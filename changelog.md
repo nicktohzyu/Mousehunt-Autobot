@@ -18,6 +18,7 @@ Added halloween 2019, valour rift. Separated event and location bot so they can 
 ## [2.4.9] 
 bwr bot now checks for acolyte second attempt and reduces the min time sand accordingly  
 ## [2.4.8] 2019-07-29  
+
 ###worked on quesogeyser bot:
 fixed bugs  
 implemented cork auto build  
