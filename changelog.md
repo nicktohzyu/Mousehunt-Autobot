@@ -8,7 +8,7 @@ Winter event, advent calendar
 Added random int generator function rand  
 Increased send gift delay timings between clicks  
 ## [2.5.1.2] 2019-11-09
-Edited bwr portal decision making, saves portal choice history  
+Edited bwr portal decision making, now saves portal choice history  
 ## [2.5.1.1] 2019-11-04
 valour rift object and using champion's fire  
 ## [2.5.1] 2019-10-29
