@@ -1,4 +1,6 @@
 # Change Log
+## [2.5.1.5] 2019-12-20
+Claim and build golem
 ## [2.5.1.4] 2019-12-16
 Flag for whether to store bwr portal history  
 Winter event location  

@@ -1,7 +1,7 @@
 {
 	// ==UserScript== // @name        MouseHunt AutoBot ENHANCED + REVAMP
 	// @author      ntzy, NobodyRandom, Hazado, Ooi Keng Siang, CnN
-	// @version    	2.5.1.4
+	// @version    	2.5.1.5
 	// @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 	// @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 	// @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -837,6 +837,18 @@ function winter2019location(){
 	for(let i = 0; i<3; i++){
 		if(golems[i].can_claim){
 			console.log("claiming golem #" + i);
+			document.getElementsByClassName("winterHunt2019HUD-golemBuilder   mousehuntTooltipParent canClaim plural")[0].click();
+			playAlertSound(); //comment out when tested
+		}
+	}
+	if(user.quests.QuestWinterHunt2019.golems[0].can_build){
+		console.log("can build golem");
+		if(!user.quests.QuestWinterHunt2019.golems[0].can_upgrade){
+			console.log("building golem");
+			document.getElementsByClassName("winterHunt2019HUD-golemBuilder-status canBuild")[0].children[0].click();
+			setTimeout(function(){ document.getElementsByClassName("winterHunt2019HUD-popup-sendGolemButton")[0].click(); }, rand(300,400));
+		} else{
+			console.log("can upgrade golem");
 			playAlertSound();
 		}
 	}
