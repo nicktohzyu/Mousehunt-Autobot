@@ -1,9 +1,11 @@
 # Change Log
 ## [2.5.1.5] 2019-12-20
-Claim and build golem
+Winter event:  
+Claim and build golem  
+Detonate  
 ## [2.5.1.4] 2019-12-16
 Flag for whether to store bwr portal history  
-Winter event location  
+Winter event location bot  
 return raffle tickets  
 ## [2.5.1.3] 2019-12-01
 Winter event, advent calendar  

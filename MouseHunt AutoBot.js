@@ -826,7 +826,7 @@ function winter2019event(){
 }
 
 function winter2019location(){
-	console.log("running winter 2019 location bot");
+	//console.log("running winter 2019 location bot");
 	if (GetCurrentLocation().indexOf("Festive Comet") < 0){
 		return;
 	}
@@ -838,17 +838,22 @@ function winter2019location(){
 		if(golems[i].can_claim){
 			console.log("claiming golem #" + i);
 			document.getElementsByClassName("winterHunt2019HUD-golemBuilder   mousehuntTooltipParent canClaim plural")[0].click();
-			playAlertSound(); //comment out when tested
+			setTimeout(winter2019location, rand(600, 800));
+			//playAlertSound(); //comment out when tested
 		}
 	}
-	if(user.quests.QuestWinterHunt2019.golems[0].can_build){
+	if(user.quests.QuestWinterHunt2019.comet.can_explode){
+		console.log("detonate");
+		document.getElementsByClassName("winterHunt2019HUD-dynamiteButton active")[0].click();
+		setTimeout(winter2019location, rand(600, 800));
+	} else if(user.quests.QuestWinterHunt2019.golems[0].can_build){
 		console.log("can build golem");
 		if(!user.quests.QuestWinterHunt2019.golems[0].can_upgrade){
 			console.log("building golem");
 			document.getElementsByClassName("winterHunt2019HUD-golemBuilder-status canBuild")[0].children[0].click();
-			setTimeout(function(){ document.getElementsByClassName("winterHunt2019HUD-popup-sendGolemButton")[0].click(); }, rand(300,400));
+			setTimeout(function(){ document.getElementsByClassName("winterHunt2019HUD-popup-sendGolemButton")[0].click(); }, rand(500,600));
 		} else{
-			console.log("can upgrade golem");
+			console.log("can upgrade golem 0");
 			playAlertSound();
 		}
 	}
