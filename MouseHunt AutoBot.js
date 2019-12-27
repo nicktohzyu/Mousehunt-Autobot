@@ -833,29 +833,38 @@ function winter2019location(){
 	if(getBaitQuantity()<1){
 		checkThenArm(null, "bait", "Gouda");
 	}
-	var golems = user.quests.QuestWinterHunt2019.golems;
-	for(let i = 0; i<3; i++){
-		if(golems[i].can_claim){
-			console.log("claiming golem #" + i);
-			document.getElementsByClassName("winterHunt2019HUD-golemBuilder   mousehuntTooltipParent canClaim plural")[0].click();
-			setTimeout(winter2019location, rand(600, 800));
-			//playAlertSound(); //comment out when tested
-		}
-	}
 	if(user.quests.QuestWinterHunt2019.comet.can_explode){
 		console.log("detonate");
 		document.getElementsByClassName("winterHunt2019HUD-dynamiteButton active")[0].click();
 		setTimeout(winter2019location, rand(600, 800));
-	} else if(user.quests.QuestWinterHunt2019.golems[0].can_build){
-		console.log("can build golem");
-		if(!user.quests.QuestWinterHunt2019.golems[0].can_upgrade){
-			console.log("building golem");
-			document.getElementsByClassName("winterHunt2019HUD-golemBuilder-status canBuild")[0].children[0].click();
-			setTimeout(function(){ document.getElementsByClassName("winterHunt2019HUD-popup-sendGolemButton")[0].click(); }, rand(500,600));
-		} else{
-			console.log("can upgrade golem 0");
-			playAlertSound();
+	}
+	checkGolem(0);
+	function checkGolem(n){
+		if(n>1) return; //only do 2 golems
+		var golems = user.quests.QuestWinterHunt2019.golems;
+		console.log("check golem " + n);
+		if(golems[n].can_claim){
+			console.log("claiming golem " + n);
+			document.getElementsByClassName("winterHunt2019HUD-golemBuilder   mousehuntTooltipParent canClaim plural")[0].click();
+			setTimeout(winter2019location, rand(600, 800)); //after claim check if can explode
+			return;
 		}
+		else if(golems[n].can_build){
+			console.log("can build golem " + n);
+			if(!golems[n].can_upgrade){ //can't upgrade, build
+				console.log("building golem " + n);
+				document.getElementsByClassName("winterHunt2019HUD-golemBuilder-status canBuild")[n].children[0].click();
+				setTimeout(function(){
+					document.getElementsByClassName("winterHunt2019HUD-popup-sendGolemButton")[n].click();
+					setTimeout(checkGolem, rand(600, 800), n);
+				}, rand(500,600));
+				return;
+			} else{ //can upgrade, alert user
+				console.log("can upgrade golem " + n);
+				playAlertSound();
+			}
+		}
+		setTimeout(checkGolem, rand(600, 800), n+1); //check the next golem
 	}
 }
 
