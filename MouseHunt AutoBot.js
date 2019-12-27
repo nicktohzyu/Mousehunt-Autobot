@@ -1,7 +1,7 @@
 {
 	// ==UserScript== // @name        MouseHunt AutoBot ENHANCED + REVAMP
 	// @author      ntzy, NobodyRandom, Hazado, Ooi Keng Siang, CnN
-	// @version    	2.5.1.5
+	// @version    	2.5.1.6
 	// @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 	// @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 	// @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -826,7 +826,7 @@ function winter2019event(){
 }
 
 function winter2019location(){
-	//console.log("running winter 2019 location bot");
+	console.log("running winter 2019 location bot");
 	if (GetCurrentLocation().indexOf("Festive Comet") < 0){
 		return;
 	}
@@ -837,6 +837,7 @@ function winter2019location(){
 		console.log("detonate");
 		document.getElementsByClassName("winterHunt2019HUD-dynamiteButton active")[0].click();
 		setTimeout(winter2019location, rand(600, 800));
+		return;
 	}
 	checkGolem(0);
 	function checkGolem(n){
@@ -859,10 +860,10 @@ function winter2019location(){
 					setTimeout(checkGolem, rand(600, 800), n);
 				}, rand(500,600));
 				return;
-			} else{ //can upgrade, alert user
+			} 
+		} else if(golems[n].can_upgrade){ //can upgrade, alert user
 				console.log("can upgrade golem " + n);
 				playAlertSound();
-			}
 		}
 		setTimeout(checkGolem, rand(600, 800), n+1); //check the next golem
 	}
