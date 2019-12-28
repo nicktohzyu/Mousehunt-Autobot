@@ -857,8 +857,8 @@ function winter2019location(){
 				document.getElementsByClassName("winterHunt2019HUD-golemBuilder-status canBuild")[n].children[0].click();
 				setTimeout(function(){
 					document.getElementsByClassName("winterHunt2019HUD-popup-sendGolemButton")[n].click();
-					setTimeout(checkGolem, rand(600, 800), n);
-				}, rand(500,600));
+					setTimeout(reloadPage, rand(2000, 2500), n);
+				}, rand(1000,1200));
 				return;
 			} 
 		} else if(golems[n].can_upgrade){ //can upgrade, alert user
