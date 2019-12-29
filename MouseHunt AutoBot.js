@@ -861,7 +861,8 @@ function winter2019location(){
 				}, rand(1000,1200));
 				return;
 			} 
-		} else if(golems[n].can_upgrade){ //can upgrade, alert user
+		}
+		if(golems[n].can_upgrade){ //can upgrade, alert user
 				console.log("can upgrade golem " + n);
 				playAlertSound();
 		}
