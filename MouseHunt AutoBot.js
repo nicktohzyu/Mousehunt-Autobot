@@ -10252,7 +10252,7 @@ function noCheeseAction() {
 	notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariable('user.username') + ' has no more cheese.');
 
 	if (isNoCheeseSound){
-		playAlertSound();
+		setTimeout(playAlertSound,10000); //wait 10 sec first so music doesn't play if bot arms cheese
 	}
 	
 	// Start rearm detector, set for every 10s to make sure not to interupt user
