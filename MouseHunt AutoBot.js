@@ -24,50 +24,17 @@
 	// @grant		GM_info
 	// @run-at		document-end
 	// ==/UserScript==
-
-	/*changelog
-	2.4.7 2019-07-24
-	added drop down menu to select bait for prickly plains
-	2.4.8 2019-07-29
-	worked on quesogeyser bot:
-	fixed bugs
-	implemented cork auto build
-	implemented/fixed cheese auto arm 
-	2.4.9: 
-	bwr bot now checks for acolyte second attempt and reduces the min time sand accordingly
-	2.5.0: 2019-10-23 
-	Added halloween 2019, valour rift. Separated event and location bot so they can run simultaneously.
-	2.5.1 2019-10-29
-	Implemented send gifts to friends (favourites+team, does not accept gifts)
-	2.5.1.1 2019-11-04
-	valour rift object and using champion's fire
-	2.5.1.2 2019-11-09
-	Edited bwr portal decision making, saves portal choice history
-	2.5.1.3 2019-12-01
-	Winter event, advent calendar
-	Added random int generator function rand
-	Increased send gift delay timings between clicks
-	2.5.1.4 2019-12-16
-	Flag for whether to store bwr portal history
-	Winter event location
-	return raffle tickets
-
-	TODO:
+	/* TODO:
 	rewrite script so locationBotcheck is settled before sounding horn (on load set flag to false, only horn when true),
-	work on default best trap/base settings,
+	work on default best trap/base settings/global "best trap of x power type",
 	fix hunt location save,
 	tournament mode where bot disarms cheese for trap check,
 	travelTo(location), (use treasuremaps/shops/travel for single click to avoid using the travel page)
-	refresh page at morning,
-	revamp locationBot check to allow both event and location at the same time,
-	edit checkthenarm to include disarmTrap('bait'), (done?)
-	return free gifts,
-	remove NOB server stuff (use "console.log(new Error().stack);" to find call chain) (disabled for now with NOBpage=false but need to remove code) trace nobInit() call
+	refresh page at morning,	remove NOB server stuff (use "console.log(new Error().stack);" to find call chain) (disabled for now with NOBpage=false but need to remove code) trace nobInit() call
 	figure out what "apply and reload" does
 	edit checkthenarm to do bait last
 	prickly plains bot: Equip trap and charms based on cheese used; implement drop down menu
 	implement feature to record all hunts
-	global "best trap of x power type"
 	function to get current setup
 	add option to turn off horn sounding
 	*/
@@ -88,14 +55,14 @@
 	var hornTimeDelayVariance = 2;
 	var smallDelayMin = 5;
 	var smallDelayVariance = 15;
-	var smallDelayProbability = 0.07;
+	var smallDelayProbability = 0.06;
 	var extraDelayMin = 200;
 	var extraDelayVariance = 400;
-	var extraDelayProbability = 0.03;
+	var extraDelayProbability = 0.02;
 	var checkTimeDelayMin = 0;
 	var checkTimeDelayVariance = 10;
 
-	var botStopHour = 0;
+	var botStopHour = 1;
 	var botStartHour = 7;
 
 
