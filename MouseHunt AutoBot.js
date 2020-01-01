@@ -818,17 +818,14 @@ function winter2019location(){
 			return;
 		}
 		else if(golems[n].can_build){
-			console.log("can build golem " + n);
-			if(!golems[n].can_upgrade){ //can't upgrade, build
-				console.log("building golem " + n);
+			console.log("building golem " + n);
 			document.getElementsByClassName("winterHunt2019HUD-golemBuilder-status canBuild")[n].children[0].click();
 			setTimeout(function(){
 				document.getElementsByClassName("winterHunt2019HUD-popup-sendGolemButton")[n].click();
 				setTimeout(reloadPage, rand(2000, 2500), n);
 			}, rand(1000,1200));
 			return;
-		} 
-	}
+		}
 		if(golems[n].can_upgrade){ //can upgrade, alert user
 			console.log("can upgrade golem " + n);
 			playAlertSound();
