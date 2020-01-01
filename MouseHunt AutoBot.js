@@ -427,7 +427,7 @@
 	var hiFivePlatform = false;
 	var mhPlatform = false;
 	var mhMobilePlatform = false;
-	var secureConnection = false;
+	var secureConnection = true;
 	var lastDateRecorded = new Date();
 	var hornTime = 900;
 	var hornTimeDelay = 0;
@@ -519,11 +519,11 @@
 }
 //remove commas before parseInt
 (function() {
-    var proxied = parseInt;
-    parseInt = function() {
-        arguments[0]=arguments[0].toString().replace(/,/g, '');
-        return proxied.apply( this, arguments );
-    };
+	var proxied = parseInt;
+	parseInt = function() {
+		arguments[0]=arguments[0].toString().replace(/,/g, '');
+		return proxied.apply( this, arguments );
+	};
 })();
 
 function sendGiftsToFavourites(){
@@ -821,17 +821,17 @@ function winter2019location(){
 			console.log("can build golem " + n);
 			if(!golems[n].can_upgrade){ //can't upgrade, build
 				console.log("building golem " + n);
-				document.getElementsByClassName("winterHunt2019HUD-golemBuilder-status canBuild")[n].children[0].click();
-				setTimeout(function(){
-					document.getElementsByClassName("winterHunt2019HUD-popup-sendGolemButton")[n].click();
-					setTimeout(reloadPage, rand(2000, 2500), n);
-				}, rand(1000,1200));
-				return;
-			} 
-		}
+			document.getElementsByClassName("winterHunt2019HUD-golemBuilder-status canBuild")[n].children[0].click();
+			setTimeout(function(){
+				document.getElementsByClassName("winterHunt2019HUD-popup-sendGolemButton")[n].click();
+				setTimeout(reloadPage, rand(2000, 2500), n);
+			}, rand(1000,1200));
+			return;
+		} 
+	}
 		if(golems[n].can_upgrade){ //can upgrade, alert user
-				console.log("can upgrade golem " + n);
-				playAlertSound();
+			console.log("can upgrade golem " + n);
+			playAlertSound();
 		}
 		setTimeout(checkGolem, rand(600, 800), n+1); //check the next golem
 	}
@@ -1223,7 +1223,7 @@ function bwRift() { //interface does not work; settings must be done in code
 					}
 					if(selectPortal) { //click portal
 					//console.log("choosing portal");
-						if (objPortal.arrName[nMinIndex] == 'ACOLYTE') {
+					if (objPortal.arrName[nMinIndex] == 'ACOLYTE') {
 							//console.plog('Chosen Portal:', objPortal.arrName[nMinIndex], 'Index: Unknown');
 							fireEvent(classPortalContainer[0].children[nMinIndex], 'click');
 							window.setTimeout(function () {
@@ -6527,51 +6527,24 @@ function reloadPage(soundHorn = false) {
 	// reload the page
 	if (fbPlatform) {
 		// for Facebook only
-
 		if (secureConnection) {
-			if (soundHorn) {
-				window.location.href = "https://www.mousehuntgame.com/canvas/turn.php";
-			} else {
-				window.location.href = "https://www.mousehuntgame.com/canvas/";
-			}
+			window.location.href = "https://www.mousehuntgame.com/canvas/";			
 		} else {
-			if (soundHorn) {
-				window.location.href = "http://www.mousehuntgame.com/canvas/turn.php";
-			} else {
-				window.location.href = "http://www.mousehuntgame.com/canvas/";
-			}
+			window.location.href = "http://www.mousehuntgame.com/canvas/";			
 		}
 	} else if (hiFivePlatform) {
 		// for Hi5 only
-
 		if (secureConnection) {
-			if (soundHorn) {
-				window.location.href = "https://mousehunt.hi5.hitgrab.com/turn.php";
-			} else {
-				window.location.href = "https://mousehunt.hi5.hitgrab.com/";
-			}
+			window.location.href = "https://mousehunt.hi5.hitgrab.com/";			
 		} else {
-			if (soundHorn) {
-				window.location.href = "http://mousehunt.hi5.hitgrab.com/turn.php";
-			} else {
-				window.location.href = "http://mousehunt.hi5.hitgrab.com/";
-			}
+			window.location.href = "http://mousehunt.hi5.hitgrab.com/";			
 		}
 	} else if (mhPlatform) {
 		// for mousehunt game only
-
 		if (secureConnection) {
-			if (soundHorn) {
-				window.location.href = "https://www.mousehuntgame.com/turn.php";
-			} else {
-				window.location.href = "https://www.mousehuntgame.com/";
-			}
+			window.location.href = "https://www.mousehuntgame.com/";			
 		} else {
-			if (soundHorn) {
-				window.location.href = "http://www.mousehuntgame.com/turn.php";
-			} else {
-				window.location.href = "http://www.mousehuntgame.com/";
-			}
+			window.location.href = "http://www.mousehuntgame.com/";
 		}
 	}
 
@@ -12456,29 +12429,29 @@ function handleFiles(files) { //WTF
 	};
 	var blob = files[0].slice(0, files[0].size);
 	reader.readAsText(blob);
-	}
-	function onIdAdsClicked() {
-		document.getElementById('inputShowAds').value = 'Loading Ads...';
-		document.getElementById('inputShowAds').disabled = 'disabled';
-		var xmlHttp = new XMLHttpRequest();
-		xmlHttp.onreadystatechange = function () {
-			if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-				document.getElementById('inputShowAds').value = 'Click to Show Ads';
-				document.getElementById('inputShowAds').disabled = '';
-				var arr = xmlHttp.responseText.split("\r\n");
-				console.log(arr);
-				var win;
-				for (var i = 0; i < arr.length; i++) {
-					if (arr[i].indexOf("http") === 0) {
-						win = window.open(arr[i]);
-						if (!win) {
-							alert("Please allow popups for this site");
-							return;
-						}
+}
+function onIdAdsClicked() {
+	document.getElementById('inputShowAds').value = 'Loading Ads...';
+	document.getElementById('inputShowAds').disabled = 'disabled';
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange = function () {
+		if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+			document.getElementById('inputShowAds').value = 'Click to Show Ads';
+			document.getElementById('inputShowAds').disabled = '';
+			var arr = xmlHttp.responseText.split("\r\n");
+			console.log(arr);
+			var win;
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i].indexOf("http") === 0) {
+					win = window.open(arr[i]);
+					if (!win) {
+						alert("Please allow popups for this site");
+						return;
 					}
 				}
 			}
-		};
+		}
+	};
 		xmlHttp.open("GET", "https://dl.dropboxusercontent.com/s/3cbo6en86lrpas1/Test.txt", true); // true for asynchronous
 		xmlHttp.send(null);
 		window.setTimeout(function () {
