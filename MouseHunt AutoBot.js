@@ -6523,7 +6523,7 @@ function countdownTimer() {
 	}
 }
 
-function reloadPage(soundHorn) {
+function reloadPage(soundHorn = false) {
 	// reload the page
 	if (fbPlatform) {
 		// for Facebook only
