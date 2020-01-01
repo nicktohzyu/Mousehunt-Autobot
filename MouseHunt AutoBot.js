@@ -6523,7 +6523,7 @@ function countdownTimer() {
 	}
 }
 
-function reloadPage(soundHorn = false) {
+function reloadPage(unusedVariable) {
 	// reload the page
 	if (fbPlatform) {
 		// for Facebook only
@@ -6547,8 +6547,6 @@ function reloadPage(soundHorn = false) {
 			window.location.href = "http://www.mousehuntgame.com/";
 		}
 	}
-
-	soundHorn = undefined;
 }
 
 function reloadWithMessage(msg, soundHorn) {
