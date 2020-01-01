@@ -808,7 +808,7 @@ function winter2019location(){
 	}
 	checkGolem(0);
 	function checkGolem(n){
-		if(n>1) return; //only do 2 golems
+		if(n>2) return; //only do 2 golems
 		var golems = user.quests.QuestWinterHunt2019.golems;
 		console.log("check golem " + n);
 		if(golems[n].can_claim){
