@@ -806,6 +806,11 @@ function winter2019location(){
 		setTimeout(winter2019location, rand(600, 800));
 		return;
 	}
+	if(user.quests.QuestWinterHunt2019.items.golem_part_head_stat_item.quantity<1 ||
+		user.quests.QuestWinterHunt2019.items.golem_part_torso_stat_item.quantity<1 ||
+		user.quests.QuestWinterHunt2019.items.golem_part_limb_stat_item.quantity<4) {
+		playAlertSound();
+	}
 	checkGolem(0);
 	function checkGolem(n){
 		if(n>2) return; //only do 2 golems
