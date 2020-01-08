@@ -1,6 +1,7 @@
 # Change Log
 ## [2.5.1.6] 2019-12-27
 Multiple golems
+alert sound only plays once
 ## [2.5.1.5] 2019-12-20
 Winter event:  
 Claim and build golem  
