@@ -831,7 +831,7 @@ function winter2019location(){
 			}, rand(1000,1200));
 			return;
 		}
-		if(golems[n].can_upgrade){ //can upgrade, alert user
+		if(golems[n].can_upgrade && n===0){ //can upgrade, alert user
 			console.log("can upgrade golem " + n);
 			playAlertSound();
 		}
@@ -10273,7 +10273,13 @@ function cheeseRearmedAction() {
 		if (debug) console.log(e);
 	}
 }
+
+var alertSoundPlaying = false;
 function playAlertSound() {
+	if(alertSoundPlaying){
+		return;
+	}
+	alertSoundPlaying = true;
 	unsafeWindow.hornAudio = new Audio(NoCheeseSound);
 	unsafeWindow.hornAudio.loop = true;
 	unsafeWindow.hornAudio.volume = NoCheeseSoundVolume;
@@ -10288,7 +10294,6 @@ function playAlertSound() {
 	targetArea[0].appendChild(stopMusicButton);
 	targetArea = null;
 	stopMusicButton = null;
-	snippet = null;
 }
 
 // ################################################################################################
