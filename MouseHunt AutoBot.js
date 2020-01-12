@@ -62,8 +62,8 @@
 	var checkTimeDelayMin = 0;
 	var checkTimeDelayVariance = 10;
 
-	var botStopHour = 1;
-	var botStartHour = 7;
+	var botStopHour = 0;
+	var botStartHour = 8;
 
 
 	var hornTimeDelayMax = 15; //old code
@@ -794,7 +794,7 @@ function winter2019event(){
 
 function winter2019location(){
 	console.log("running winter 2019 location bot");
-	if (GetCurrentLocation().indexOf("Festive Comet") < 0){
+	if (GetCurrentLocation().indexOf("Festive Comet") < 0 && GetCurrentLocation().indexOf("Frozen Vacant Lot")< 0){
 		return;
 	}
 	if(getBaitQuantity()<1){
