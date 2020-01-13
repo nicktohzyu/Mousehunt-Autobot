@@ -777,6 +777,20 @@ function eventBotCheck(caller){
 		case 'Winter 2019':
 		winter2019event();
 		break;
+		case 'Lunar New Year 2019':
+		lny2020event();
+		break;
+	}
+}
+
+function lny2020event(){
+	console.log("running lny 2020 event bot");
+	//check candle
+	function armCandle(){
+
+	}
+	function disarmCandle(){
+		
 	}
 }
 
@@ -933,6 +947,7 @@ function travelToLocation(){ //early draft. should only run on https://www.mouse
 }
 
 function bwRift() { //interface does not work; settings must be done in code
+	//temporarily disabled hunting when acolyte available
 	if (GetCurrentLocation().indexOf("Bristle Woods Rift") < 0)
 		return;
 
@@ -1012,7 +1027,7 @@ function bwRift() { //interface does not work; settings must be done in code
 		objDefaultBWRift.master.bait[12] = 'Runic String'; 
 		objDefaultBWRift.master.bait[13] = 'Runic String'; 
 		objDefaultBWRift.master.bait[14] = 'Runic String'; 
-		objDefaultBWRift.master.bait[15] = 'Runic String'; 
+		objDefaultBWRift.master.bait[15] = 'NONE'; 
 
 		objDefaultBWRift.master.activate[4] = true;
 		objDefaultBWRift.master.activate[5] = true;
@@ -7328,6 +7343,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="None">None</option>';
 				preferenceHTMLStr += '<option value="Halloween 2019">Halloween 2019</option>';
 				preferenceHTMLStr += '<option value="Winter 2019">Winter 2019</option>';
+				preferenceHTMLStr += '<option value="Lunar New Year 2019">Lunar New Year 2019</option>';
 				preferenceHTMLStr += '</select>';
 				preferenceHTMLStr += '</td>';
 				preferenceHTMLStr += '</tr>';
