@@ -946,8 +946,7 @@ function travelToLocation(){ //early draft. should only run on https://www.mouse
 	}
 }
 
-function bwRift() { //interface does not work; settings must be done in code
-	//temporarily disabled hunting when acolyte available
+function bwRift() { //interface does not work; settings must be done in code //temporarily disabled hunting when acolyte available
 	if (GetCurrentLocation().indexOf("Bristle Woods Rift") < 0)
 		return;
 
@@ -1025,9 +1024,9 @@ function bwRift() { //interface does not work; settings must be done in code
 		objDefaultBWRift.master.bait[9] = 'Runic String'; 
 		objDefaultBWRift.master.bait[11] = 'Runic String'; 
 		objDefaultBWRift.master.bait[12] = 'Runic String'; 
-		objDefaultBWRift.master.bait[13] = 'Runic String'; 
+		objDefaultBWRift.master.bait[13] = 'NONE'; 
 		objDefaultBWRift.master.bait[14] = 'Runic String'; 
-		objDefaultBWRift.master.bait[15] = 'NONE'; 
+		objDefaultBWRift.master.bait[15] = 'Runic String'; 
 
 		objDefaultBWRift.master.activate[4] = true;
 		objDefaultBWRift.master.activate[5] = true;
