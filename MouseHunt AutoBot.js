@@ -37,6 +37,7 @@
 	implement feature to record all hunts
 	function to get current setup
 	add option to turn off horn sounding
+	alert sound when trying to arm charm that user doesn't have
 	*/
 
 	/*try {
@@ -229,6 +230,8 @@
 		}
 	};
 
+	var bestRiftWeapon = 'Timesplit Dissonance Trap';
+	var bestRiftBase = 'Clockwork Base';
 	// // Fiery Warpath Preference
 	var commanderCharm = ['Super Warpath Commander\'s', 'Warpath Commander\'s'];
 	var objPopulation = {
@@ -729,9 +732,6 @@ function locationBotCheck(caller) {
 		//zokor();
 		labyZokor();
 		break;
-		case 'Furoma Rift':
-		fRift();
-		break;
 		case 'BC/JOD':
 		balackCoveJOD();
 		break;
@@ -752,6 +752,9 @@ function locationBotCheck(caller) {
 		break;
 		case 'Valour Rift':
 		valourRift();
+		break;
+		case 'Furoma Rift':
+		fRift();
 		break;
 		default:
 		break;
@@ -1410,6 +1413,7 @@ function pricklyPlains(){
 	checkThenArm(null, "charm", "Enerchi Charm");
 	checkThenArm(null, 'bait', objPricklyPlains.bait); //add check if have cheese, if not use bland
 	//in future implement crafting the queso and auto-farming all tiers
+	//check if worth to switch base/charms for higher tier cheese
 }
 
 function quesoGeyser(){ // create object with equipment to use
@@ -4191,12 +4195,17 @@ function fRift() {
 	var objDefaultFR = {
 		enter: 0,
 		retreat: 0,
-		weapon: new Array(11).fill(''),
-		base: new Array(11).fill(''),
+		weapon: new Array(11).fill(bestRiftWeapon),
+		base: new Array(11).fill(bestRiftBase),
 		trinket: new Array(11).fill(''),
 		bait: new Array(11).fill(''),
 		masterOrder: new Array(11).fill('Glutter=>Combat=>Susheese')
 	};
+	objDefaultFR.trinket[10]='Rift Wealth Charm';
+	objDefaultFR.trinket[11]='Rift Wealth Charm';
+	objDefaultFR.bait[9]='Rift Combat';
+	objDefaultFR.bait[10]='Null Onyx Gorgonzola';
+	objDefaultFR.bait[11]='Null Onyx Gorgonzola';
 	var objFR = getStorageToObject('FRift', objDefaultFR);
 	objFR.enter = parseInt(objFR.enter);
 	objFR.retreat = parseInt(objFR.retreat);
@@ -7359,7 +7368,8 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Bristle Woods Rift">Bristle Woods Rift</option>';
 				preferenceHTMLStr += '<option value="Queso Canyon">Queso Canyon</option>';
 				preferenceHTMLStr += '<option value="Valour Rift">Valour Rift</option>';
-				preferenceHTMLStr += '<option value="Winter 2019">Winter 2019</option>';
+				// preferenceHTMLStr += '<option value="Winter 2019">Winter 2019</option>';
+				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
 				/*preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
 				preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
 				preferenceHTMLStr += '<option value="Birthday 2019">Birthday 2019</option>';
@@ -7373,7 +7383,6 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Fiery Warpath">Fiery Warpath</option>';
 				preferenceHTMLStr += '<option value="Fort Rox">Fort Rox</option>';
 				preferenceHTMLStr += '<option value="Fungal Cavern">Fungal Cavern</option>';
-				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
 				preferenceHTMLStr += '<option value="GES">Gnawnian Express Station</option>';
 				preferenceHTMLStr += '<option value="GWH2016R">GWH 2016</option>';
 				preferenceHTMLStr += '<option value="Iceberg">Iceberg</option>';
