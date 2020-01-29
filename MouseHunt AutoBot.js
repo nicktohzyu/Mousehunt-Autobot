@@ -811,7 +811,7 @@ function winter2019event(){
 
 function winter2019location(){
 	console.log("running winter 2019 location bot");
-	if (GetCurrentLocation().indexOf("Festive Comet") < 0 && GetCurrentLocation().indexOf("Frozen Vacant Lot")< 0){
+	if (getCurrentLocation().indexOf("Festive Comet") < 0 && getCurrentLocation().indexOf("Frozen Vacant Lot")< 0){
 		return;
 	}
 	if(getBaitQuantity()<1){
@@ -888,7 +888,7 @@ function halloween2019(){
 }
 
 function valourRift(){
-	if (GetCurrentLocation().indexOf("Valour Rift") < 0){
+	if (getCurrentLocation().indexOf("Valour Rift") < 0){
 		return;
 	}
 	console.log("run Valour Rift bot");
@@ -950,7 +950,7 @@ function travelToLocation(){ //early draft. should only run on https://www.mouse
 }
 
 function bwRift() { //interface does not work; settings must be done in code //temporarily disabled hunting when acolyte available
-	if (GetCurrentLocation().indexOf("Bristle Woods Rift") < 0)
+	if (getCurrentLocation().indexOf("Bristle Woods Rift") < 0)
 		return;
 
 	var objDefaultBWRift = {
@@ -1374,7 +1374,7 @@ function bwRift() { //interface does not work; settings must be done in code //t
 
 function quesoCanyon(){ //implement tonic
 	//call the sublocation functions
-	var currentLocation = GetCurrentLocation();
+	var currentLocation = getCurrentLocation();
 	if (currentLocation.indexOf("Queso Geyser") >= 0){
 		quesoGeyser();
 	}
@@ -1388,7 +1388,7 @@ function checkTonic(){
 }
 
 function pricklyPlains(){
-	if (GetCurrentLocation().indexOf("Prickly Plains") < 0){
+	if (getCurrentLocation().indexOf("Prickly Plains") < 0){
 		return;
 	}
 
@@ -1417,7 +1417,7 @@ function pricklyPlains(){
 }
 
 function quesoGeyser(){ // create object with equipment to use
-	if (GetCurrentLocation().indexOf("Queso Geyser") < 0){
+	if (getCurrentLocation().indexOf("Queso Geyser") < 0){
 		return;
 	}
 	checkThenArm(null, "base", "Minotaur Base");
@@ -1602,7 +1602,7 @@ function tonicActive(){
 }
 
 function fortRox() {
-	if (GetCurrentLocation().indexOf("Fort Rox") < 0)
+	if (getCurrentLocation().indexOf("Fort Rox") < 0)
 		return;
 
 	var objDefaultFRox = {
@@ -1693,7 +1693,7 @@ function easter2019noECC(){
 }
 
 function easterMopi(){
-	if(GetCurrentLocation().indexOf("Moussu Picchu") < 0){
+	if(getCurrentLocation().indexOf("Moussu Picchu") < 0){
 		//console.log("not at Moussu Picchu, travelling now");
 		easter2019Travel(52);
 	}
@@ -1703,7 +1703,7 @@ function easterMopi(){
 }
 
 function easterGrift(){ //Farm map clue egg
-	if(GetCurrentLocation().indexOf("Gnawnia Rift") < 0){
+	if(getCurrentLocation().indexOf("Gnawnia Rift") < 0){
 		easter2019Travel(53);
 	}
 	checkThenArm(null, "base", "Clockwork Base");
@@ -1713,7 +1713,7 @@ function easterGrift(){ //Farm map clue egg
 }
 
 function easterFrift(){
-	if(GetCurrentLocation().indexOf("Furoma Rift") < 0){
+	if(getCurrentLocation().indexOf("Furoma Rift") < 0){
 		console.log("charging, not at FRift, travelling now");
 		easter2019Travel(56);
 	}
@@ -1723,7 +1723,7 @@ function easterFrift(){
 }
 
 function easterQRiver(){
-	if(GetCurrentLocation().indexOf("Queso River") < 0){
+	if(getCurrentLocation().indexOf("Queso River") < 0){
 		//console.log("charging, not at Queso River, travelling now");
 		easter2019Travel(34);
 	}
@@ -1898,14 +1898,14 @@ function checkCaughtMouse(obj, arrUpdatedUncaught) {
 	}
 }
 
-function GetCurrentLocation() {
+function getCurrentLocation() {
 	// var loc = getPageVariable('user.location');
-	// console.log('GetCurrentLocation: ', loc);
+	// console.log('getCurrentLocation: ', loc);
 	return user.environment_name;
 }
 
 /*function fungalCavern(){ //basic, just equips stuff
-	if (GetCurrentLocation().indexOf("Fungal Cavern") < 0)
+	if (getCurrentLocation().indexOf("Fungal Cavern") < 0)
 		return;
 	checkThenArm(null, 'weapon', 'School of Sharks');
 	checkThenArm(null, 'base', 'Attuned Enerchi Induction Base');
@@ -1916,7 +1916,7 @@ function GetCurrentLocation() {
 
 /*function birthday2019(){ //basic, just equips stuff
 	console.log("In Birthday2019(), getting location");
-	if (GetCurrentLocation().indexOf("SUPER|brie+ Factory") < 0){
+	if (getCurrentLocation().indexOf("SUPER|brie+ Factory") < 0){
 		return;
 	}
 	console.log("getting bait quantity");
@@ -1978,7 +1978,7 @@ function Halloween2015() {
 }
 
 function Halloween2016() {
-	if (GetCurrentLocation().indexOf("Spooky Sandcastle") < 0)
+	if (getCurrentLocation().indexOf("Spooky Sandcastle") < 0)
 		return;
 
 	var areaName = document.getElementsByClassName('halloweenHud-areaDetails-name')[0].innerHTML;
@@ -2132,7 +2132,7 @@ function loadTrain(location) {
 }
 
 function ges() {
-		if (GetCurrentLocation().indexOf('Gnawnian Express Station') < 0)
+		if (getCurrentLocation().indexOf('Gnawnian Express Station') < 0)
 			return;
 
 		var i, j;
@@ -2313,7 +2313,7 @@ function ges() {
 }
 
 function wwrift() {
-	if (GetCurrentLocation().indexOf('Whisker Woods Rift') < 0)
+	if (getCurrentLocation().indexOf('Whisker Woods Rift') < 0)
 		return;
 
 	var objDefaultWWRift = {
@@ -2543,7 +2543,7 @@ if (location.indexOf('Iceberg') > -1) {
 }
 
 function icebergV2() {
-	var loc = GetCurrentLocation();
+	var loc = getCurrentLocation();
 	var arrOrder = ['GENERAL', 'TREACHEROUS', 'BRUTAL', 'BOMBING', 'MAD', 'ICEWING', 'HIDDEN', 'DEEP', 'SLUSHY'];
 	var objDefaultIceberg = {
 		base: new Array(9).fill(''),
@@ -2594,7 +2594,7 @@ function BurroughRift(bCheckLoc, minMist, maxMist, nToggle) {
 	//Tier 1/Yellow: 1-5 Mist Canisters
 	//Tier 2/Green: 6-18 Mist Canisters
 	//Tier 3/Red: 19-20 Mist Canisters
-	if (bCheckLoc && GetCurrentLocation().indexOf('Burroughs Rift') < 0){
+	if (bCheckLoc && getCurrentLocation().indexOf('Burroughs Rift') < 0){
 		return;
 	}
 
@@ -2638,7 +2638,7 @@ function BurroughRift(bCheckLoc, minMist, maxMist, nToggle) {
 }
 
 function BRCustom() {
-	if (GetCurrentLocation().indexOf('Burroughs Rift') < 0)
+	if (getCurrentLocation().indexOf('Burroughs Rift') < 0)
 		return;
 
 	var objDefaultBRCustom = {
@@ -2685,7 +2685,7 @@ function BRCustom() {
 }
 
 function lgGeneral(objLG) {
-	var loc = GetCurrentLocation();
+	var loc = getCurrentLocation();
 	switch (loc) {
 		case 'Living Garden':
 		livingGarden(objLG);
@@ -3049,7 +3049,7 @@ function DisarmLGSpecialCharm(locationName) {
 }*/
 
 function seasonalGarden() { /* V2 SG + ZTower */
-	if (GetCurrentLocation().indexOf('Seasonal Garden') < 0)
+	if (getCurrentLocation().indexOf('Seasonal Garden') < 0)
 		return;
 
 	var cheeseArmed = getPageVariable('user.bait_name');
@@ -3096,7 +3096,7 @@ function seasonalGarden() { /* V2 SG + ZTower */
 }
 
 function zugzwangTower() {
-	var loc = GetCurrentLocation();
+	var loc = getCurrentLocation();
 	/*if (loc.indexOf("Seasonal Garden") > -1) {
 		setStorage('locationBot', 'SG');
 		seasonalGarden();
@@ -3221,7 +3221,7 @@ function getZTUnlockedMouse(nProgress) {
 } /* End V2 SG + ZTower */
 
 function balackCoveJOD() {
-	var curLoc = GetCurrentLocation();
+	var curLoc = getCurrentLocation();
 	var bInJOD = (curLoc.indexOf('Jungle') > -1);
 	var bInBC = (curLoc.indexOf('Balack') > -1);
 	if (!(bInJOD || bInBC))
@@ -3283,7 +3283,7 @@ function balackCoveJOD() {
 }
 
 function forbiddenGroveAR() {
-	var curLoc = GetCurrentLocation();
+	var curLoc = getCurrentLocation();
 	var bInFG = (curLoc.indexOf('Forbidden Grove') > -1);
 	var bInAR = (curLoc.indexOf('Acolyte Realm') > -1);
 	if (!(bInFG || bInAR))
@@ -3304,7 +3304,7 @@ function forbiddenGroveAR() {
 }
 
 function SunkenCity(isAggro) {
-	if (GetCurrentLocation().indexOf("Sunken City") < 0)
+	if (getCurrentLocation().indexOf("Sunken City") < 0)
 		return;
 
 	var zone = document.getElementsByClassName('zoneName')[0].innerText;
@@ -3377,7 +3377,7 @@ function SunkenCity(isAggro) {
 }
 
 function SCCustom() {
-	if (GetCurrentLocation().indexOf("Sunken City") < 0)
+	if (getCurrentLocation().indexOf("Sunken City") < 0)
 		return;
 
 	var objDefaultSCCustom = {
@@ -3509,7 +3509,7 @@ function GetSunkenCityZone(zoneName) {
 }
 
 function labyZokor() {
-	if (GetCurrentLocation().indexOf("Labyrinth") < 0)
+	if (getCurrentLocation().indexOf("Labyrinth") < 0)
 		zokor();
 	else
 		labyrinth();
@@ -3523,7 +3523,7 @@ function tempLabyrinth() {
 
 function labyrinth() {
 	if (debug) console.log("RUN labyrinth()");
-	if (GetCurrentLocation().indexOf("Labyrinth") < 0) {
+	if (getCurrentLocation().indexOf("Labyrinth") < 0) {
 		console.debug("Not in labyrinth.");
 		return;
 	}
@@ -3815,7 +3815,7 @@ function labyrinth() {
 }
 
 function zokor() {
-	var loc = GetCurrentLocation();
+	var loc = getCurrentLocation();
 	if (loc.indexOf("Labyrinth") > -1) {
 		setStorage('locationBot', 'Labyrinth');
 		labyrinth();
@@ -3957,7 +3957,7 @@ function fieryWarpath(superCharm) {
 
 // Warpath V2
 function fw() {
-	if (GetCurrentLocation().indexOf("Fiery Warpath") < 0)
+	if (getCurrentLocation().indexOf("Fiery Warpath") < 0)
 		return;
 
 	var wave = getPageVariable('user.viewing_atts.desert_warpath.wave');
@@ -4189,7 +4189,7 @@ function fw() {
 }
 
 function fRift() {
-	if (GetCurrentLocation().indexOf('Furoma Rift') < 0)
+	if (getCurrentLocation().indexOf('Furoma Rift') < 0)
 		return;
 
 	var objDefaultFR = {
@@ -4438,7 +4438,7 @@ function Winter2015() {
 }
 
 function gwh() {
-	if (GetCurrentLocation().indexOf("Great Winter Hunt") < 0)
+	if (getCurrentLocation().indexOf("Great Winter Hunt") < 0)
 		return;
 
 	var userVariable = JSON.parse(getPageVariable('JSON.stringify(user.quests.QuestWinterHunt2016)'));
@@ -6170,22 +6170,22 @@ function getCharmQuantity(){ //works as of 2019-3-8, if no charm armed the web p
 	return CharmQuantity;
 }
 
-function getCurrentLocation() {
-	var tempLocation;
-	if (isNewUI) {
-		tempLocation = document.getElementsByClassName('mousehuntHud-environmentName');
-		if (tempLocation.length > 0)
-			return tempLocation[0].textContent;
-		else
-			return "";
-	} else {
-		tempLocation = document.getElementById('hud_location');
-		if (!isNullOrUndefined(tempLocation))
-			return tempLocation.textContent;
-		else
-			return "";
-	}
-}
+// function getCurrentLocation() { //Why are there two versions?!
+// 	var tempLocation;
+// 	if (isNewUI) {
+// 		tempLocation = document.getElementsByClassName('mousehuntHud-environmentName');
+// 		if (tempLocation.length > 0)
+// 			return tempLocation[0].textContent;
+// 		else
+// 			return "";
+// 	} else {
+// 		tempLocation = document.getElementById('hud_location');
+// 		if (!isNullOrUndefined(tempLocation))
+// 			return tempLocation.textContent;
+// 		else
+// 			return "";
+// 	}
+// }
 
 function retrieveData() {
 	if (debug) console.log("Run retrieveData()");
