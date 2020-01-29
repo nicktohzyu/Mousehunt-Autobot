@@ -1,7 +1,7 @@
 {
 	// ==UserScript== // @name        MouseHunt AutoBot ENHANCED + REVAMP
 	// @author      ntzy, NobodyRandom, Hazado, Ooi Keng Siang, CnN
-	// @version    	2.5.1.6
+	// @version    	2.5.2.0
 	// @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 	// @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 	// @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -895,8 +895,8 @@ function valourRift(){
 	var locationData = user.quests.QuestRiftValour;//JSON.parse(getPageVariable('JSON.stringify(user.quests.QuestRiftBristleWoods)'));
 	var objDefaultValourRift = {
 
-		weapon: 'Timesplit Dissonance Trap',
-		base: 'Clockwork Base',
+		weapon: bestRiftWeapon,
+		base: bestRiftBase,
 		trinket:'Super Rift Vacuum Charm',
 		baitOutside: 'Brie String',
 		baitInside: 'Gauntlet String Cheese',
@@ -956,8 +956,8 @@ function bwRift() { //interface does not work; settings must be done in code //t
 	var objDefaultBWRift = {
 		order: ['NONE', 'GEARWORKS', 'ANCIENT', 'RUNIC', 'TIMEWARP', 'GUARD', 'SECURITY', 'FROZEN', 'FURNACE', 'INGRESS', 'PURSUER', 'ACOLYTE_CHARGING', 'ACOLYTE_DRAINING', 'ACOLYTE_DRAINED', 'LUCKY', 'HIDDEN'],
 		master: {
-			weapon: new Array(32).fill('Timesplit Dissonance Trap'),
-			base: new Array(32).fill('Clockwork Base'),
+			weapon: new Array(32).fill(bestRiftWeapon),
+			base: new Array(32).fill(bestRiftBase),
 			trinket: new Array(32).fill('Super Rift Vacuum Charm'),
 			bait: new Array(32).fill('Brie String'),
 			activate: new Array(32).fill(false),
@@ -1055,7 +1055,7 @@ function bwRift() { //interface does not work; settings must be done in code //t
 
 	var objUser = JSON.parse(getPageVariable('JSON.stringify(user.quests.QuestRiftBristleWoods)'));
 	var nTimeSand = parseInt(objUser.items.rift_hourglass_sand_stat_item.quantity);
-	//console.log("RUN BWRift() using:", objBWRift);
+	console.log("RUN BWRift() using:", objBWRift);
 
 	var nIndex = -1;
 	var nLootRemaining = objUser.progress_remaining;
@@ -1899,9 +1899,9 @@ function checkCaughtMouse(obj, arrUpdatedUncaught) {
 }
 
 function GetCurrentLocation() {
-	var loc = getPageVariable('user.location');
-	//if (debug) console.log('Current Location:', loc);
-	return loc;
+	// var loc = getPageVariable('user.location');
+	// console.log('GetCurrentLocation: ', loc);
+	return user.environment_name;
 }
 
 /*function fungalCavern(){ //basic, just equips stuff
@@ -2129,9 +2129,9 @@ function loadTrain(location) {
 			if (debug) console.debug(e.message);
 			return;
 		}
-	}
+}
 
-	function ges() {
+function ges() {
 		if (GetCurrentLocation().indexOf('Gnawnian Express Station') < 0)
 			return;
 
@@ -6156,12 +6156,13 @@ function getKingRewardStatus() {
 }
 
 function getBaitQuantity() {
-	var hudBaitQuantity = document.getElementById('hud_baitQuantity');
-	if (hudBaitQuantity !== null) {
-		return parseInt(hudBaitQuantity.textContent);
-	} else {
-		return 0;
-	}
+	// var hudBaitQuantity = document.getElementById('hud_baitQuantity');
+	// if (hudBaitQuantity !== null) {
+	// 	return parseInt(hudBaitQuantity.textContent);
+	// } else {
+	// 	return 0;
+	// }
+	return user.bait_quantity;
 }
 
 function getCharmQuantity(){ //works as of 2019-3-8, if no charm armed the web page value is zero
@@ -6751,19 +6752,19 @@ function embedTimer(targetPage) {
 					tempSpan4 = null;
 					loadLinkToUpdateDiv = null;
 					loadLinkToUpdate = null;*/
+					var returnRaffleButton = document.createElement('span');
+					returnRaffleButton.innerHTML = '<a> Return Raffle Tickets </a> &#126; ';
+					returnRaffleButton.title = "Returns raffle tickets";
+					returnRaffleButton.onclick = returnRaffle;
+					//sendPresentsButton.style = "font-size: 15px;";
+					timerDivElement.appendChild(returnRaffleButton);
+
 					var sendPresentsButton = document.createElement('span');
 					sendPresentsButton.innerHTML = '<a> Send presents </a>';
 					sendPresentsButton.title = "Selects favourites and teammates to send presents to (does not click send)";
 					sendPresentsButton.onclick = sendGiftsToFavourites;
 					//sendPresentsButton.style = "font-size: 15px;";
 					timerDivElement.appendChild(sendPresentsButton);
-
-					var returnRaffleButton = document.createElement('span');
-					returnRaffleButton.innerHTML = ' &#126; <a> Return Raffle Tickets </a>';
-					returnRaffleButton.title = "Returns raffle tickets";
-					returnRaffleButton.onclick = returnRaffle;
-					//sendPresentsButton.style = "font-size: 15px;";
-					timerDivElement.appendChild(returnRaffleButton);
 
 					returnRaffleButton = null;
 					sendPresentsButton = null;
