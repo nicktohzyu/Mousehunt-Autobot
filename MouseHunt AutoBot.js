@@ -1374,7 +1374,7 @@ function bwRift() { //interface does not work; settings must be done in code
 	}
 }
 
-function quesoCanyon(){ //implement tonic
+function quesoCanyon(){
 	//call the sublocation functions
 	var currentLocation = getCurrentLocation();
 	if (currentLocation.indexOf("Queso Geyser") >= 0){
@@ -1589,6 +1589,11 @@ function quesoGeyser(){ // create object with equipment to use
 
 function armTonic(arm){
 	if(arm){
+		if(parseInt(document.getElementsByClassName("quesoHUD-wildTonic-quantity quantity")[0].textContent) < 1){
+			console.log("out of tonic!");
+			disarmTrap("bait");
+			playAlertSound();
+		}
 		console.log("Arming tonic");
 		if(!tonicActive()){
 			document.getElementsByClassName("quesoHUD-wildTonic-button")[0].click();
