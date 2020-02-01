@@ -1,4 +1,8 @@
 # Change Log
+## [2.5.2.0] 2019-12-27
+New mousehunt version
+Update getBaitQuantity and getCurrentLocation to work with new version
+Used bestRiftWeapon/Base for valour rift and BWR
 ## [2.5.1.6] 2019-12-27
 Multiple golems  
 alert sound only plays once
