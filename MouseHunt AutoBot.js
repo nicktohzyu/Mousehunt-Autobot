@@ -38,6 +38,8 @@
 	function to get current setup
 	add option to turn off horn sounding
 	alert sound when trying to arm charm that user doesn't have
+	run on https://www.mousehuntgame.com/login.php
+	checkthenarm allow a string of preferences
 	*/
 
 	/*try {
@@ -949,7 +951,7 @@ function travelToLocation(){ //early draft. should only run on https://www.mouse
 	}
 }
 
-function bwRift() { //interface does not work; settings must be done in code //temporarily disabled hunting when acolyte available
+function bwRift() { //interface does not work; settings must be done in code
 	if (getCurrentLocation().indexOf("Bristle Woods Rift") < 0)
 		return;
 
@@ -1027,7 +1029,7 @@ function bwRift() { //interface does not work; settings must be done in code //t
 		objDefaultBWRift.master.bait[9] = 'Runic String'; 
 		objDefaultBWRift.master.bait[11] = 'Runic String'; 
 		objDefaultBWRift.master.bait[12] = 'Runic String'; 
-		objDefaultBWRift.master.bait[13] = 'NONE'; 
+		objDefaultBWRift.master.bait[13] = 'Runic String'; 
 		objDefaultBWRift.master.bait[14] = 'Runic String'; 
 		objDefaultBWRift.master.bait[15] = 'Runic String'; 
 
@@ -1420,6 +1422,7 @@ function quesoGeyser(){ // create object with equipment to use
 	if (getCurrentLocation().indexOf("Queso Geyser") < 0){
 		return;
 	}
+	//console.log("running queso geyser bot");
 	checkThenArm(null, "base", "Minotaur Base");
 	checkThenArm(null, "weapon", "Chrome Storm Wrought Ballista Trap");
 
@@ -1449,9 +1452,8 @@ function quesoGeyser(){ // create object with equipment to use
 
 	}
 	var quesoList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", "Flamin' Queso", "Wildfire Queso"];
-	var charmList = ["none", "none", "Ancient Charm", "Rainbow Luck Charm", "Festive Ultimate Luck Charm", "Festive Ultimate Lucky Power Charm"]; //dragonbane?
-	var eruptionCharmList = ["none", "none", "Ancient Charm", "Rainbow Luck Charm", "Festive Ultimate Luck Charm", "Festive Ultimate Lucky Power Charm"]; //dragonbane?
-	var tonicList = [false, false, false, false, true, true];
+	var charmList = ["none", "none", "Ancient Charm", "Rainbow Luck Charm", "Festive Ultimate Luck Charm", "Dragonbane Charm"]; //dragonbane?
+	var eruptionCharmList = ["none", "none", "Ancient Charm", "Rainbow Luck Charm", "Festive Ultimate Luck Charm", "Super Dragonbane Charm"]; //dragonbane?
 	var eruptionTonicList = [false, false, false, false, true, true];
 	var armQuesoButtons = []; //not in use
 	for(i = 0; i < 6; i++){
@@ -1499,23 +1501,32 @@ function quesoGeyser(){ // create object with equipment to use
 			setTimeout(reloadPage, 2000);
 		}*/
 
-		var quesoToArm = 3; //change to 5 when sure no bugs, using flamin is never optimal unless need that pressure
+		var quesoToArm = -1;
+		var useTonic = false;
 		if(pressureNeeded <= 10 && presurePerHuntNeeded<3){
 			quesoToArm = 1;
 			disarmTrap("trinket");
-		} else if(pressureNeeded <= 30 && presurePerHuntNeeded<10){
+		} else if(pressureNeeded <= 30 && presurePerHuntNeeded<=10){
 			quesoToArm = 2;
-		} else if(pressureNeeded <= 150 && presurePerHuntNeeded<30){
+		} else if(pressureNeeded <= 120 && presurePerHuntNeeded<=30){
 			quesoToArm = 3;
-			//checkThenArm(null, "charm", "Rainbow Luck Charm");
-		} else if(pressureNeeded <= 1200 && presurePerHuntNeeded<80){ //change when values when implementing epic eruption
-			quesoToArm = 4;
-			//checkThenArm(null, "charm", "Festive Ultimate Luck Charm");
+		} else if(pressureNeeded <= 600 && presurePerHuntNeeded<=160){ //change when values when implementing epic eruption
+			quesoToArm = 4; //with tonic
+			if(pressureNeeded >100 || presurePerHuntNeeded > 80){
+				useTonic = true;
+			}
+		} else{
+			if(pressureNeeded > 600 || presurePerHuntNeeded > 160){
+				quesoToArm = 5;
+				if(pressureNeeded>1500|| presurePerHuntNeeded > 1200){
+					useTonic = true;
+				}
+			}
 		}
-		console.log("queso to arm:", quesoToArm);
+		console.log("queso to arm:", quesoList[quesoToArm]);
 		checkThenArm(null, 'bait', quesoList[quesoToArm]);
 		checkThenArm(null, "charm", charmList[quesoToArm]);
-		armTonic(tonicList[quesoToArm]);
+		armTonic(useTonic);
 		//implement using tonic for wildfire queso
 	}
 	else if(phase == "eruption"){
@@ -1527,12 +1538,12 @@ function quesoGeyser(){ // create object with equipment to use
 		var claimAvailable = document.getElementsByClassName("quesoGeyserHUD-claimContainer reveal").length>0; //true if avail, false otherwise
 		console.log("claim available:", claimAvailable);
 		if(huntsRemaining == 0 ){ //or check //claim loot after eruption complete
-			//playAlertSound();
-			//checkThenArm(null, 'bait', 'Mild Queso');
+			playAlertSound();
+			disarmTrap("bait");
 			//disarmTrap("trinket");
 			document.getElementsByClassName("quesoGeyserHUD-claimNestButton default")[0].click(); // can click when not available, just returns unavailable dialogue	
 			//document.getElementsByClassName("jsDialogClose button")[0].click(); //continue button
-			setTimeout(reloadPage, 3000);
+			setTimeout(reloadPage, 30000);
 		}
 		
 	}
@@ -1551,7 +1562,7 @@ function quesoGeyser(){ // create object with equipment to use
 		var corkSize=0; //size of cork to build //small = 1, medium = 2, large = 3, epic = 4
 		if(craftingItemQuantity[3]>=60){ //disabled until sure of no bugs
 			if(craftingItemQuantity[0]>=180){
-				//corkSize=4;
+				corkSize=4;
 			}
 		} else if(craftingItemQuantity[2]>=30){ //add check if enough cheese before building cork
 			if(craftingItemQuantity[0]>=90){
@@ -5933,13 +5944,15 @@ function clickTrapSelector(strSelect, bForceClick) { //strSelect = weapon/base/c
 		var arrTemp = armedItem.getAttribute('class').split(" ");
 		if (bForceClick !== true && arrTemp[arrTemp.length - 1] == 'active') { // trap selector opened
 			arming = true;
-			return (console.plog('Trap selector', strSelect, 'opened'));
+			//console.log('Trap selector', strSelect, 'opened');
+			return true;;
 		}
 		fireEvent(armedItem, 'click');
 	} else {
 		if (bForceClick !== true && document.getElementsByClassName("showComponents " + strSelect).length > 0) { // trap selector opened
 			arming = true;
-			return (console.plog('Trap selector', strSelect, 'opened'));
+			//console.log('Trap selector', strSelect, 'opened')
+			return true;
 		}
 		if (strSelect == "base")
 			fireEvent(document.getElementsByClassName('trapControlThumb')[0], 'click');
@@ -5949,11 +5962,13 @@ function clickTrapSelector(strSelect, bForceClick) { //strSelect = weapon/base/c
 			fireEvent(document.getElementsByClassName('trapControlThumb')[2], 'click');
 		else if (strSelect == "bait")
 			fireEvent(document.getElementsByClassName('trapControlThumb')[3], 'click');
-		else
-			return (console.plog("Invalid trapSelector"));
+		else{
+			//console.log("Invalid trapSelector");
+			return true;
+		}
 	}
 	arming = true;
-	//console.plog("Trap selector", strSelect, "clicked");
+	//console.log("Trap selector", strSelect, "clicked");
 }
 
 function closeTrapSelector(category) {
@@ -5961,13 +5976,13 @@ function closeTrapSelector(category) {
 		var armedItem = document.getElementsByClassName('campPage-trap-armedItem ' + category)[0];
 		if (!isNullOrUndefined(armedItem) && armedItem.getAttribute('class').indexOf('active') > -1) { // trap selector opened
 			fireEvent(armedItem, 'click');
-			console.plog("Trap selector", category, "closed");
+			// console.log("Trap selector", category, "closed");
 		}
 	}
 	else {
 		if (document.getElementsByClassName("showComponents " + category).length > 0) {
 			fireEvent(document.getElementById('trapSelectorBrowserClose'), 'click');
-			console.plog("Trap selector", category, "closed");
+			// console.log("Trap selector", category, "closed");
 		}
 	}
 }

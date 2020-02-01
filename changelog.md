@@ -1,5 +1,7 @@
 # Change Log
-## [2.5.2.0] 2019-12-27
+## [2.5.2.1] 2019-02-01
+Updated queso geyser
+## [2.5.2.0] 2020-01-28
 New mousehunt version
 Update getBaitQuantity and getCurrentLocation to work with new version
 Used bestRiftWeapon/Base for valour rift and BWR
