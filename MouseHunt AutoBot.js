@@ -1383,10 +1383,9 @@ function quesoCanyon(){
 	else if (currentLocation.indexOf("Prickly Plains") >= 0){
 		pricklyPlains();
 	}
-}
-
-function checkTonic(){
-	//check quantity and if armed
+	else if (currentLocation.indexOf("Queso River") >= 0){
+		quesoRiver();
+	}
 }
 
 function pricklyPlains(){
@@ -1594,8 +1593,8 @@ function armTonic(arm){
 			disarmTrap("bait");
 			playAlertSound();
 		}
-		console.log("Arming tonic");
 		if(!tonicActive()){
+			console.log("Arming tonic");
 			document.getElementsByClassName("quesoHUD-wildTonic-button")[0].click();
 		}
 	}
@@ -1605,8 +1604,8 @@ function armTonic(arm){
 }
 
 function disarmTonic(){
-	console.log("Disarming tonic");
 	if(tonicActive()){
+		console.log("Tonic currently armed, disarming tonic");
 		document.getElementsByClassName("quesoHUD-wildTonic-button selected")[0].click();
 	}
 }
@@ -1615,6 +1614,14 @@ function tonicActive(){
 	var active = (document.getElementsByClassName("quesoHUD-wildTonic-button selected").length>0);
 	//console.log("Tonic active? :", active);
 	return active;
+}
+
+function quesoRiver(){
+	armTonic(false);
+	checkThenArm(null, "base", "Overgrown Ember Stone Base");
+	checkThenArm(null, "weapon", "Ember Prison Core Trap");
+	checkThenArm(null, "trinket", "Queso Pump Charm");
+	checkThenArm(null, "bait", "Gouda");
 }
 
 function fortRox() {
