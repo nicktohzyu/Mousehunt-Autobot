@@ -1,7 +1,7 @@
 {
 	// ==UserScript== // @name        MouseHunt AutoBot ENHANCED + REVAMP
 	// @author      ntzy, NobodyRandom, Hazado, Ooi Keng Siang, CnN
-	// @version    	2.5.2.0
+	// @version    	2.5.2.1
 	// @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 	// @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 	// @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -899,28 +899,32 @@ function valourRift(){
 
 		weapon: bestRiftWeapon,
 		base: bestRiftBase,
-		trinket:'Super Rift Vacuum Charm',
+		trinketOutside:'Super Rift Vacuum Charm',
+		trinketInside:'Super Rift Vacuum Charm',
+		trinketEclipse:'Rift Ultimate Power Charm',
 		baitOutside: 'Brie String',
 		baitInside: 'Gauntlet String Cheese',
-		fireAtEclipse: true,
+		fireEclipse: true,
 		fireOtherwise: false
 	};
 	var objValourRift = objDefaultValourRift;
-	//console.log(locationData);
+	// console.log(locationData);
 	checkThenArm(null, 'weapon', objValourRift.weapon);
 	checkThenArm(null, 'base', objValourRift.base);
-	checkThenArm(null, 'trinket', objValourRift.trinket);
 	if(user.quests.QuestRiftValour.state == "farming"){
-		console.log("out of tower, arming " + objValourRift.baitOutside);
+		checkThenArm(null, 'trinket', objValourRift.trinketOutside);
+		// console.log("out of tower, arming " + objValourRift.baitOutside);
 		checkThenArm(null, "bait", objValourRift.baitOutside);
 	}
 	if(user.quests.QuestRiftValour.state == "tower"){
-		console.log("in tower, arming " + objValourRift.baitInside);
+		// console.log("in tower, arming " + objValourRift.baitInside);
 		checkThenArm(null, "bait", objValourRift.baitInside);
 
 		if(user.quests.QuestRiftValour.is_at_eclipse){ //implement eclipse types
-			armDisarmFire(objValourRift.fireAtEclipse);
+			checkThenArm(null, 'trinket', objValourRift.trinketEclipse);
+			armDisarmFire(objValourRift.fireEclipse);
 		} else{ //not eclipse
+			checkThenArm(null, 'trinket', objValourRift.trinketInside);
 			armDisarmFire(objValourRift.fireOtherwise);
 		}
 	}

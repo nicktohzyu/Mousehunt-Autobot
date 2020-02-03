@@ -1,6 +1,7 @@
 # Change Log
 ## [2.5.2.1] 2019-02-01
 Updated queso geyser
+Updated valor rift
 ## [2.5.2.0] 2020-01-28
 New mousehunt version
 Update getBaitQuantity and getCurrentLocation to work with new version
