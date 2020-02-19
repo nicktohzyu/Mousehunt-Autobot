@@ -912,6 +912,7 @@ function valourRift(){
 	checkThenArm(null, 'weapon', objValourRift.weapon);
 	checkThenArm(null, 'base', objValourRift.base);
 	if(user.quests.QuestRiftValour.state == "farming"){
+		armDisarmFire(false);
 		checkThenArm(null, 'trinket', objValourRift.trinketOutside);
 		// console.log("out of tower, arming " + objValourRift.baitOutside);
 		checkThenArm(null, "bait", objValourRift.baitOutside);
@@ -924,6 +925,9 @@ function valourRift(){
 			checkThenArm(null, 'trinket', objValourRift.trinketEclipse);
 			armDisarmFire(objValourRift.fireEclipse);
 		} else{ //not eclipse
+			if(locationData.highest_floor_reached > 8 && locationData.highest_floor_reached < 16 && locationData.floor > 8){
+				//objValourRift.fireOtherwise = true; //use fire to push to unlock lvl 15 boost and farm tower secrets faster
+			}
 			checkThenArm(null, 'trinket', objValourRift.trinketInside);
 			armDisarmFire(objValourRift.fireOtherwise);
 		}
@@ -4903,6 +4907,7 @@ function FinalizePuzzleImageAnswer(answer) {
 			kingsRewardRetry = 0;
 			setStorage("KingsRewardRetry", kingsRewardRetry);
 			var strTemp = 'Max ' + kingsRewardRetryMax + 'retries. Pls solve it manually ASAP.';
+			playAlertSound();
 			alert(strTemp);
 			displayTimer(strTemp, strTemp, strTemp);
 			console.perror(strTemp);
