@@ -749,9 +749,6 @@ function locationBotCheck(caller) {
 		case 'Fungal Cavern':
 		fungalCavern();
 		break;
-		case 'Birthday 2019':
-		//birthday2019();
-		break;
 		case 'Valour Rift':
 		valourRift();
 		break;
@@ -785,7 +782,32 @@ function eventBotCheck(caller){
 		case 'Lunar New Year 2019':
 		lny2020event();
 		break;
+		case 'Birthday 2020':
+		birthday2020();
+		break;
 	}
+}
+
+function birthday2020(){ //basic, just equips stuff
+	console.log("In Birthday2020(), getting location");
+	if (getCurrentLocation().indexOf("SUPER|brie+ Factory") < 0){
+		return;
+	}
+	// console.log("getting bait quantity");
+	if(getBaitQuantity()==0 || user.quests.QuestBirthday2020.factory_atts.boss_warning){
+		checkThenArm(null, 'bait','Gouda Cheese');
+	}
+
+	// console.log("getting charm quantity");
+	if(getCharmQuantity()==0 || CurrentArmedBait()!='Coggy Colby Cheese'){
+		checkThenArm(null, 'trinket', 'Enerchi Charm');
+		checkThenArm(null, 'base', 'Attuned Enerchi Induction Base');
+	}
+	if(user.quests.QuestBirthday2020.factory_atts.can_claim){
+		console.log("can claim");
+		document.getElementsByClassName("birthday2020HUD-claimButton mousehuntTooltipParent")[0].click();
+	}
+	return;
 }
 
 function lny2020event(){
@@ -1942,25 +1964,6 @@ function getCurrentLocation() {
 	checkThenArm(null, 'base', 'Attuned Enerchi Induction Base');
 	checkThenArm(null, 'trinket', 'Enerchi Charm');
 	checkThenArm(null, 'bait', 'Dumpling Cheese');
-	return;
-}*/
-
-/*function birthday2019(){ //basic, just equips stuff
-	console.log("In Birthday2019(), getting location");
-	if (getCurrentLocation().indexOf("SUPER|brie+ Factory") < 0){
-		return;
-	}
-	console.log("getting bait quantity");
-	if(getBaitQuantity()==0){
-		checkThenArm(null, 'bait','Brie Cheese');
-	}
-	console.log("getting charm quantity");
-	if(getCharmQuantity()==0 || CurrentArmedBait()!='Coggy Colby Cheese'){
-		checkThenArm(null, 'trinket', 'Enerchi Charm');
-	}
-	if(document.getElementsByClassName("birthday2019HUD-itemContainer craftingItems")[0].children[0].getElementsByClassName("quantity")[0].innerText>=10){
-		//document.getElementsByClassName("birthday2019HUD-factoryContainer")[0].getElementsByClassName("mousehuntActionButton tiny")[0].click();
-	}
 	return;
 }*/
 
@@ -7389,6 +7392,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Halloween 2019">Halloween 2019</option>';
 				preferenceHTMLStr += '<option value="Winter 2019">Winter 2019</option>';
 				preferenceHTMLStr += '<option value="Lunar New Year 2019">Lunar New Year 2019</option>';
+				preferenceHTMLStr += '<option value="Birthday 2020">Birthday 2020</option>';
 				preferenceHTMLStr += '</select>';
 				preferenceHTMLStr += '</td>';
 				preferenceHTMLStr += '</tr>';
@@ -7409,7 +7413,6 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
 				/*preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
 				preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
-				preferenceHTMLStr += '<option value="Birthday 2019">Birthday 2019</option>';
 				preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
 				preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
 				preferenceHTMLStr += '<option value="Burroughs Rift(Yellow)">Burroughs Rift(Yellow)</option>';
