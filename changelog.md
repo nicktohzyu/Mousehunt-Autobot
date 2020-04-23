@@ -1,5 +1,5 @@
 # Change Log
-## [2.5.2.2] 2019-02-01
+## [2.5.2.2] 2019-04-23
 Global variables for coordination between event/location scripts
 moved injected html display element to right place (due to change in game code)
 Updated queso geyser
