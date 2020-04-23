@@ -1,4 +1,9 @@
 # Change Log
+## [2.5.2.2] 2019-02-01
+Global variables for coordination between event/location scripts
+moved injected html display element to right place (due to change in game code)
+Updated queso geyser
+Updated valor rift ultimate eclipse
 ## [2.5.2.1] 2019-02-01
 Updated queso geyser
 Updated valor rift
