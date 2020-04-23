@@ -6676,8 +6676,8 @@ function embedTimer(targetPage) {
 		if (showTimerInPage) {
 			var headerElement;
 			if (fbPlatform || hiFivePlatform || mhPlatform) {
-				console.log("fb/mhPlatform");
-				headerElement = document.getElementById('noscript');
+				// console.log("fb/mhPlatform");
+				headerElement = document.getElementsByClassName("pageFrameView-content")[0];
 			} else if (mhMobilePlatform) {
 				headerElement = document.getElementById('mobileHorn');
 			}
