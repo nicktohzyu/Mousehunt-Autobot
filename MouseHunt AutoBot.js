@@ -232,7 +232,7 @@
 		}
 	};
 
-	var bestRiftWeapon = 'Timesplit Dissonance Trap';
+	var bestRiftWeapon = 'Timesplit Dissonance';
 	var bestRiftBase = 'Clockwork Base';
 	// // Fiery Warpath Preference
 	var commanderCharm = ['Super Warpath Commander\'s', 'Warpath Commander\'s'];
@@ -331,9 +331,9 @@
 		LONG: "l"
 	};
 	var arrHallwayOrder = [
-	'sp', 'mp', 'lp',
-	'ss', 'ms', 'ls',
-	'se', 'me', 'le'];
+		'sp', 'mp', 'lp',
+		'ss', 'ms', 'ls',
+		'se', 'me', 'le'];
 	var objDefaultLaby = {
 		districtFocus: 'None',
 		between0and14: ['lp'],
@@ -461,6 +461,7 @@
 	var separator = "~";
 	var selAlgo = getStorageToVariableStr("locationBot", "None");
 	var eventBot = getStorageToVariableStr("eventBot", "None");
+	var useCharm = false; //for event
 
 	// element in page
 	var titleElement;
@@ -487,117 +488,117 @@
 	var clockNeedOn = false;
 	var NOBadFree = false;
 	var LOCATION_TIMERS = [
-	['Seasonal Garden', {
-		first: 1283616000,
-		length: 288000,
-		breakdown: [1, 1, 1, 1],
-		name: ['Summer', 'Fall', 'Winter', 'Spring'],
-		color: ['Red', 'Orange', 'Blue', 'Green'],
-		effective: ['tactical', 'shadow', 'hydro', 'physical']
-	}],
-	['Balack\'s Cove', {
-		first: 1294680060,
-		length: 1200,
-		breakdown: [48, 3, 2, 3],
-		name: ['Low', 'Medium (in)', 'High', 'Medium (out)'],
-		color: ['Green', 'Orange', 'Red', 'Orange']
-	}],
-	['Forbidden Grove', {
-		first: 1285704000,
-		length: 14400,
-		breakdown: [4, 1],
-		name: ['Open', 'Closed'],
-		color: ['Green', 'Red']
-	}],
-	['Toxic Spill', {
-		first: 1503597600,
-		length: 3600,
-		breakdown: [15, 16, 18, 18, 24, 24, 24, 12, 12, 24, 24, 24, 18, 18, 16, 15],
-		name: ['Hero', 'Knight', 'Lord', 'Baron', 'Count', 'Duke', 'Grand Duke', 'Archduke', 'Archduke', 'Grand Duke', 'Duke', 'Count', 'Baron', 'Lord', 'Knight', 'Hero'],
-		color: ['Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green'],
-		effective: ['Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling']
-	}],
-	['Relic Hunter', {
-		url: 'http://horntracker.com/backend/relichunter.php?functionCall=relichunt'
-	}]
+		['Seasonal Garden', {
+			first: 1283616000,
+			length: 288000,
+			breakdown: [1, 1, 1, 1],
+			name: ['Summer', 'Fall', 'Winter', 'Spring'],
+			color: ['Red', 'Orange', 'Blue', 'Green'],
+			effective: ['tactical', 'shadow', 'hydro', 'physical']
+		}],
+		['Balack\'s Cove', {
+			first: 1294680060,
+			length: 1200,
+			breakdown: [48, 3, 2, 3],
+			name: ['Low', 'Medium (in)', 'High', 'Medium (out)'],
+			color: ['Green', 'Orange', 'Red', 'Orange']
+		}],
+		['Forbidden Grove', {
+			first: 1285704000,
+			length: 14400,
+			breakdown: [4, 1],
+			name: ['Open', 'Closed'],
+			color: ['Green', 'Red']
+		}],
+		['Toxic Spill', {
+			first: 1503597600,
+			length: 3600,
+			breakdown: [15, 16, 18, 18, 24, 24, 24, 12, 12, 24, 24, 24, 18, 18, 16, 15],
+			name: ['Hero', 'Knight', 'Lord', 'Baron', 'Count', 'Duke', 'Grand Duke', 'Archduke', 'Archduke', 'Grand Duke', 'Duke', 'Count', 'Baron', 'Lord', 'Knight', 'Hero'],
+			color: ['Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green'],
+			effective: ['Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling']
+		}],
+		['Relic Hunter', {
+			url: 'http://horntracker.com/backend/relichunter.php?functionCall=relichunt'
+		}]
 	];
 }
 //remove commas before parseInt
-(function() {
+(function () {
 	var proxied = parseInt;
-	parseInt = function() {
-		arguments[0]=arguments[0].toString().replace(/,/g, '');
-		return proxied.apply( this, arguments );
+	parseInt = function () {
+		arguments[0] = arguments[0].toString().replace(/,/g, '');
+		return proxied.apply(this, arguments);
 	};
 })();
 
-function sendGiftsToFavourites(){
+function sendGiftsToFavourites() {
 	console.log("sending gifts to friends");
 	var listOfFavourites = null;
 	var listOfTeammates = null;
 	document.getElementsByClassName("free_gifts")[0].children[0].click(); //click to open gifts tab
 	setTimeout(selectTab, rand(1000, 1100));//wait for it to load
 
-	function selectTab(){
+	function selectTab() {
 		document.getElementsByClassName("giftSelectorView-tabHeader")[1].click()
 		setTimeout(selectGift, rand(200, 250));
 	}
-	function selectGift(){
+	function selectGift() {
 		document.getElementsByClassName("giftSelectorView-gift sendable gift gift_of_the_day")[1].click()
 		setTimeout(loadFriends, rand(200, 250));
 	}
-	function loadFriends(){
+	function loadFriends() {
 		listOfFavourites = document.getElementsByClassName("giftSelectorView-friend favorite");
 		listOfTeammates = document.getElementsByClassName("giftSelectorView-friend-group team")[0].getElementsByClassName("giftSelectorView-friend");
 		//console.log(listOfTeammates);
-		if(listOfFavourites.length < 1){
+		if (listOfFavourites.length < 1) {
 			console.log("error, unable to get list");
 			return;
-		} else{
+		} else {
 			setTimeout(selectFavourites, rand(200, 250), 0);
 		}
 	}
 
-	function selectFavourites(n){
+	function selectFavourites(n) {
 		//console.log("select favourites: " + n);
-		while(n<listOfFavourites.length && listOfFavourites[n].className != "giftSelectorView-friend favorite"){
+		while (n < listOfFavourites.length && listOfFavourites[n].className != "giftSelectorView-friend favorite") {
 			n++;
 		}
-		if(n<listOfFavourites.length){
+		if (n < listOfFavourites.length) {
 			//console.log("selecting favourites " + n);
 			listOfFavourites[n].click();
-			setTimeout(selectFavourites, rand(150, 200), n+1);
-		} else{
+			setTimeout(selectFavourites, rand(150, 200), n + 1);
+		} else {
 			setTimeout(selectTeammates, rand(150, 200), 0);
 		}
 	}
 
-	function selectTeammates(n){
+	function selectTeammates(n) {
 		//console.log("select teammate: " + n);
-		while(n<listOfTeammates.length && listOfTeammates[n].className != "giftSelectorView-friend"){
+		while (n < listOfTeammates.length && listOfTeammates[n].className != "giftSelectorView-friend") {
 			n++;
 		}
-		if(n<listOfTeammates.length){
+		if (n < listOfTeammates.length) {
 			//console.log("selecting teammate " + n);
 			listOfTeammates[n].click();
-			setTimeout(selectTeammates, rand(150, 200), n+1);
+			setTimeout(selectTeammates, rand(150, 200), n + 1);
 		}
 	}
 }
 
-function returnRaffle(){
+function returnRaffle() {
 	console.log("returning raffle tickets");
 	document.getElementsByClassName("menuItem first inbox")[0].click();//open inbox tab
 	setTimeout(getEntries, rand(1000, 1100));//wait for it to load
 
-	function getEntries(){
+	function getEntries() {
 		var entries = document.getElementsByClassName("sendBallot");
 		setTimeout(send, rand(150, 200), 0);//wait for it to load
-		function send(n){
-			if(n<entries.length){
+		function send(n) {
+			if (n < entries.length) {
 				console.log("returning raffle " + n);
 				entries[n].click();
-				setTimeout(send, rand(200, 250), n+1);
+				setTimeout(send, rand(200, 250), n + 1);
 			}
 		}
 	}
@@ -607,221 +608,221 @@ function locationBotCheck(caller) {
 	//if (debug) console.log("RUN locationBotCheck(" + caller + ")");
 	//console.log("selAlgo: ", selAlgo);
 	setTimeout(eventBotCheck, 3000);
-	if (selAlgo != null && selAlgo != ""){
+	if (selAlgo != null && selAlgo != "") {
 		console.log("Running \"" + selAlgo + "\" location bot");
 	}
 	switch (selAlgo) {
 		case 'Hunt For':
-		huntFor();
-		break;
+			huntFor();
+			break;
 		case 'Charge Egg EggstraCharge':
-		checkCharge(18, true);
-		//setTimeout(easter2019ECC, 2000); //bodge
-		break;
+			checkCharge(18, true);
+			//setTimeout(easter2019ECC, 2000); //bodge
+			break;
 		case 'Charge Egg':
-		checkCharge(18, false);
-		//setTimeout(easter2019noECC, 2000); //bodge
-		break;
+			checkCharge(18, false);
+			//setTimeout(easter2019noECC, 2000); //bodge
+			break;
 		case 'Gnawnian Express(Empty)':
-		gnawnianExpress(false);
-		break;
+			gnawnianExpress(false);
+			break;
 		case 'Gnawnian Express(Full)':
-		gnawnianExpress(true);
-		break;
+			gnawnianExpress(true);
+			break;
 		case 'GES':
-		// USING A SMARTER GES
-		//gnawnianExpress(true);
-		ges();
-		break;
+			// USING A SMARTER GES
+			//gnawnianExpress(true);
+			ges();
+			break;
 		case 'Burroughs Rift(Red)':
-		BurroughRift(true, 19, 20);
-		break;
+			BurroughRift(true, 19, 20);
+			break;
 		case 'Burroughs Rift(Green)':
-		BurroughRift(true, 6, 18);
-		break;
+			BurroughRift(true, 6, 18);
+			break;
 		case 'Burroughs Rift(Yellow)':
-		BurroughRift(true, 1, 5);
-		break;
+			BurroughRift(true, 1, 5);
+			break;
 		case 'Burroughs Rift Custom':
-		BRCustom();
-		break;
+			BRCustom();
+			break;
 		case 'Iceberg':
-		iceberg();
-		break;
+			iceberg();
+			break;
 		case 'WWRift':
-		wwrift();
-		break;
+			wwrift();
+			break;
 		case 'Halloween 2016':
-		Halloween2016();
-		break;
+			Halloween2016();
+			break;
 		case 'Halloween 2015':
-		Halloween2015();
-		break;
+			Halloween2015();
+			break;
 		case 'Winter 2015':
-		Winter2015();
-		break;
+			Winter2015();
+			break;
 		case 'Winter 2019':
-		winter2019location();
-		break;
+			winter2019location();
+			break;
 		case 'GWH2016R':
-		gwh();
-		break;
+			gwh();
+			break;
 		case 'All LG Area':
-		{ //put this shit inside the function
-			var objLGTemplate = { 
-				isAutoFill: false,
-				isAutoPour: false,
-				maxSaltCharged: 25,
-				base: {
-					before: '',
-					after: ''
-				},
-				trinket: {
-					before: '',
-					after: ''
-				},
-				bait: {
-					before: '',
-					after: ''
-				}
-			};
-			var objDefaultLG = {
-				LG: JSON.parse(JSON.stringify(objLGTemplate)),
-				TG: JSON.parse(JSON.stringify(objLGTemplate)),
-				LC: JSON.parse(JSON.stringify(objLGTemplate)),
-				CC: JSON.parse(JSON.stringify(objLGTemplate)),
-				SD: JSON.parse(JSON.stringify(objLGTemplate)),
-				SC: JSON.parse(JSON.stringify(objLGTemplate)),
-			};
-			var temp = getStorageToObject("LGArea", objDefaultLG);
-			lgGeneral(temp); 
-		}
-		break;
+			{ //put this shit inside the function
+				var objLGTemplate = {
+					isAutoFill: false,
+					isAutoPour: false,
+					maxSaltCharged: 25,
+					base: {
+						before: '',
+						after: ''
+					},
+					trinket: {
+						before: '',
+						after: ''
+					},
+					bait: {
+						before: '',
+						after: ''
+					}
+				};
+				var objDefaultLG = {
+					LG: JSON.parse(JSON.stringify(objLGTemplate)),
+					TG: JSON.parse(JSON.stringify(objLGTemplate)),
+					LC: JSON.parse(JSON.stringify(objLGTemplate)),
+					CC: JSON.parse(JSON.stringify(objLGTemplate)),
+					SD: JSON.parse(JSON.stringify(objLGTemplate)),
+					SC: JSON.parse(JSON.stringify(objLGTemplate)),
+				};
+				var temp = getStorageToObject("LGArea", objDefaultLG);
+				lgGeneral(temp);
+			}
+			break;
 		case 'Queso Canyon':
-		quesoCanyon();
-		break;
+			quesoCanyon();
+			break;
 		case 'Sunken City':
-		SunkenCity(false);
-		break;
+			SunkenCity(false);
+			break;
 		case 'Sunken City Aggro':
-		SunkenCity(true);
-		break;
+			SunkenCity(true);
+			break;
 		case 'Sunken City Custom':
-		SCCustom();
-		break;
+			SCCustom();
+			break;
 		case 'SG':
-		seasonalGarden();
-		break;
+			seasonalGarden();
+			break;
 		case 'ZT':
-		zugzwangTower();
-		break;
+			zugzwangTower();
+			break;
 		case 'Fiery Warpath':
-		fieryWarpath();
-		break;
+			fieryWarpath();
+			break;
 		case 'Fiery Warpath Super':
-		fieryWarpath(true);
-		break;
+			fieryWarpath(true);
+			break;
 		case 'Iceberg (Wax)':
-		iceberg('wax');
-		break;
+			iceberg('wax');
+			break;
 		case 'Iceberg (Sticky)':
-		iceberg('sticky');
-		break;
+			iceberg('sticky');
+			break;
 		case 'Labyrinth':
 		//labyrinth();
 		//break;
 		case 'Zokor':
-		//zokor();
-		labyZokor();
-		break;
+			//zokor();
+			labyZokor();
+			break;
 		case 'BC/JOD':
-		balackCoveJOD();
-		break;
+			balackCoveJOD();
+			break;
 		case 'FG/AR':
-		forbiddenGroveAR();
-		break;
+			forbiddenGroveAR();
+			break;
 		case 'Bristle Woods Rift':
-		bwRift();
-		break;
+			bwRift();
+			break;
 		case 'Fort Rox':
-		fortRox();
-		break;
+			fortRox();
+			break;
 		case 'Fungal Cavern':
-		fungalCavern();
-		break;
+			fungalCavern();
+			break;
 		case 'Valour Rift':
-		valourRift();
-		break;
+			valourRift();
+			break;
 		case 'Furoma Rift':
-		fRift();
-		break;
+			fRift();
+			break;
 		default:
-		break;
+			break;
 	}
 }
 
-function rand(min, max){
-	if(max<min){
+function rand(min, max) {
+	if (max < min) {
 		console.log("rand call error, max<min", new Error().stack);
 	}
-	return Math.floor((Math.random() * (max-min)) + min);
+	return Math.floor((Math.random() * (max - min)) + min);
 }
 
-function eventBotCheck(caller){
+function eventBotCheck(caller) {
 	//if (debug) console.log("RUN eventBotCheck(" + caller + ")");
-	if (eventBot != null && eventBot != ""){
+	if (eventBot != null && eventBot != "") {
 		console.log("Running \"" + eventBot + "\" event bot");
 	}
 	switch (eventBot) {
 		case 'Halloween 2019':
-		halloween2019();
-		break;
+			halloween2019();
+			break;
 		case 'Winter 2019':
-		winter2019event();
-		break;
+			winter2019event();
+			break;
 		case 'Lunar New Year 2019':
-		lny2020event();
-		break;
+			lny2020event();
+			break;
 		case 'Birthday 2020':
-		birthday2020();
-		break;
+			birthday2020();
+			break;
 	}
 }
 
-function birthday2020(){ //basic, just equips stuff
+function birthday2020() { //basic, just equips stuff
 	console.log("In Birthday2020(), getting location");
-	if (getCurrentLocation().indexOf("SUPER|brie+ Factory") < 0){
+	if (getCurrentLocation().indexOf("SUPER|brie+ Factory") < 0) {
 		return;
 	}
 	// console.log("getting bait quantity");
-	if(getBaitQuantity()==0 || user.quests.QuestBirthday2020.factory_atts.boss_warning){
-		checkThenArm(null, 'bait','Gouda Cheese');
+	if (getBaitQuantity() == 0 || user.quests.QuestBirthday2020.factory_atts.boss_warning) {
+		checkThenArm(null, 'bait', 'Gouda Cheese');
 	}
 
 	// console.log("getting charm quantity");
-	if(getCharmQuantity()==0 || CurrentArmedBait()!='Coggy Colby Cheese'){
+	if (getCharmQuantity() == 0 || CurrentArmedBait() != 'Coggy Colby Cheese') {
 		checkThenArm(null, 'trinket', 'Enerchi Charm');
 		checkThenArm(null, 'base', 'Attuned Enerchi Induction Base');
 	}
-	if(user.quests.QuestBirthday2020.factory_atts.can_claim){
+	if (user.quests.QuestBirthday2020.factory_atts.can_claim) {
 		console.log("can claim");
 		document.getElementsByClassName("birthday2020HUD-claimButton mousehuntTooltipParent")[0].click();
 	}
 	return;
 }
 
-function lny2020event(){
+function lny2020event() {
 	console.log("running lny 2020 event bot");
 	//check candle
-	function armCandle(){
+	function armCandle() {
 
 	}
-	function disarmCandle(){
-		
+	function disarmCandle() {
+
 	}
 }
 
-function winter2019event(){
+function winter2019event() {
 	//console.log("running winter 2019 bot");
 	//add date check
 	//var advent_calendar_claims = document.getElementsByClassName("canClaim")
@@ -833,86 +834,86 @@ function winter2019event(){
 	// }
 }
 
-function winter2019location(){
+function winter2019location() {
 	console.log("running winter 2019 location bot");
-	if (getCurrentLocation().indexOf("Festive Comet") < 0 && getCurrentLocation().indexOf("Frozen Vacant Lot")< 0){
+	if (getCurrentLocation().indexOf("Festive Comet") < 0 && getCurrentLocation().indexOf("Frozen Vacant Lot") < 0) {
 		return;
 	}
-	if(getBaitQuantity()<1){
+	if (getBaitQuantity() < 1) {
 		checkThenArm(null, "bait", "Gouda");
 	}
-	if(user.quests.QuestWinterHunt2019.comet.can_explode){
+	if (user.quests.QuestWinterHunt2019.comet.can_explode) {
 		console.log("detonate");
 		document.getElementsByClassName("winterHunt2019HUD-dynamiteButton active")[0].click();
 		setTimeout(winter2019location, rand(600, 800));
 		return;
 	}
-	if(user.quests.QuestWinterHunt2019.items.golem_part_head_stat_item.quantity<1 ||
-		user.quests.QuestWinterHunt2019.items.golem_part_torso_stat_item.quantity<1 ||
-		user.quests.QuestWinterHunt2019.items.golem_part_limb_stat_item.quantity<4) {
+	if (user.quests.QuestWinterHunt2019.items.golem_part_head_stat_item.quantity < 1 ||
+		user.quests.QuestWinterHunt2019.items.golem_part_torso_stat_item.quantity < 1 ||
+		user.quests.QuestWinterHunt2019.items.golem_part_limb_stat_item.quantity < 4) {
 		playAlertSound();
 	}
 	checkGolem(0);
-	function checkGolem(n){
-		if(n>2) return; //only do 2 golems
+	function checkGolem(n) {
+		if (n > 2) return; //only do 2 golems
 		var golems = user.quests.QuestWinterHunt2019.golems;
 		console.log("check golem " + n);
-		if(golems[n].can_claim){
+		if (golems[n].can_claim) {
 			console.log("claiming golem " + n);
 			document.getElementsByClassName("winterHunt2019HUD-golemBuilder   mousehuntTooltipParent canClaim plural")[0].click();
 			setTimeout(winter2019location, rand(600, 800)); //after claim check if can explode
 			return;
 		}
-		else if(golems[n].can_build){
+		else if (golems[n].can_build) {
 			console.log("building golem " + n);
 			document.getElementsByClassName("winterHunt2019HUD-golemBuilder-status canBuild")[n].children[0].click();
-			setTimeout(function(){
+			setTimeout(function () {
 				document.getElementsByClassName("winterHunt2019HUD-popup-sendGolemButton")[n].click();
 				setTimeout(reloadPage, rand(2000, 2500), n);
-			}, rand(1000,1200));
+			}, rand(1000, 1200));
 			return;
 		}
-		if(golems[n].can_upgrade && n===0){ //can upgrade, alert user
+		if (golems[n].can_upgrade && n === 0) { //can upgrade, alert user
 			console.log("can upgrade golem " + n);
 			playAlertSound();
 		}
-		setTimeout(checkGolem, rand(600, 800), n+1); //check the next golem
+		setTimeout(checkGolem, rand(600, 800), n + 1); //check the next golem
 	}
 }
 
-function halloween2019(){
+function halloween2019() {
 	//console.log("running halloween2019 bot");
 	var eventData = user.quests.QuestHalloween2019;
-	if(isNullOrUndefined(eventData)){
+	if (isNullOrUndefined(eventData)) {
 		console.log("Data not available! Event has likely ended");
 		return;
 	}
 
-	if (currentLocation.indexOf("Queso River") >= 0){
+	if (currentLocation.indexOf("Queso River") >= 0) {
 		checkThenArm(null, "base", "Overgrown Ember Stone Base");
 		checkThenArm(null, "weapon", "Golem Guardian Physical Trap");
 		checkThenArm(null, "charm", "Unstable Charm");
 		checkThenArm(null, 'bait', "Ghastly Galleon Gouda"); //add check if have cheese, if not use bland
 	}
 
-	if(user.quests.QuestHalloween2019.has_reward){
+	if (user.quests.QuestHalloween2019.has_reward) {
 		console.log("claiming reward");
 		document.getElementsByClassName("mousehuntActionButton halloweenHUD-campBanner-claimReward")[0].click();
 	}
-	if(!user.quests.QuestHalloween2019.is_cannon_enabled && !user.quests.QuestHalloween2019.is_long_range_cannon_enabled && user.bait_name != "Ghastly Galleon Gouda"){
+	if (!user.quests.QuestHalloween2019.is_cannon_enabled && !user.quests.QuestHalloween2019.is_long_range_cannon_enabled && user.bait_name != "Ghastly Galleon Gouda") {
 		console.log("cannon not firing");
-		if(user.quests.QuestHalloween2019.items.long_range_cannonball_stat_item.quantity > 0){
+		if (user.quests.QuestHalloween2019.items.long_range_cannonball_stat_item.quantity > 0) {
 			console.log("arming ghostfire cannonball");
 			document.getElementsByClassName("halloweenHUD-campBanner-cannonBall-button default")[1].click();
-		} else if(user.quests.QuestHalloween2019.items.ethereal_cannonball_stat_item.quantity > 0){
+		} else if (user.quests.QuestHalloween2019.items.ethereal_cannonball_stat_item.quantity > 0) {
 			console.log("arming regular cannonball");
 			document.getElementsByClassName("halloweenHUD-campBanner-cannonBall-button default")[0].click();
 		}
 	}
 }
 
-function valourRift(){
-	if (getCurrentLocation().indexOf("Valour Rift") < 0){
+function valourRift() {
+	if (getCurrentLocation().indexOf("Valour Rift") < 0) {
 		return;
 	}
 	console.log("run Valour Rift bot");
@@ -921,62 +922,92 @@ function valourRift(){
 
 		weapon: bestRiftWeapon,
 		base: bestRiftBase,
-		trinketOutside:'Super Rift Vacuum Charm',
-		trinketInside:'Super Rift Vacuum Charm',
-		trinketEclipse:'Rift Ultimate Power Charm',
+		trinketOutside: 'Super Rift Vacuum Charm',
+		// trinketInside: 'Super Rift Vacuum Charm',
+		// trinketInsideUmbra: 'Super Rift Vacuum Charm',
+		// trinketEclipse: 'Rift Ultimate Power Charm',
+		// trinketEclipseUmbra: 'Rift Ultimate Power Charm',
+		trinketInside: 'Eggstra Charm', // for easter event
+		trinketInsideUmbra: 'Rift Airship Charm',
+		umbraHighThreshold: 9,
+		trinketInsideUmbraHigh: 'Rift Ultimate Power Charm', //more powerful charm at higher floors
+		trinketEclipse: 'Rift Ultimate Power Charm', //doesn't drop egg?
+		trinketEclipseUmbra: 'Eggstra Charm',
 		baitOutside: 'Brie String',
 		baitInside: 'Gauntlet String Cheese',
 		fireEclipse: true,
-		fireOtherwise: false
+		fireEclipseUmbra: true,
+		fireOtherwise: false,
+		fireOtherwiseUmbra: false
 	};
-	var objValourRift = objDefaultValourRift;
+	var objValourRift = objDefaultValourRift;//TODO: implement user selection
 	// console.log(locationData);
 	checkThenArm(null, 'weapon', objValourRift.weapon);
 	checkThenArm(null, 'base', objValourRift.base);
-	if(user.quests.QuestRiftValour.state == "farming"){
+	if (user.quests.QuestRiftValour.state == "farming") {
 		armDisarmFire(false);
 		checkThenArm(null, 'trinket', objValourRift.trinketOutside);
 		// console.log("out of tower, arming " + objValourRift.baitOutside);
 		checkThenArm(null, "bait", objValourRift.baitOutside);
 	}
-	if(user.quests.QuestRiftValour.state == "tower"){
+	if (user.quests.QuestRiftValour.state == "tower") {
 		// console.log("in tower, arming " + objValourRift.baitInside);
 		checkThenArm(null, "bait", objValourRift.baitInside);
-
-		if(user.quests.QuestRiftValour.is_at_eclipse){ //implement eclipse types
-			checkThenArm(null, 'trinket', objValourRift.trinketEclipse);
-			armDisarmFire(objValourRift.fireEclipse);
-		} else{ //not eclipse
-			if(locationData.highest_floor_reached > 8 && locationData.highest_floor_reached < 16 && locationData.floor > 8){
-				//objValourRift.fireOtherwise = true; //use fire to push to unlock lvl 15 boost and farm tower secrets faster
+		if (user.quests.QuestRiftValour.is_eclipse_mode) {// total eclipse
+			if (user.quests.QuestRiftValour.is_at_eclipse) { //implement eclipse types
+				console.log("total eclipse");
+				checkThenArm(null, 'trinket', objValourRift.trinketEclipseUmbra);
+				armDisarmFire(objValourRift.fireEclipseUmbra);
+			} else { //not eclipse
+				if (user.quests.QuestRiftValour.floor >= objValourRift.umbraHighThreshold) {
+					checkThenArm(null, 'trinket', objValourRift.trinketInsideUmbraHigh);
+				} else {
+					checkThenArm(null, 'trinket', objValourRift.trinketInsideUmbra);
+				}
+				armDisarmFire(objValourRift.fireOtherwiseUmbra);
 			}
-			checkThenArm(null, 'trinket', objValourRift.trinketInside);
-			armDisarmFire(objValourRift.fireOtherwise);
+		} else {
+			if (user.quests.QuestRiftValour.is_at_eclipse) { //implement eclipse types
+				checkThenArm(null, 'trinket', objValourRift.trinketEclipse);
+				armDisarmFire(objValourRift.fireEclipse);
+			} else { //not eclipse
+				if (locationData.highest_floor_reached > 8 && locationData.highest_floor_reached < 16 && locationData.floor > 8) {
+					//objValourRift.fireOtherwise = true; //use fire to push to unlock lvl 15 boost and farm tower secrets faster
+				}
+				checkThenArm(null, 'trinket', objValourRift.trinketInside);
+				armDisarmFire(objValourRift.fireOtherwise);
+			}
 		}
 	}
 	//console.log("can claim?" + locationData.can_claim);
-	if(locationData.can_claim){
+	if (locationData.can_claim) {
 		console.log("claiming loot");
 		document.getElementsByClassName("valourRiftHUD-claimButton mousehuntActionButton")[0].click();
 	}
 
-	function armDisarmFire(arm){
-		if(arm && !user.quests.QuestRiftValour.is_fuel_enabled){
-			document.getElementsByClassName("valourRiftHUD-fuelContainer-armButton")[0].click();
-		} else if(!arm && user.quests.QuestRiftValour.is_fuel_enabled){
+	function armDisarmFire(arm) {
+		if (arm && !user.quests.QuestRiftValour.is_fuel_enabled) {
+			var fuel = parseInt(document.getElementsByClassName("valourRiftHUD-fuelContainer-quantity quantity")[0].innerText);
+			console.log("fuel remaining: " + fuel);
+			if (fuel > 0) {
+				document.getElementsByClassName("valourRiftHUD-fuelContainer-armButton")[0].click();
+			} else {
+				playAlertSound();
+			}
+		} else if (!arm && user.quests.QuestRiftValour.is_fuel_enabled) {
 			document.getElementsByClassName("valourRiftHUD-fuelContainer-armButton")[0].click();
 		}
 	}
 }
 
 //plan: bot decides to travel, setStorage targetLocation, then goes to https://www.mousehuntgame.com/travel.php, bot identifies webpage and calls travelToLocation
-function travelToLocation(){ //early draft. should only run on https://www.mousehuntgame.com/travel.php
+function travelToLocation() { //early draft. should only run on https://www.mousehuntgame.com/travel.php
 	targetLocation = getStorage(targetLocation);
-	if(targetLocation == null){
+	if (targetLocation == null) {
 		return;
 	}
 	//code
-	if(targetLocation === getCurrentLocation()){
+	if (targetLocation === getCurrentLocation()) {
 		setStorage("targetLocation", null);
 	}
 }
@@ -1056,27 +1087,27 @@ function bwRift() { //interface does not work; settings must be done in code
 		objDefaultBWRift.master.bait[4] = 'Runic String';
 		objDefaultBWRift.master.bait[5] = 'Runic String';
 		objDefaultBWRift.master.bait[7] = 'Runic String';
-		objDefaultBWRift.master.bait[9] = 'Runic String'; 
-		objDefaultBWRift.master.bait[11] = 'Runic String'; 
-		objDefaultBWRift.master.bait[12] = 'Runic String'; 
-		objDefaultBWRift.master.bait[13] = 'Runic String'; 
-		objDefaultBWRift.master.bait[14] = 'Runic String'; 
-		objDefaultBWRift.master.bait[15] = 'Runic String'; 
+		objDefaultBWRift.master.bait[9] = 'Runic String';
+		objDefaultBWRift.master.bait[11] = 'Runic String';
+		objDefaultBWRift.master.bait[12] = 'Runic String';
+		objDefaultBWRift.master.bait[13] = 'Runic String';
+		objDefaultBWRift.master.bait[14] = 'Runic String';
+		objDefaultBWRift.master.bait[15] = 'Runic String';
 
 		objDefaultBWRift.master.activate[4] = true;
 		objDefaultBWRift.master.activate[5] = true;
 		objDefaultBWRift.master.activate[7] = true;
-		objDefaultBWRift.master.activate[9] = true; 
-		objDefaultBWRift.master.activate[11] = true; 
-		objDefaultBWRift.master.activate[13] = true; 
-		objDefaultBWRift.master.activate[14] = true; 
-		objDefaultBWRift.master.activate[15] = true; 
+		objDefaultBWRift.master.activate[9] = true;
+		objDefaultBWRift.master.activate[11] = true;
+		objDefaultBWRift.master.activate[13] = true;
+		objDefaultBWRift.master.activate[14] = true;
+		objDefaultBWRift.master.activate[15] = true;
 
 		objDefaultBWRift.master.trinket[4] = 'Rift Wealth Charm';
-		objDefaultBWRift.master.trinket[12] = 'Rift Wealth Charm'; 
-		objDefaultBWRift.master.trinket[13] = 'Rift Wealth Charm'; 
-		objDefaultBWRift.master.trinket[14] = 'Rift Wealth Charm'; 
-		objDefaultBWRift.master.trinket[15] = 'Rift Wealth Charm'; 
+		objDefaultBWRift.master.trinket[12] = 'Rift Wealth Charm';
+		objDefaultBWRift.master.trinket[13] = 'Rift Wealth Charm';
+		objDefaultBWRift.master.trinket[14] = 'Rift Wealth Charm';
+		objDefaultBWRift.master.trinket[15] = 'Rift Wealth Charm';
 	}
 
 	objBWRift = objDefaultBWRift;
@@ -1112,7 +1143,7 @@ function bwRift() { //interface does not work; settings must be done in code
 		//console.plog('Status:', strStatus, 'Obelisk:', objUser.minigame.acolyte_chamber.obelisk_charge, 'Acolyte Sand:', objUser.minigame.acolyte_chamber.acolyte_sand);
 		nIndex = objBWRift.order.indexOf(strStatus);
 	} else if (strChamberName == 'RIFT')
-	nIndex = 0;
+		nIndex = 0;
 	else {
 		if (nLootRemaining > 0)
 			nIndex = objBWRift.order.indexOf(strChamberName);
@@ -1135,12 +1166,12 @@ function bwRift() { //interface does not work; settings must be done in code
 		if (objUser.status_effects.ex.indexOf('default') < 0) //fourth portal?
 			nIndexBuffCurse |= 0x01;
 	}
-	if(objUser.obelisk_percent == 100){
+	if (objUser.obelisk_percent == 100) {
 		//console.log("second run at acolyte");
-		objBWRift.minTimeSand[9] = objBWRift.minTimeSand[nIndexBuffCurse]/2 - 20 + objUser.acolyte_sand * 1.3;
+		objBWRift.minTimeSand[9] = objBWRift.minTimeSand[nIndexBuffCurse] / 2 - 20 + objUser.acolyte_sand * 1.3;
 		nIndexBuffCurse = 9;
 	}
-	if(nTimeSand>objBWRift.minTimeSand[nIndexBuffCurse]){ //Prioritize timesand first, then farm potions while searching for acolyte portal
+	if (nTimeSand > objBWRift.minTimeSand[nIndexBuffCurse]) { //Prioritize timesand first, then farm potions while searching for acolyte portal
 		console.log("Enough timesand, using alternate priorities");
 		objBWRift.priorities = ['SECURITY', 'FURNACE', 'PURSUER', 'GUARD', 'FROZEN', 'ACOLYTE', 'LUCKY', 'HIDDEN', 'ANCIENT', 'RUNIC', 'TIMEWARP', 'GEARWORKS', 'GEARWORKS'];
 		objBWRift.master.trinket[4] = 'Super Rift Vacuum Charm';
@@ -1151,7 +1182,7 @@ function bwRift() { //interface does not work; settings must be done in code
 		// Choosing portal
 		//console.log("choosing portal", nIndex, objUser.chamber_status);
 		var storePortalHistory = false;
-		if(storePortalHistory){
+		if (storePortalHistory) {
 			var portalHistory = getStorageToObject('BWR_portal_history', []);
 			var portalHistoryCurrentIndex = portalHistory.length;
 			portalHistory[portalHistoryCurrentIndex] = [];
@@ -1182,7 +1213,7 @@ function bwRift() { //interface does not work; settings must be done in code
 					objPortal.arrName[i] = 'HIDDEN';
 				objPortal.arrName[i] = objPortal.arrName[i].split(' ')[0].toUpperCase();
 				objPortal.arrIndex[i] = arrPriorities.indexOf(objPortal.arrName[i]);
-				if (classPortalContainer[0].children[i] == 'frozen'){
+				if (classPortalContainer[0].children[i] == 'frozen') {
 					console.log("Portal", i, "is frozen");
 					objPortal.arrIndex[i] = Number.MAX_SAFE_INTEGER;
 				}
@@ -1214,7 +1245,7 @@ function bwRift() { //interface does not work; settings must be done in code
 						if (nTotalRSC < nMinRSC || nTimeSand < objBWRift.minTimeSand[nIndexBuffCurse]) {
 							arrIndices = getAllIndices(objPortal.arrName, 'ACOLYTE');
 							for (i = 0; i < arrIndices.length; i++)
-								objPortal.arrIndex[arrIndices[i]] = Number.MAX_SAFE_INTEGER-1;
+								objPortal.arrIndex[arrIndices[i]] = Number.MAX_SAFE_INTEGER - 1;
 						}
 					}
 					var arrTemp = ['TIMEWARP', 'GUARD'];
@@ -1232,7 +1263,7 @@ function bwRift() { //interface does not work; settings must be done in code
 						if (nIndexTemp > -1 && nIndexBuffCurse == 8 && objBWRift.enterMinigameWCurse === false) {
 							arrIndices = getAllIndices(objPortal.arrName, arrTemp[i]);
 							for (j = 0; j < arrIndices.length; j++)
-								objPortal.arrIndex[arrIndices[j]] = Number.MAX_SAFE_INTEGER-1;
+								objPortal.arrIndex[arrIndices[j]] = Number.MAX_SAFE_INTEGER - 1;
 						}
 					}
 					var arrAL = getAllIndices(objPortal.arrName, 'ANCIENT');
@@ -1254,7 +1285,7 @@ function bwRift() { //interface does not work; settings must be done in code
 						}
 					}
 					nIndexTemp = objPortal.arrName.indexOf('ENTER');
-					if (nIndexTemp > -1){
+					if (nIndexTemp > -1) {
 						objPortal.arrIndex[nIndexTemp] = 1;
 					}
 					var nMinIndex = minIndex(objPortal.arrIndex);
@@ -1268,13 +1299,13 @@ function bwRift() { //interface does not work; settings must be done in code
 						selectPortal = false;
 					}*/
 					console.log("Choose portal: ", objPortal);
-					if(storePortalHistory){
+					if (storePortalHistory) {
 						portalHistory[portalHistoryCurrentIndex][2] = objPortal;
 						setStorage('BWR_portal_history', JSON.stringify(portalHistory));
 					}
-					if(selectPortal) { //click portal
-					//console.log("choosing portal");
-					if (objPortal.arrName[nMinIndex] == 'ACOLYTE') {
+					if (selectPortal) { //click portal
+						//console.log("choosing portal");
+						if (objPortal.arrName[nMinIndex] == 'ACOLYTE') {
 							//console.plog('Chosen Portal:', objPortal.arrName[nMinIndex], 'Index: Unknown');
 							fireEvent(classPortalContainer[0].children[nMinIndex], 'click');
 							window.setTimeout(function () {
@@ -1404,22 +1435,22 @@ function bwRift() { //interface does not work; settings must be done in code
 	}
 }
 
-function quesoCanyon(){
+function quesoCanyon() {
 	//call the sublocation functions
 	var currentLocation = getCurrentLocation();
-	if (currentLocation.indexOf("Queso Geyser") >= 0){
+	if (currentLocation.indexOf("Queso Geyser") >= 0) {
 		quesoGeyser();
 	}
-	else if (currentLocation.indexOf("Prickly Plains") >= 0){
+	else if (currentLocation.indexOf("Prickly Plains") >= 0) {
 		pricklyPlains();
 	}
-	else if (currentLocation.indexOf("Queso River") >= 0){
+	else if (currentLocation.indexOf("Queso River") >= 0) {
 		quesoRiver();
 	}
 }
 
-function pricklyPlains(){
-	if (getCurrentLocation().indexOf("Prickly Plains") < 0){
+function pricklyPlains() {
+	if (getCurrentLocation().indexOf("Prickly Plains") < 0) {
 		return;
 	}
 
@@ -1433,8 +1464,8 @@ function pricklyPlains(){
 		};
 		//storageValue = JSON.stringify(defaultObjPricklyPlains);
 		//window.localStorage.
-		objPricklyPlains=defaultObjPricklyPlains;
-	} else{
+		objPricklyPlains = defaultObjPricklyPlains;
+	} else {
 		objPricklyPlains = JSON.parse(storageValue);
 	}
 
@@ -1447,13 +1478,13 @@ function pricklyPlains(){
 	//check if worth to switch base/charms for higher tier cheese
 }
 
-function quesoGeyser(){ // create object with equipment to use
-	if (getCurrentLocation().indexOf("Queso Geyser") < 0){
+function quesoGeyser() { // create object with equipment to use
+	if (getCurrentLocation().indexOf("Queso Geyser") < 0) {
 		return;
 	}
 	//console.log("running queso geyser bot");
 	checkThenArm(null, "base", "Minotaur Base");
-	checkThenArm(null, "weapon", "Chrome Storm Wrought Ballista Trap");
+	checkThenArm(null, "weapon", "Chrome Storm Wrought Ballista");
 
 	//get number of resources & each cheese
 
@@ -1463,66 +1494,66 @@ function quesoGeyser(){ // create object with equipment to use
 
 	var craftingItemElement = document.getElementsByClassName("quesoGeyserHUD-craftingItem-quantity quantity");
 	var craftingItemQuantity = [];
-	for(i = 0; i < 4; i++){
+	for (i = 0; i < 4; i++) {
 		craftingItemQuantity[i] = parseInt(craftingItemElement[i].innerText);
 	}
 	//console.log("Crafting Item Quantities:", craftingItemQuantity);
 	var quesoQuantityElement = document.getElementsByClassName("quesoHUD-bait-group-baitQuantity quantity");
 	var quesoQuantity = [];
-	for(i = 0; i < 6; i++){
+	for (i = 0; i < 6; i++) {
 		quesoQuantity[i] = parseInt(quesoQuantityElement[i].innerText);
 	}
 	var quesoArmedElement = document.getElementsByClassName("quesoGeyserHUD-baitContainer")[0].children;
 	var quesoArmed = -1; //which queso is armed
-	for(i = 0; i < 6; i++){
-		if(quesoArmedElement[i].className.indexOf("active")>=0){
+	for (i = 0; i < 6; i++) {
+		if (quesoArmedElement[i].className.indexOf("active") >= 0) {
 			quesoArmed = i;
 		}
 
 	}
 	var quesoList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", "Flamin' Queso", "Wildfire Queso"];
 	var charmList = ["none", "none", "Ancient Charm", "Rainbow Luck Charm", "Festive Ultimate Luck Charm", "Dragonbane Charm"]; //dragonbane?
-	var eruptionCharmList = ["none", "none", "Ancient Charm", "Rainbow Luck Charm", "Festive Ultimate Luck Charm", "Super Dragonbane Charm"]; //dragonbane?
+	var eruptionCharmList = ["none", "none", "Ancient Charm", "Rainbow Luck Charm", "Festive Ultimate Luck Charm", ["Super Dragonbane Charm", "Dragonbane Charm"]]; //dragonbane?
 	var eruptionTonicList = [false, false, false, false, true, true];
 	var armQuesoButtons = []; //not in use
-	for(i = 0; i < 6; i++){
-		armQuesoButtons[i]=document.getElementsByClassName("quesoHUD-bait-group-cheeseImage")[i].getElementsByClassName("mousehuntItem-boundingBox")[0];
+	for (i = 0; i < 6; i++) {
+		armQuesoButtons[i] = document.getElementsByClassName("quesoHUD-bait-group-cheeseImage")[i].getElementsByClassName("mousehuntItem-boundingBox")[0];
 	}
 	//console.log("Queso Quantities:", quesoQuantity);
 	//console.log("Queso Armed:", quesoArmed);
 	var phase = "none";
 	var size = 0; //small = 1, medium = 2, large = 3, epic = 4
-	if(state != "null"){
-		if(state.indexOf("Cork")>=0){
+	if (state != "null") {
+		if (state.indexOf("Cork") >= 0) {
 			phase = "corked"
 		}
-		else if(state.indexOf("Eruption")>=0){
+		else if (state.indexOf("Eruption") >= 0) {
 			phase = "eruption"
 		}
 		console.log("Phase:", phase);
 		var huntsRemaining = parseInt(document.getElementsByClassName("quesoGeyserHUD-block-huntsRemaining")[0].innerText); // number of hunts remaining
 		console.log("Hunts remaining:", huntsRemaining);
-		if(state.indexOf("Small")>=0){
+		if (state.indexOf("Small") >= 0) {
 			size = 1
 		}
-		else if(state.indexOf("Medium")>=0){
+		else if (state.indexOf("Medium") >= 0) {
 			size = 2
 		}
-		else if(state.indexOf("Large")>=0){
+		else if (state.indexOf("Large") >= 0) {
 			size = 3
 		}
-		else if(state.indexOf("Epic")>=0){
+		else if (state.indexOf("Epic") >= 0) {
 			size = 4
 		}
 		console.log("Size:", size);
 	}
-	if(phase == "corked"){
+	if (phase == "corked") {
 		var currentPressure = parseInt(document.getElementsByClassName("quesoGeyserHUD-eruptionPressure")[0].innerText); //does not dissapear or reset during eruption
-		var pressureArr = [0,35,175,1000,3000];
+		var pressureArr = [0, 35, 175, 1000, 3000];
 		var maxPressure = pressureArr[size];
 		var pressureNeeded = maxPressure - currentPressure;
-		var presurePerHuntNeeded = pressureNeeded/huntsRemaining;
-		var maxCatchPressure = [-1,5,15,40,100,1500]; //max increase possible per cheese type
+		var presurePerHuntNeeded = pressureNeeded / huntsRemaining;
+		var maxCatchPressure = [-1, 5, 15, 40, 100, 1500]; //max increase possible per cheese type
 		console.log("Current pressure:", currentPressure, "Max:", maxPressure, "Pressure needed:", pressureNeeded, "Pressure per hunt needed:", presurePerHuntNeeded.toFixed(2));
 		//use lower cheese if pressure almost full
 		/*if(pressureNeeded <= maxCatchPressure[quesoArmed-1]){ //not in use
@@ -1532,51 +1563,58 @@ function quesoGeyser(){ // create object with equipment to use
 
 		var quesoToArm = -1;
 		var useTonic = false;
-		if(pressureNeeded <= 10 && presurePerHuntNeeded<3){
+		if (pressureNeeded <= 10 && presurePerHuntNeeded < 3) {
 			quesoToArm = 1;
 			disarmTrap("trinket");
-		} else if(pressureNeeded <= 30 && presurePerHuntNeeded<=10){
+		} else if (pressureNeeded <= 30 && presurePerHuntNeeded <= 10) {
 			quesoToArm = 2;
-		} else if(pressureNeeded <= 120 && presurePerHuntNeeded<=30){
+		} else if (pressureNeeded <= 200 && presurePerHuntNeeded <= 30) {
 			quesoToArm = 3;
-		} else if(pressureNeeded <= 600 && presurePerHuntNeeded<=160){ //change when values when implementing epic eruption
+		} else if (pressureNeeded <= 600 && presurePerHuntNeeded <= 160) { //change when values when implementing epic eruption
 			quesoToArm = 4; //with tonic
-			if(pressureNeeded >100 || presurePerHuntNeeded > 80){
+			if (pressureNeeded > 100 || presurePerHuntNeeded > 80) {
 				useTonic = true;
 			}
-		} else{
-			if(pressureNeeded > 600 || presurePerHuntNeeded > 160){
+		} else {
+			if (pressureNeeded > 600 || presurePerHuntNeeded > 160) {
 				quesoToArm = 5;
-				if(pressureNeeded>1500|| presurePerHuntNeeded > 1200){
+				if (pressureNeeded > 1500 || presurePerHuntNeeded > 1200) {
 					useTonic = true;
 				}
 			}
 		}
 		console.log("queso to arm:", quesoList[quesoToArm]);
 		checkThenArm(null, 'bait', quesoList[quesoToArm]);
-		checkThenArm(null, "charm", charmList[quesoToArm]);
+		if (useCharm) {
+			checkThenArm(null, "charm", charmList[quesoToArm]);
+		}
 		armTonic(useTonic);
 		//implement using tonic for wildfire queso
 	}
-	else if(phase == "eruption"){
-		if(huntsRemaining>0){
-			checkThenArm(null, 'bait', quesoList[size+1]);
-			checkThenArm(null, "charm", eruptionCharmList[size+1]);
-			armTonic(eruptionTonicList[size+1]);
+	else if (phase == "eruption") {
+		if (huntsRemaining > 0) {
+			checkThenArm(null, 'bait', quesoList[size + 1]);
+			if (useCharm) {
+				checkThenArm(null, "charm", eruptionCharmList[size + 1]);
+			}
+			armTonic(eruptionTonicList[size + 1]);
 		}
-		var claimAvailable = document.getElementsByClassName("quesoGeyserHUD-claimContainer reveal").length>0; //true if avail, false otherwise
-		console.log("claim available:", claimAvailable);
-		if(huntsRemaining == 0 ){ //or check //claim loot after eruption complete
+		var claimAvailable = document.getElementsByClassName("quesoGeyserHUD-claimContainer reveal").length > 0; //true if avail, false otherwise
+		// console.log("claim available?", claimAvailable);
+		if (huntsRemaining == 0) { //or check //claim loot after eruption complete
 			playAlertSound();
 			disarmTrap("bait");
 			//disarmTrap("trinket");
-			document.getElementsByClassName("quesoGeyserHUD-claimNestButton default")[0].click(); // can click when not available, just returns unavailable dialogue	
-			//document.getElementsByClassName("jsDialogClose button")[0].click(); //continue button
-			setTimeout(reloadPage, 30000);
+			if (size < 4) { // only claims non-epic
+				document.getElementsByClassName("quesoGeyserHUD-claimNestButton default")[0].click(); // can click when not available, just returns unavailable dialogue	
+				//document.getElementsByClassName("jsDialogClose button")[0].click(); //continue button
+				setTimeout(reloadPage, 30000);
+			}
 		}
-		
+
 	}
-	else if(phase == "none"){
+	else if (phase == "none") {
+		var buildCork = true;
 		/*if(quesoQuantity[2]>0){
 			checkThenArm(null, 'bait', 'Medium Queso');
 		}
@@ -1584,69 +1622,71 @@ function quesoGeyser(){ // create object with equipment to use
 			checkThenArm(null, 'bait', 'Mild Queso');
 		}*/
 		checkThenArm(null, 'bait', 'Mild Queso');
-		disarmTrap("trinket");
-		if(tonicActive()){
+		if (useCharm) {
+			disarmTrap("trinket");
+		}
+		if (tonicActive()) {
 			disarmTonic();
 		}
-		var corkSize=0; //size of cork to build //small = 1, medium = 2, large = 3, epic = 4
-		if(craftingItemQuantity[3]>=60){ //disabled until sure of no bugs
-			if(craftingItemQuantity[0]>=180){
-				corkSize=4;
+		var corkSize = 0; //size of cork to build //small = 1, medium = 2, large = 3, epic = 4
+		if (craftingItemQuantity[3] >= 60) { //disabled until sure of no bugs
+			if (craftingItemQuantity[0] >= 180) {
+				// corkSize = 4;
 			}
-		} else if(craftingItemQuantity[2]>=30){ //add check if enough cheese before building cork
-			if(craftingItemQuantity[0]>=90){
-				corkSize=3;
+		} else if (craftingItemQuantity[2] >= 30) { //add check if enough cheese before building cork
+			if (craftingItemQuantity[0] >= 90) {
+				corkSize = 3;
 			}
-		} else if(craftingItemQuantity[1]>=15){
-			if(craftingItemQuantity[0]>=30){
-				corkSize=2;
+		} else if (craftingItemQuantity[1] >= 15) {
+			if (craftingItemQuantity[0] >= 30) {
+				corkSize = 2;
 			}
-		} else if(craftingItemQuantity[0]>=10){
-			if(craftingItemQuantity[0]>=10){
-				corkSize=1;
+		} else if (craftingItemQuantity[0] >= 10) {
+			if (craftingItemQuantity[0] >= 10) {
+				corkSize = 1;
 			}
-		} else{
-			corkSize=0;
+		} else {
+			corkSize = 0;
 		}
 		console.log("cork size to build:", corkSize);
-		if(corkSize>0){
-			document.getElementsByClassName("quesoHUD-confirm-state buildCork")[0].getElementsByClassName("mousehuntActionButton small")[corkSize-1].click(); //because we defined 0 as no cork
+		if (corkSize > 0 && buildCork) {
+			document.getElementsByClassName("quesoHUD-confirm-state buildCork")[0].getElementsByClassName("mousehuntActionButton small")[corkSize - 1].click(); //because we defined 0 as no cork
 			setTimeout(quesoGeyser, 2000);//call bot again after building cork
 		}
 	}
 }
 
-function armTonic(arm){
-	if(arm){
-		if(parseInt(document.getElementsByClassName("quesoHUD-wildTonic-quantity quantity")[0].textContent) < 1){
+function armTonic(arm) {
+	if (arm) {
+		if (parseInt(document.getElementsByClassName("quesoHUD-wildTonic-quantity quantity")[0].textContent) < 1) {
 			console.log("out of tonic!");
 			disarmTrap("bait");
 			playAlertSound();
 		}
-		if(!tonicActive()){
+		if (!tonicActive()) {
 			console.log("Arming tonic");
 			document.getElementsByClassName("quesoHUD-wildTonic-button")[0].click();
 		}
 	}
-	else{
+	else {
 		disarmTonic();
 	}
 }
 
-function disarmTonic(){
-	if(tonicActive()){
+function disarmTonic() {
+	if (tonicActive()) {
 		console.log("Tonic currently armed, disarming tonic");
 		document.getElementsByClassName("quesoHUD-wildTonic-button selected")[0].click();
 	}
 }
 
-function tonicActive(){
-	var active = (document.getElementsByClassName("quesoHUD-wildTonic-button selected").length>0);
+function tonicActive() {
+	var active = (document.getElementsByClassName("quesoHUD-wildTonic-button selected").length > 0);
 	//console.log("Tonic active? :", active);
 	return active;
 }
 
-function quesoRiver(){
+function quesoRiver() {
 	armTonic(false);
 	checkThenArm(null, "base", "Overgrown Ember Stone Base");
 	checkThenArm(null, "weapon", "Ember Prison Core Trap");
@@ -2090,51 +2130,51 @@ function gnawnianExpress(load) {
 
 			switch (phase) {
 				case 'Supply Depot':
-				checkThenArm('best', 'weapon', supplyDepotTrap);
-				var supplyHoarder = parseInt(document.getElementsByClassName('supplyHoarderTab')[0].textContent.substr(0, 1));
-				if (supplyHoarder == 0) {
-					console.debug("Looking for supply hoarder");
-					checkThenArm(null, 'trinket', 'Supply Schedule');
-				} else {
-					console.debug("Supply hoarder is present. Disarming charm now...");
-					disarmTrap('trinket');
-				}
-				if (load) loadTrain('depot');
-				break;
+					checkThenArm('best', 'weapon', supplyDepotTrap);
+					var supplyHoarder = parseInt(document.getElementsByClassName('supplyHoarderTab')[0].textContent.substr(0, 1));
+					if (supplyHoarder == 0) {
+						console.debug("Looking for supply hoarder");
+						checkThenArm(null, 'trinket', 'Supply Schedule');
+					} else {
+						console.debug("Supply hoarder is present. Disarming charm now...");
+						disarmTrap('trinket');
+					}
+					if (load) loadTrain('depot');
+					break;
 				case 'Raider River':
-				checkThenArm('best', 'weapon', raiderRiverTrap);
-				var attacking = document.getElementsByClassName('attacked');
-				for (var i = 0; i < attacking.length; i++) {
-					if (attacking[i].tagName == 'DIV')
-						attacking = attacking[i].className.substr(0, attacking[i].className.indexOf(' '));
-				}
-				console.debug("Raiders are attacking " + attacking);
-				switch (attacking) {
-					case 'roof':
-					checkThenArm(null, 'trinket', 'Roof Rack', 'disarm');
+					checkThenArm('best', 'weapon', raiderRiverTrap);
+					var attacking = document.getElementsByClassName('attacked');
+					for (var i = 0; i < attacking.length; i++) {
+						if (attacking[i].tagName == 'DIV')
+							attacking = attacking[i].className.substr(0, attacking[i].className.indexOf(' '));
+					}
+					console.debug("Raiders are attacking " + attacking);
+					switch (attacking) {
+						case 'roof':
+							checkThenArm(null, 'trinket', 'Roof Rack', 'disarm');
+							break;
+						case 'door':
+							checkThenArm(null, 'trinket', 'Door Guard', 'disarm');
+							break;
+						case 'rails':
+							checkThenArm(null, 'trinket', 'Greasy Glob', 'disarm');
+							break;
+						default:
+							console.debug('Bot is confused, raiders are not attacking?');
+							disarmTrap('trinket');
+							break;
+					}
+					if (load) loadTrain('raider');
 					break;
-					case 'door':
-					checkThenArm(null, 'trinket', 'Door Guard', 'disarm');
-					break;
-					case 'rails':
-					checkThenArm(null, 'trinket', 'Greasy Glob', 'disarm');
-					break;
-					default:
-					console.debug('Bot is confused, raiders are not attacking?');
-					disarmTrap('trinket');
-					break;
-				}
-				if (load) loadTrain('raider');
-				break;
 				case 'Daredevil Canyon':
-				checkThenArm('best', 'weapon', daredevilCanyonTrap);
-				if (debug) console.log("Starting to look for " + coalCharm + " charm.");
-				checkThenArm('best', 'trinket', coalCharm);
-				if (debug) console.log("Done looking for charm.")
+					checkThenArm('best', 'weapon', daredevilCanyonTrap);
+					if (debug) console.log("Starting to look for " + coalCharm + " charm.");
+					checkThenArm('best', 'trinket', coalCharm);
+					if (debug) console.log("Done looking for charm.")
 					if (load) loadTrain('canyon');
-				break;
+					break;
 				default:
-				break;
+					break;
 			}
 		}
 	}
@@ -2144,90 +2184,90 @@ function loadTrain(location) {
 	try {
 		switch (location) {
 			case 'raider':
-			var repellents = parseInt(document.getElementsByClassName('mouseRepellent')[0].getElementsByClassName('quantity')[0].textContent);
-			if (repellents >= 10)
-				fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
-			break;
+				var repellents = parseInt(document.getElementsByClassName('mouseRepellent')[0].getElementsByClassName('quantity')[0].textContent);
+				if (repellents >= 10)
+					fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
+				break;
 			case 'canyon':
-			var timeLeft = document.getElementsByClassName('phaseTimer')[0].textContent.substr(10);
+				var timeLeft = document.getElementsByClassName('phaseTimer')[0].textContent.substr(10);
 				// Fire only when time left is less than 16 mins :P (needs checking if works)
 				if ((parseInt(timeLeft.substr(0, timeLeft.indexOf(':'))) == 0 && parseInt(timeLeft.substr(timeLeft.indexOf(':') + 1)) <= 16))
 					fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
 				break;
-				default:
+			default:
 				fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
 				break;
-			}
-			return;
-		} catch (e) {
-			if (debug) console.debug(e.message);
-			return;
 		}
+		return;
+	} catch (e) {
+		if (debug) console.debug(e.message);
+		return;
+	}
 }
 
 function ges() {
-		if (getCurrentLocation().indexOf('Gnawnian Express Station') < 0)
-			return;
+	if (getCurrentLocation().indexOf('Gnawnian Express Station') < 0)
+		return;
 
-		var i, j;
-		var bOnTrain = (getPageVariable('user.quests.QuestTrainStation.on_train') == 'true');
-		var charmArmed = getPageVariable("user.trinket_name");
-		var arrCharm;
-		var nCharmQuantity;
-		var objDefaultGES = {
-			bLoadCrate: false,
-			nMinCrate: 11,
-			bUseRepellent: false,
-			nMinRepellent: 11,
-			bStokeEngine: false,
-			nMinFuelNugget: 20,
-			SD_BEFORE: {
-				weapon: '',
-				base: '',
-				trinket: '',
-				bait: ''
-			},
-			SD_AFTER: {
-				weapon: '',
-				base: '',
-				trinket: '',
-				bait: ''
-			},
-			RR: {
-				weapon: '',
-				base: '',
-				trinket: '',
-				bait: ''
-			},
-			DC: {
-				weapon: '',
-				base: '',
-				trinket: '',
-				bait: ''
-			},
-			WAITING: {
-				weapon: '',
-				base: '',
-				trinket: '',
-				bait: ''
-			}
-		};
-		var objGES = getStorageToObject('GES', objDefaultGES);
-		var nPhaseSecLeft = parseInt(getPageVariable('user.quests.QuestTrainStation.phase_seconds_remaining'));
-		var strCurrentPhase = '';
-		if (!bOnTrain) {
-			strCurrentPhase = 'WAITING';
-		} else {
-			var classPhase = document.getElementsByClassName('box phaseName');
-			if (classPhase.length > 0 && classPhase[0].children.length > 1)
-				strCurrentPhase = classPhase[0].children[1].textContent;
+	var i, j;
+	var bOnTrain = (getPageVariable('user.quests.QuestTrainStation.on_train') == 'true');
+	var charmArmed = getPageVariable("user.trinket_name");
+	var arrCharm;
+	var nCharmQuantity;
+	var objDefaultGES = {
+		bLoadCrate: false,
+		nMinCrate: 11,
+		bUseRepellent: false,
+		nMinRepellent: 11,
+		bStokeEngine: false,
+		nMinFuelNugget: 20,
+		SD_BEFORE: {
+			weapon: '',
+			base: '',
+			trinket: '',
+			bait: ''
+		},
+		SD_AFTER: {
+			weapon: '',
+			base: '',
+			trinket: '',
+			bait: ''
+		},
+		RR: {
+			weapon: '',
+			base: '',
+			trinket: '',
+			bait: ''
+		},
+		DC: {
+			weapon: '',
+			base: '',
+			trinket: '',
+			bait: ''
+		},
+		WAITING: {
+			weapon: '',
+			base: '',
+			trinket: '',
+			bait: ''
 		}
-		console.plog('Current Phase:', strCurrentPhase, 'Time Left (s):', nPhaseSecLeft);
-		if (strCurrentPhase === '')
-			return;
+	};
+	var objGES = getStorageToObject('GES', objDefaultGES);
+	var nPhaseSecLeft = parseInt(getPageVariable('user.quests.QuestTrainStation.phase_seconds_remaining'));
+	var strCurrentPhase = '';
+	if (!bOnTrain) {
+		strCurrentPhase = 'WAITING';
+	} else {
+		var classPhase = document.getElementsByClassName('box phaseName');
+		if (classPhase.length > 0 && classPhase[0].children.length > 1)
+			strCurrentPhase = classPhase[0].children[1].textContent;
+	}
+	console.plog('Current Phase:', strCurrentPhase, 'Time Left (s):', nPhaseSecLeft);
+	if (strCurrentPhase === '')
+		return;
 
-		var strStage = '';
-		if (strCurrentPhase.indexOf('Supply Depot') > -1) {
+	var strStage = '';
+	if (strCurrentPhase.indexOf('Supply Depot') > -1) {
 		if (nPhaseSecLeft <= nextActiveTime || (enableTrapCheck && trapCheckTimeDiff === 0 && nPhaseSecLeft <= 900)) { // total seconds left to next phase less than next active time or next trap check time
 			strStage = 'RR';
 			checkThenArm(null, 'trinket', objGES[strStage].trinket);
@@ -2510,13 +2550,13 @@ function wwrift() {
 }
 
 function iceberg(waxOrSticky) { // takes in string 'wax' or 'sticky'
-var location = getPageVariable('user.location');
-if (debug) console.debug(location);
+	var location = getPageVariable('user.location');
+	if (debug) console.debug(location);
 
-if (location.indexOf('Iceberg') > -1) {
-	var stage = document.getElementsByClassName('currentPhase')[0].textContent;
-	var progress = parseInt(document.getElementsByClassName('user_progress')[0].textContent.replace(',', ''));
-	console.debug('In ' + stage + ' at ' + progress + ' feets right now.');
+	if (location.indexOf('Iceberg') > -1) {
+		var stage = document.getElementsByClassName('currentPhase')[0].textContent;
+		var progress = parseInt(document.getElementsByClassName('user_progress')[0].textContent.replace(',', ''));
+		console.debug('In ' + stage + ' at ' + progress + ' feets right now.');
 
 		// Check if theres general
 		if (progress == 300 || progress == 600 || progress == 1600 || progress == 1800) {
@@ -2539,32 +2579,32 @@ if (location.indexOf('Iceberg') > -1) {
 				checkThenArm(null, 'base', 'Magnet Base');
 				checkThenArm('best', 'trinket', icebergCharm, wasteCharm);
 				break;
-				case 'Brutal Bulwark':
+			case 'Brutal Bulwark':
 				// spiked base
 				checkThenArm(null, 'base', 'Spiked Base');
 				checkThenArm('best', 'trinket', icebergCharm, wasteCharm);
 				break;
-				case 'Bombing Run':
+			case 'Bombing Run':
 				// Remote det base
 				checkThenArm('best', 'base', ['Remote Detonator Base', 'Magnet Base']);
 				checkThenArm('best', 'trinket', icebergCharm, wasteCharm);
 				break;
-				case 'The Mad Depths':
+			case 'The Mad Depths':
 				// Hearthstone base
 				checkThenArm(null, 'base', 'Hearthstone Base');
 				checkThenArm('best', 'trinket', icebergCharm, wasteCharm);
 				break;
-				case 'Icewing\'s Lair':
+			case 'Icewing\'s Lair':
 			// Deep freeze base for the rest
 			case 'Hidden Depths':
 			case 'The Deep Lair':
-			checkThenArm(null, 'base', 'Deep Freeze Base');
-			var charmArmed = getPageVariable('user.trinket_name');
-			if (charmArmed.indexOf('Wax') > -1 || charmArmed.indexOf('Sticky') > -1)
-				disarmTrap('trinket');
-			break;
+				checkThenArm(null, 'base', 'Deep Freeze Base');
+				var charmArmed = getPageVariable('user.trinket_name');
+				if (charmArmed.indexOf('Wax') > -1 || charmArmed.indexOf('Sticky') > -1)
+					disarmTrap('trinket');
+				break;
 			default:
-			break;
+				break;
 		}
 
 		icebergCharm = null;
@@ -2628,7 +2668,7 @@ function BurroughRift(bCheckLoc, minMist, maxMist, nToggle) {
 	//Tier 1/Yellow: 1-5 Mist Canisters
 	//Tier 2/Green: 6-18 Mist Canisters
 	//Tier 3/Red: 19-20 Mist Canisters
-	if (bCheckLoc && getCurrentLocation().indexOf('Burroughs Rift') < 0){
+	if (bCheckLoc && getCurrentLocation().indexOf('Burroughs Rift') < 0) {
 		return;
 	}
 
@@ -2722,25 +2762,25 @@ function lgGeneral(objLG) {
 	var loc = getCurrentLocation();
 	switch (loc) {
 		case 'Living Garden':
-		livingGarden(objLG);
-		break;
+			livingGarden(objLG);
+			break;
 		case 'Lost City':
-		lostCity(objLG);
-		break;
+			lostCity(objLG);
+			break;
 		case 'Sand Dunes':
-		sandDunes();
-		break;
+			sandDunes();
+			break;
 		case 'Twisted Garden':
-		twistedGarden(objLG);
-		break;
+			twistedGarden(objLG);
+			break;
 		case 'Cursed City':
-		cursedCity(objLG);
-		break;
+			cursedCity(objLG);
+			break;
 		case 'Sand Crypts':
-		sandCrypts(objLG);
-		break;
+			sandCrypts(objLG);
+			break;
 		default:
-		return;
+			return;
 	}
 	DisarmLGSpecialCharm(loc);
 }
@@ -2940,17 +2980,17 @@ function cursedCity(obj) {
 			if (objCC.curses[i].active) {
 				switch (i) {
 					case 0:
-					console.plog("Fear Active");
-					cursedCityCharm.push('Bravery');
-					break;
+						console.plog("Fear Active");
+						cursedCityCharm.push('Bravery');
+						break;
 					case 1:
-					console.plog("Darkness Active");
-					cursedCityCharm.push('Shine');
-					break;
+						console.plog("Darkness Active");
+						cursedCityCharm.push('Shine');
+						break;
 					case 2:
-					console.plog("Mist Active");
-					cursedCityCharm.push('Clarity');
-					break;
+						console.plog("Mist Active");
+						cursedCityCharm.push('Clarity');
+						break;
 				}
 			}
 		}
@@ -3496,48 +3536,48 @@ function GetSunkenCityZone(zoneName) {
 		case 'Sand Dollar Sea Bar':
 		case 'Pearl Patch':
 		case 'Sunken Treasure':
-		returnZone = objSCZone.ZONE_TREASURE;
-		break;
+			returnZone = objSCZone.ZONE_TREASURE;
+			break;
 		case 'Feeding Grounds':
 		case 'Carnivore Cove':
-		returnZone = objSCZone.ZONE_DANGER;
-		break;
+			returnZone = objSCZone.ZONE_DANGER;
+			break;
 		case 'Monster Trench':
-		returnZone = objSCZone.ZONE_DANGER_PP;
-		break;
+			returnZone = objSCZone.ZONE_DANGER_PP;
+			break;
 		case 'Lair of the Ancients':
-		returnZone = objSCZone.ZONE_DANGER_PP_LOTA;
-		break;
+			returnZone = objSCZone.ZONE_DANGER_PP_LOTA;
+			break;
 		case 'Deep Oxygen Stream':
 		case 'Oxygen Stream':
-		returnZone = objSCZone.ZONE_OXYGEN;
-		break;
+			returnZone = objSCZone.ZONE_OXYGEN;
+			break;
 		case 'Magma Flow':
-		returnZone = objSCZone.ZONE_BONUS;
-		break;
+			returnZone = objSCZone.ZONE_BONUS;
+			break;
 		case 'Coral Reef':
 		case 'Coral Garden':
 		case 'Coral Castle':
-		returnZone = objSCZone.ZONE_CORAL;
-		break;
+			returnZone = objSCZone.ZONE_CORAL;
+			break;
 		case 'School of Mice':
 		case 'Mermouse Den':
 		case 'Lost Ruins':
-		returnZone = objSCZone.ZONE_SCALE;
-		break;
+			returnZone = objSCZone.ZONE_SCALE;
+			break;
 		case 'Rocky Outcrop':
 		case 'Shipwreck':
 		case 'Haunted Shipwreck':
-		returnZone = objSCZone.ZONE_BARNACLE;
-		break;
+			returnZone = objSCZone.ZONE_BARNACLE;
+			break;
 		case 'Shallow Shoals':
 		case 'Sea Floor':
 		case 'Murky Depths':
-		returnZone = objSCZone.ZONE_DEFAULT;
-		break;
+			returnZone = objSCZone.ZONE_DEFAULT;
+			break;
 		default:
-		returnZone = objSCZone.ZONE_NOT_DIVE;
-		break;
+			returnZone = objSCZone.ZONE_NOT_DIVE;
+			break;
 	}
 	return returnZone;
 }
@@ -4235,11 +4275,11 @@ function fRift() {
 		bait: new Array(11).fill(''),
 		masterOrder: new Array(11).fill('Glutter=>Combat=>Susheese')
 	};
-	objDefaultFR.trinket[10]='Rift Wealth Charm';
-	objDefaultFR.trinket[11]='Rift Wealth Charm';
-	objDefaultFR.bait[9]='Rift Combat';
-	objDefaultFR.bait[10]='Null Onyx Gorgonzola';
-	objDefaultFR.bait[11]='Null Onyx Gorgonzola';
+	objDefaultFR.trinket[10] = 'Rift Wealth Charm';
+	objDefaultFR.trinket[11] = 'Rift Wealth Charm';
+	objDefaultFR.bait[9] = 'Rift Combat';
+	objDefaultFR.bait[10] = 'Null Onyx Gorgonzola';
+	objDefaultFR.bait[11] = 'Null Onyx Gorgonzola';
 	var objFR = getStorageToObject('FRift', objDefaultFR);
 	objFR.enter = parseInt(objFR.enter);
 	objFR.retreat = parseInt(objFR.retreat);
@@ -4711,7 +4751,7 @@ function checkCharge(stopDischargeAt, useEggstraCharge) {
 				if (charge >= chargeHigh && eggstraCharge.quantity > 0 && useEggstraCharge) {
 					checkThenArm(null, "charm", "Eggstra Charge Charm");
 				}
-				else{
+				else {
 					checkThenArm(null, "charm", "Eggscavator Charge Charm");
 				}
 			}
@@ -4721,7 +4761,7 @@ function checkCharge(stopDischargeAt, useEggstraCharge) {
 			if (charge >= chargeHigh && eggstraCharge.quantity > 0 && useEggstraCharge) {
 				checkThenArm(null, "charm", "Eggstra Charge Charm");
 			}
-			else{
+			else {
 				checkThenArm(null, "charm", "Eggscavator Charge Charm");
 			}
 		}
@@ -4836,59 +4876,59 @@ function CalculateDelay(trapcheck, xcheckTime, xnextActiveTime) {
 	var delay = -1; // easy to spot bug
 	var tbsh = botStartHour;
 
-	if(!trapcheck){ //horn
-		delay = hornTimeDelayMin + Math.round(Math.random() * hornTimeDelayVariance)+1; //+1 sec to be safe
-	} else{ //trapcheck
-		delay = checkTimeDelayMin + Math.round(Math.random() * checkTimeDelayVariance)+4; //+4 sec to be safe
+	if (!trapcheck) { //horn
+		delay = hornTimeDelayMin + Math.round(Math.random() * hornTimeDelayVariance) + 1; //+1 sec to be safe
+	} else { //trapcheck
+		delay = checkTimeDelayMin + Math.round(Math.random() * checkTimeDelayVariance) + 4; //+4 sec to be safe
 	}
 
-	if(Math.random() < smallDelayProbability){
-		delay += smallDelayMin+ Math.round(Math.random() * (smallDelayVariance));
+	if (Math.random() < smallDelayProbability) {
+		delay += smallDelayMin + Math.round(Math.random() * (smallDelayVariance));
 		console.plog("added small delay");
 	}
-	if(Math.random() < extraDelayProbability){
-		delay += extraDelayMin+ Math.round(Math.random() * (extraDelayVariance));
+	if (Math.random() < extraDelayProbability) {
+		delay += extraDelayMin + Math.round(Math.random() * (extraDelayVariance));
 		console.plog("added extra delay");
 	}
 
 	var delayToMorning = false;
-	if(botStopHour > botStartHour){
-		if(hourNow >= botStopHour) tbsh+=24;
-		if(hourNow >= botStopHour || hourNow < botStartHour){
+	if (botStopHour > botStartHour) {
+		if (hourNow >= botStopHour) tbsh += 24;
+		if (hourNow >= botStopHour || hourNow < botStartHour) {
 			console.plog("Delaying until tomorrow morning");
 			delayToMorning = true;
 		}
-	} else if(botStartHour > botStopHour && hourNow >= botStopHour && hourNow < botStartHour){
+	} else if (botStartHour > botStopHour && hourNow >= botStopHour && hourNow < botStartHour) {
 		console.plog("Delaying until tomorrow morning");
 		delayToMorning = true;
 	}
 
-	if(!trapcheck && selAlgo != "None"){ //do not sound horn at the same time as trap check
-		var timeToNextHorn = xnextActiveTime+delay;
-		if(Math.abs(timeToNextHorn-xcheckTime) < 15){ //going to clash
+	if (!trapcheck && selAlgo != "None") { //do not sound horn at the same time as trap check
+		var timeToNextHorn = xnextActiveTime + delay;
+		if (Math.abs(timeToNextHorn - xcheckTime) < 15) { //going to clash
 			console.log("Adding extra delay to avoid horn clash with trap check");
-			delay = xcheckTime-xnextActiveTime + 15 + Math.round(Math.random() * 6); //15 sec to do event location check etc
+			delay = xcheckTime - xnextActiveTime + 15 + Math.round(Math.random() * 6); //15 sec to do event location check etc
 		}
 	}
-	var timetoMorning = 3600*(tbsh - hourNow) - 60*minutesNow;
+	var timetoMorning = 3600 * (tbsh - hourNow) - 60 * minutesNow;
 	//console.log("time to morning: ", timetoMorning);
-	if(delayToMorning){
-		if(trapcheck){
-			delay += Math.ceil(timetoMorning/3600)*3600;
+	if (delayToMorning) {
+		if (trapcheck) {
+			delay += Math.ceil(timetoMorning / 3600) * 3600;
 		}
-		else{ //horn
-			delay += timetoMorning -xnextActiveTime;
+		else { //horn
+			delay += timetoMorning - xnextActiveTime;
 		}
 	}
 	//console.log("Calculate delay, trapcheck = ", trapcheck, " delay = ", delay);
 	return delay;
 }
 
-function returnGifts(){
+function returnGifts() {
 	x = document.getElementsByClassName("mousehuntActionButton return tiny");
-	for(var i = 0; i<x.length; i++){
-		if(x[i].className.includes("disabled")){ continue; }
-		else{
+	for (var i = 0; i < x.length; i++) {
+		if (x[i].className.includes("disabled")) { continue; }
+		else {
 			x[i].click();
 		}
 	}
@@ -4974,7 +5014,7 @@ function receiveMessage(event) { //throws error in normal operation, but necessa
 	if (!debugKR && !isAutoSolve)
 		return;
 	if (event.origin.indexOf("mhcdn") > -1 || event.origin.indexOf("mousehuntgame") > -1 || event.origin.indexOf("dropbox") > -1) {
-		if(typeof event.data.indexOf != 'function'){
+		if (typeof event.data.indexOf != 'function') {
 			return;
 		}
 		if (event.data.indexOf("~") > -1) {
@@ -4996,7 +5036,7 @@ function receiveMessage(event) { //throws error in normal operation, but necessa
 			var value = event.data.substring(1, event.data.length);
 			setStorage("krCallBack", value);
 		} else if (event.data.indexOf('Log_') > -1)
-		console.plog(event.data.split('_')[1]);
+			console.plog(event.data.split('_')[1]);
 		else if (event.data.indexOf('MHAKRS_') > -1) {
 			var temp = event.data.split('_');
 			console.plog(temp[0], temp[1]);
@@ -5018,12 +5058,12 @@ function CallKRSolver() {
 		frame.src = "https://dl.dropboxusercontent.com/s/ppg0l35h25phrx3/download%20(16).png";
 	} else {
 		//if (isNewUI) {
-			if (debug) console.log("Trying to fetch Captcha Image")
-				img = document.getElementsByClassName('mousehuntPage-puzzle-form-captcha-image')[0];
-			if (debug) console.log("Captcha Image fetched:")
-				if (debug) console.log(img);
+		if (debug) console.log("Trying to fetch Captcha Image")
+		img = document.getElementsByClassName('mousehuntPage-puzzle-form-captcha-image')[0];
+		if (debug) console.log("Captcha Image fetched:")
+		if (debug) console.log(img);
 
-			frame.src = img.style.backgroundImage.slice(4, -1).replace(/"/g, "");
+		frame.src = img.style.backgroundImage.slice(4, -1).replace(/"/g, "");
 		/*} else {
 			img = document.getElementById('puzzleImage');
 			frame.src = img.src;
@@ -5135,7 +5175,7 @@ function setKREntriesColor() {
 }
 
 window.addEventListener("message", receiveMessage, false);
-if (debugKR){
+if (debugKR) {
 	console.log("calling KR solver");
 	CallKRSolver();
 }
@@ -5155,7 +5195,7 @@ try {
 	if (!isNullOrUndefined(chrome.runtime.id)) {
 		g_strScriptHandler = "Extensions";
 		g_strVersion = chrome.runtime.getManifest().version;
-		getMapPort = chrome.runtime.connect({name: 'map'});
+		getMapPort = chrome.runtime.connect({ name: 'map' });
 		getMapPort.onMessage.addListener(function (msg) {
 			console.log(msg);
 			if (msg.array.length > 0)
@@ -5649,17 +5689,17 @@ function getBestTrap() {
 	}
 }
 
-function checkThenArm(sort, category, name, isForcedRetry){   //category = weapon/base/charm/trinket/bait
+function checkThenArm(sort, category, name, isForcedRetry) {   //category = weapon/base/charm/trinket/bait
 	if (isNullOrUndefined(name) || name === '')
 		return;
 
-	if (category == "charm"){
+	if (category == "charm") {
 		category = "trinket";
 	}
-	if (category == "trap"){
+	if (category == "trap") {
 		category = "weapon";
 	}
-	if (category == "cheese"){
+	if (category == "cheese") {
 		category = "bait";
 	}
 
@@ -5929,9 +5969,9 @@ function armTrapNewUI(sort, trap, name) {
 				}
 				console.plog(name + ' armed');
 
-				if(trap=="bait"){
+				if (trap == "bait") {
 					console.log("changed bait, reloading page in", reloadSecAfterChangeBait, "seconds");
-					setTimeout(reloadPage, reloadSecAfterChangeBait*1000);
+					setTimeout(reloadPage, reloadSecAfterChangeBait * 1000);
 				}
 				return ARMED;
 			}
@@ -5986,7 +6026,7 @@ function clickTrapSelector(strSelect, bForceClick) { //strSelect = weapon/base/c
 			fireEvent(document.getElementsByClassName('trapControlThumb')[2], 'click');
 		else if (strSelect == "bait")
 			fireEvent(document.getElementsByClassName('trapControlThumb')[3], 'click');
-		else{
+		else {
 			//console.log("Invalid trapSelector");
 			return true;
 		}
@@ -6055,10 +6095,10 @@ function retrieveDataFirst() {//needs revamp
 
 					hornTimeDelay = CalculateDelay(false, checkTime, nextActiveTime);
 					hornTime = nextActiveTime + hornTimeDelay;
-					if(hornTime < 15){
+					if (hornTime < 15) {
 						hornTime = 15; //on first load, give enough time to run bot
 					}
-					if (nextActiveTime <= 0 && !isKingReward){ //nani??
+					if (nextActiveTime <= 0 && !isKingReward) { //nani??
 						locationBotCheck();
 					}
 					lastDateRecorded = undefined;
@@ -6149,7 +6189,7 @@ function retrieveDataFirst() {//needs revamp
 		console.perror('retrieveDataFirst', e.message);
 	}
 	console.log("debug");
-	return; 
+	return;
 }
 
 function GetHornTime() {
@@ -6186,12 +6226,12 @@ function getKingRewardStatus() {
 
 	if (headerOrHud !== null) {
 		var textContentLowerCase = headerOrHud.textContent.toLowerCase();
-		if (textContentLowerCase.indexOf("king reward") > -1 ||	textContentLowerCase.indexOf("king's reward") > -1 || textContentLowerCase.indexOf("kings reward") > -1) {
+		if (textContentLowerCase.indexOf("king reward") > -1 || textContentLowerCase.indexOf("king's reward") > -1 || textContentLowerCase.indexOf("kings reward") > -1) {
 			return true;
 		} else
-		return (strValue == 'true');
+			return (strValue == 'true');
 	} else
-	return false;
+		return false;
 }
 
 function getBaitQuantity() {
@@ -6204,8 +6244,8 @@ function getBaitQuantity() {
 	return user.bait_quantity;
 }
 
-function getCharmQuantity(){ //works as of 2019-3-8, if no charm armed the web page value is zero
-	var CharmQuantity = parseInt(document.getElementsByClassName("campPage-trap-armedItem trinket")[0].innerText.replace(/,/g,""));
+function getCharmQuantity() { //works as of 2019-3-8, if no charm armed the web page value is zero
+	var CharmQuantity = parseInt(document.getElementsByClassName("campPage-trap-armedItem trinket")[0].innerText.replace(/,/g, ""));
 	return CharmQuantity;
 }
 
@@ -6593,21 +6633,21 @@ function reloadPage(unusedVariable) {
 	if (fbPlatform) {
 		// for Facebook only
 		if (secureConnection) {
-			window.location.href = "https://www.mousehuntgame.com/canvas/";			
+			window.location.href = "https://www.mousehuntgame.com/canvas/";
 		} else {
-			window.location.href = "http://www.mousehuntgame.com/canvas/";			
+			window.location.href = "http://www.mousehuntgame.com/canvas/";
 		}
 	} else if (hiFivePlatform) {
 		// for Hi5 only
 		if (secureConnection) {
-			window.location.href = "https://mousehunt.hi5.hitgrab.com/";			
+			window.location.href = "https://mousehunt.hi5.hitgrab.com/";
 		} else {
-			window.location.href = "http://mousehunt.hi5.hitgrab.com/";			
+			window.location.href = "http://mousehunt.hi5.hitgrab.com/";
 		}
 	} else if (mhPlatform) {
 		// for mousehunt game only
 		if (secureConnection) {
-			window.location.href = "https://www.mousehuntgame.com/";			
+			window.location.href = "https://www.mousehuntgame.com/";
 		} else {
 			window.location.href = "http://www.mousehuntgame.com/";
 		}
@@ -6636,6 +6676,7 @@ function embedTimer(targetPage) {
 		if (showTimerInPage) {
 			var headerElement;
 			if (fbPlatform || hiFivePlatform || mhPlatform) {
+				console.log("fb/mhPlatform");
 				headerElement = document.getElementById('noscript');
 			} else if (mhMobilePlatform) {
 				headerElement = document.getElementById('mobileHorn');
@@ -6880,15 +6921,15 @@ function embedTimer(targetPage) {
 
 				var showPreferenceSpan = document.createElement('span');
 				var showPreferenceLinkStr = '<a id="showPreferenceLink" name="showPreferenceLink" onclick="' +
-				'if (document.getElementById(\'showPreferenceLink\').innerHTML == \'<b>[Hide Preference]</b>\') {' +
-				'document.getElementById(\'preferenceDiv\').style.display=\'none\';' +
-				'document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Show Preference]</b>\';' +
-				'} else {' +
-				'document.getElementById(\'preferenceDiv\').style.display=\'block\';' +
-				'document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Hide Preference]</b>\';' +
-				'initLocationBot();' + 'initEventBot();' + 
-				'}' +
-				'">';
+					'if (document.getElementById(\'showPreferenceLink\').innerHTML == \'<b>[Hide Preference]</b>\') {' +
+					'document.getElementById(\'preferenceDiv\').style.display=\'none\';' +
+					'document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Show Preference]</b>\';' +
+					'} else {' +
+					'document.getElementById(\'preferenceDiv\').style.display=\'block\';' +
+					'document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Hide Preference]</b>\';' +
+					'initLocationBot();' + 'initEventBot();' +
+					'}' +
+					'">';
 
 				if (showPreference === true)
 					showPreferenceLinkStr += '<b>[Hide Preference]</b>';
@@ -8954,42 +8995,42 @@ function embedTimer(targetPage) {
 
 				var nobWhatsNewDiv = document.createElement('div');
 				nobWhatsNewDiv.innerHTML = "<style>" +
-				"@-webkit-keyframes colorRotate {" +
-				"from {color: rgb(255, 0, 0);}" +
-				"16.6% {color: rgb(255, 0, 255);}" +
-				"33.3% {color: rgb(0, 0, 255);}" +
-				"50% {color: rgb(0, 255, 255);}" +
-				"66.6% {color: rgb(0, 255, 0);}" +
-				"83.3% {color: rgb(255, 255, 0);}" +
-				"to {color: rgb(255, 0, 0);}" +
+					"@-webkit-keyframes colorRotate {" +
+					"from {color: rgb(255, 0, 0);}" +
+					"16.6% {color: rgb(255, 0, 255);}" +
+					"33.3% {color: rgb(0, 0, 255);}" +
+					"50% {color: rgb(0, 255, 255);}" +
+					"66.6% {color: rgb(0, 255, 0);}" +
+					"83.3% {color: rgb(255, 255, 0);}" +
+					"to {color: rgb(255, 0, 0);}" +
 
-				"@-moz-keyframes colorRotate {" +
-				"from {color: rgb(255, 0, 0);}" +
-				"16.6% {color: rgb(255, 0, 255);}" +
-				"33.3% {color: rgb(0, 0, 255);}" +
-				"50% {color: rgb(0, 255, 255);}" +
-				"66.6% {color: rgb(0, 255, 0);}" +
-				"83.3% {color: rgb(255, 255, 0);}" +
-				"to {color: rgb(255, 0, 0);}" +
+					"@-moz-keyframes colorRotate {" +
+					"from {color: rgb(255, 0, 0);}" +
+					"16.6% {color: rgb(255, 0, 255);}" +
+					"33.3% {color: rgb(0, 0, 255);}" +
+					"50% {color: rgb(0, 255, 255);}" +
+					"66.6% {color: rgb(0, 255, 0);}" +
+					"83.3% {color: rgb(255, 255, 0);}" +
+					"to {color: rgb(255, 0, 0);}" +
 
-				"@-o-keyframes colorRotate {" +
-				"from {color: rgb(255, 0, 0);}" +
-				"16.6% {color: rgb(255, 0, 255);}" +
-				"33.3% {color: rgb(0, 0, 255);}" +
-				"50% {color: rgb(0, 255, 255);}" +
-				"66.6% {color: rgb(0, 255, 0);}" +
-				"83.3% {color: rgb(255, 255, 0);}" +
-				"to {color: rgb(255, 0, 0);}" +
+					"@-o-keyframes colorRotate {" +
+					"from {color: rgb(255, 0, 0);}" +
+					"16.6% {color: rgb(255, 0, 255);}" +
+					"33.3% {color: rgb(0, 0, 255);}" +
+					"50% {color: rgb(0, 255, 255);}" +
+					"66.6% {color: rgb(0, 255, 0);}" +
+					"83.3% {color: rgb(255, 255, 0);}" +
+					"to {color: rgb(255, 0, 0);}" +
 
-				"@keyframes colorRotate {" +
-				"from {color: rgb(255, 0, 0);}" +
-				"16.6% {color: rgb(255, 0, 255);}" +
-				"33.3% {color: rgb(0, 0, 255);}" +
-				"50% {color: rgb(0, 255, 255);}" +
-				"66.6% {color: rgb(0, 255, 0);}" +
-				"83.3% {color: rgb(255, 255, 0);}" +
-				"to {color: rgb(255, 0, 0);}" +
-				"</style>";
+					"@keyframes colorRotate {" +
+					"from {color: rgb(255, 0, 0);}" +
+					"16.6% {color: rgb(255, 0, 255);}" +
+					"33.3% {color: rgb(0, 0, 255);}" +
+					"50% {color: rgb(0, 255, 255);}" +
+					"66.6% {color: rgb(0, 255, 0);}" +
+					"83.3% {color: rgb(255, 255, 0);}" +
+					"to {color: rgb(255, 0, 0);}" +
+					"</style>";
 
 				var preferenceDiv = document.createElement('div');
 				preferenceDiv.setAttribute('id', 'preferenceDiv');
@@ -9936,40 +9977,40 @@ function addGoogleAd() {
 				 adFrame.appendChild(document.createElement('center'));
 				 adFrame.firstChild.appendChild(newAd);*/
 
-				 var newAd = document.createElement('div');
-				 newAd.style.height = "560px";
-				 adFrame.appendChild(document.createElement('center'));
-				 adFrame.firstChild.appendChild(newAd);
-				 var newAdScript = document.createElement('script');
-				 newAdScript.src = "//pagead2.google" + "syndication.com/" + "pagead/js/adsbygoogle" + ".js";
-				 newAd.innerHTML = "<ins class=\"adsbygoogle\" " +
-				 "style=\"display:block\" " +
-				 "data-" + "ad" + "-client=\"ca-pub-" + "3255634416502948\" " +
-				 "data-" + "ad-" + "slot=\"2618509310\" data-" + "ad" + "-format=\"auto\"></ins>";
-				 newAd.appendChild(newAdScript);
-				 (adsbygoogle = window.adsbygoogle || []).push({});
+				var newAd = document.createElement('div');
+				newAd.style.height = "560px";
+				adFrame.appendChild(document.createElement('center'));
+				adFrame.firstChild.appendChild(newAd);
+				var newAdScript = document.createElement('script');
+				newAdScript.src = "//pagead2.google" + "syndication.com/" + "pagead/js/adsbygoogle" + ".js";
+				newAd.innerHTML = "<ins class=\"adsbygoogle\" " +
+					"style=\"display:block\" " +
+					"data-" + "ad" + "-client=\"ca-pub-" + "3255634416502948\" " +
+					"data-" + "ad-" + "slot=\"2618509310\" data-" + "ad" + "-format=\"auto\"></ins>";
+				newAd.appendChild(newAdScript);
+				(adsbygoogle = window.adsbygoogle || []).push({});
 
-				 var removeAdButton = document.createElement('a');
-				 removeAdButton.id = 'removeAdLink';
-				 removeAdButton.href = 'https://www.mousehuntgame.com/index.php';
-				 removeAdButton.innerHTML = 'Click here to remove ads :*(';
-				 adFrame.firstChild.appendChild(removeAdButton);
+				var removeAdButton = document.createElement('a');
+				removeAdButton.id = 'removeAdLink';
+				removeAdButton.href = 'https://www.mousehuntgame.com/index.php';
+				removeAdButton.innerHTML = 'Click here to remove ads :*(';
+				adFrame.firstChild.appendChild(removeAdButton);
 
-				 removeAdButton = null;
-				 newAd = null;
-				} else if (!NOBadFree) {
-					adFrame.innerHTML = "<a id=\"addAdLink\" href=\"#\" style=\"-webkit-animation: colorRotate 6s linear 0s infinite; -moz-animation: colorRotate 6s linear 0s infinite; -o-animation: colorRotate 6s linear 0s infinite; animation: colorRotate 6s linear 0s infinite; font-weight: bolder; text-align: center;\">Click here to show ads to support the development of this bot :)</a>";
-				} else {
-					console.debug("Thanks for donating ^.^");
-					adFrame.innerHTML = "";
-				}
+				removeAdButton = null;
+				newAd = null;
+			} else if (!NOBadFree) {
+				adFrame.innerHTML = "<a id=\"addAdLink\" href=\"#\" style=\"-webkit-animation: colorRotate 6s linear 0s infinite; -moz-animation: colorRotate 6s linear 0s infinite; -o-animation: colorRotate 6s linear 0s infinite; animation: colorRotate 6s linear 0s infinite; font-weight: bolder; text-align: center;\">Click here to show ads to support the development of this bot :)</a>";
+			} else {
+				console.debug("Thanks for donating ^.^");
+				adFrame.innerHTML = "";
 			}
-			adFrame = null;
-			allowAds = null;
-		} catch (e) {
-			console.log('Remove ad error: ' + e);
 		}
+		adFrame = null;
+		allowAds = null;
+	} catch (e) {
+		console.log('Remove ad error: ' + e);
 	}
+}
 
 // ################################################################################################
 //   Ad Function - End
@@ -10288,10 +10329,10 @@ function nobTestBetaUI() { // Return true if beta UI
 function noCheeseAction() {
 	notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariable('user.username') + ' has no more cheese.');
 
-	if (isNoCheeseSound){
-		setTimeout(playAlertSound,10000); //wait 10 sec first so music doesn't play if bot arms cheese
+	if (isNoCheeseSound) {
+		setTimeout(playAlertSound, 10000); //wait 10 sec first so music doesn't play if bot arms cheese
 	}
-	
+
 	// Start rearm detector, set for every 10s to make sure not to interupt user
 	// var checkRearmInterval = setInterval(function () { //doesn't work
 	// 	try {
@@ -10313,7 +10354,7 @@ function noCheeseAction() {
 	// 		checkRearmInterval = null;
 	// 	}
 	// }, 10000);
-	setInterval(reloadPage, rand(18000,25200)*1000);//wait 5-7 hours then reload page
+	setInterval(reloadPage, rand(18000, 25200) * 1000);//wait 5-7 hours then reload page
 }
 
 function cheeseRearmedAction() {
@@ -10340,7 +10381,7 @@ function cheeseRearmedAction() {
 
 var alertSoundPlaying = false;
 function playAlertSound() {
-	if(alertSoundPlaying){
+	if (alertSoundPlaying) {
 		return;
 	}
 	alertSoundPlaying = true;
@@ -10465,7 +10506,7 @@ function notifyMe(notice, icon, body) {
 	if (!("Notification" in window)) {
 		alert("This browser does not support desktop notification");
 	} else if (Notification.permission === "granted") {
-		var notification = new Notification(notice, {'icon': icon, 'body': body});
+		var notification = new Notification(notice, { 'icon': icon, 'body': body });
 
 		notification.onclick = function () {
 			window.open("https://www.mousehuntgame.com/");
@@ -10486,7 +10527,7 @@ function notifyMe(notice, icon, body) {
 
 			// If the user is okay, let's create a notification
 			if (permission === "granted") {
-				var notification = new Notification(notice, {'icon': icon, 'body': body});
+				var notification = new Notification(notice, { 'icon': icon, 'body': body });
 
 				notification.onclick = function () {
 					window.open("https://www.mousehuntgame.com/");
@@ -10630,7 +10671,7 @@ function trapCheck() {
 	 fireEvent(campElement, 'click');
 	 campElement = null;*/
 
-	 reloadWithMessage("Reloading page for trap check...", false);
+	reloadWithMessage("Reloading page for trap check...", false);
 	// reload the page if click on camp button fail
 	/*window.setTimeout(function() {
 	 reloadWithMessage("Fail to click on camp button. Reloading...", false);
@@ -10642,8 +10683,8 @@ function CalculateNextTrapCheckInMinute() { //sets the value of checkTime
 	var now = new Date(Date.now() + g_nTimeOffset * 1000); //g_nTimeOffset usually = 0
 	checkTimeDelay = CalculateDelay(true);
 	checkTime = (trapCheckTimeDiff * 60) - (now.getMinutes() * 60 + now.getSeconds()) + checkTimeDelay;
-	if(now.getMinutes() >= trapCheckTimeDiff){
-		checkTime+=3600;
+	if (now.getMinutes() >= trapCheckTimeDiff) {
+		checkTime += 3600;
 	}
 
 	//if (debug) console.log("CalcNextTrapCheck: " + checkTime);
@@ -10680,9 +10721,9 @@ function ajaxPost(postURL, objData, callback, throwerror) {
 
 function versionCompare(v1, v2, options) {
 	var lexicographical = options && options.lexicographical,
-	zeroExtend = options && options.zeroExtend,
-	v1parts = v1.split('.'),
-	v2parts = v2.split('.');
+		zeroExtend = options && options.zeroExtend,
+		v1parts = v1.split('.'),
+		v2parts = v2.split('.');
 
 	function isValidPart(x) {
 		return (lexicographical ? /^\d+[A-Za-z]*$/ : /^\d+$/).test(x);
@@ -10767,8 +10808,8 @@ function minIndex(data) {
 			index = i;
 		}
 	}
-	if(index==-1)
-		index=0;
+	if (index == -1)
+		index = 0;
 	return index;
 }
 
@@ -11522,147 +11563,147 @@ function nobMapRequest(handleData) {
 function nobLoading(location, name) {
 	var element = document.getElementById(location);
 	element.innerHTML = "<style type=\"text/css\">" +
-	/* Universal styling */
-	"    [class^=\"shaft-load\"] {" +
-	"    margin: 5px auto;" +
-	"    width: 60px;" +
-	"    height: 15px;" +
-	"}" +
-	"[class^=\"shaft-load\"] > div {" +
-	"    float: left;" +
-	"    background: #B96CFF;" +
-	"    height: 100%;" +
-	"    width: 5px;" +
-	"    margin-right: 1px;" +
-	"    display: inline-block;" +
-	"}" +
-	"[class^=\"shaft-load\"] .shaft1 {" +
-	"    -webkit-animation-delay: 0.05s;" +
-	"    -moz-animation-delay: 0.05s;" +
-	"    -o-animation-delay: 0.05s;" +
-	"    animation-delay: 0.05s;" +
-	"}" +
-	"[class^=\"shaft-load\"] .shaft2 {" +
-	"    -webkit-animation-delay: 0.1s;" +
-	"    -moz-animation-delay: 0.1s;" +
-	"    -o-animation-delay: 0.1s;" +
-	"    animation-delay: 0.1s;" +
-	"}" +
-	"[class^=\"shaft-load\"] .shaft3 {" +
-	"    -webkit-animation-delay: 0.15s;" +
-	"    -moz-animation-delay: 0.15s;" +
-	"    -o-animation-delay: 0.15s;" +
-	"    animation-delay: 0.15s;" +
-	"}" +
-	"[class^=\"shaft-load\"] .shaft4 {" +
-	"    -webkit-animation-delay: 0.2s;" +
-	"    -moz-animation-delay: 0.2s;" +
-	"    -o-animation-delay: 0.2s;" +
-	"    animation-delay: 0.2s;" +
-	"}" +
-	"[class^=\"shaft-load\"] .shaft5 {" +
-	"    -webkit-animation-delay: 0.25s;" +
-	"    -moz-animation-delay: 0.25s;" +
-	"    -o-animation-delay: 0.25s;" +
-	"    animation-delay: 0.25s;" +
-	"}" +
-	"[class^=\"shaft-load\"] .shaft6 {" +
-	"    -webkit-animation-delay: 0.3s;" +
-	"    -moz-animation-delay: 0.3s;" +
-	"    -o-animation-delay: 0.3s;" +
-	"    animation-delay: 0.3s;" +
-	"}" +
-	"[class^=\"shaft-load\"] .shaft7 {" +
-	"    -webkit-animation-delay: 0.35s;" +
-	"    -moz-animation-delay: 0.35s;" +
-	"    -o-animation-delay: 0.35s;" +
-	"    animation-delay: 0.35s;" +
-	"}" +
-	"[class^=\"shaft-load\"] .shaft8 {" +
-	"    -webkit-animation-delay: 0.4s;" +
-	"    -moz-animation-delay: 0.4s;" +
-	"    -o-animation-delay: 0.4s;" +
-	"    animation-delay: 0.4s;" +
-	"}" +
-	"[class^=\"shaft-load\"] .shaft9 {" +
-	"    -webkit-animation-delay: 0.45s;" +
-	"    -moz-animation-delay: 0.45s;" +
-	"    -o-animation-delay: 0.45s;" +
-	"    animation-delay: 0.45s;" +
-	"}" +
-	"[class^=\"shaft-load\"] .shaft10 {" +
-	"    -webkit-animation-delay: 0.5s;" +
-	"    -moz-animation-delay: 0.5s;" +
-	"    -o-animation-delay: 0.5s;" +
-	"    animation-delay: 0.5s;" +
-	"}" +
+		/* Universal styling */
+		"    [class^=\"shaft-load\"] {" +
+		"    margin: 5px auto;" +
+		"    width: 60px;" +
+		"    height: 15px;" +
+		"}" +
+		"[class^=\"shaft-load\"] > div {" +
+		"    float: left;" +
+		"    background: #B96CFF;" +
+		"    height: 100%;" +
+		"    width: 5px;" +
+		"    margin-right: 1px;" +
+		"    display: inline-block;" +
+		"}" +
+		"[class^=\"shaft-load\"] .shaft1 {" +
+		"    -webkit-animation-delay: 0.05s;" +
+		"    -moz-animation-delay: 0.05s;" +
+		"    -o-animation-delay: 0.05s;" +
+		"    animation-delay: 0.05s;" +
+		"}" +
+		"[class^=\"shaft-load\"] .shaft2 {" +
+		"    -webkit-animation-delay: 0.1s;" +
+		"    -moz-animation-delay: 0.1s;" +
+		"    -o-animation-delay: 0.1s;" +
+		"    animation-delay: 0.1s;" +
+		"}" +
+		"[class^=\"shaft-load\"] .shaft3 {" +
+		"    -webkit-animation-delay: 0.15s;" +
+		"    -moz-animation-delay: 0.15s;" +
+		"    -o-animation-delay: 0.15s;" +
+		"    animation-delay: 0.15s;" +
+		"}" +
+		"[class^=\"shaft-load\"] .shaft4 {" +
+		"    -webkit-animation-delay: 0.2s;" +
+		"    -moz-animation-delay: 0.2s;" +
+		"    -o-animation-delay: 0.2s;" +
+		"    animation-delay: 0.2s;" +
+		"}" +
+		"[class^=\"shaft-load\"] .shaft5 {" +
+		"    -webkit-animation-delay: 0.25s;" +
+		"    -moz-animation-delay: 0.25s;" +
+		"    -o-animation-delay: 0.25s;" +
+		"    animation-delay: 0.25s;" +
+		"}" +
+		"[class^=\"shaft-load\"] .shaft6 {" +
+		"    -webkit-animation-delay: 0.3s;" +
+		"    -moz-animation-delay: 0.3s;" +
+		"    -o-animation-delay: 0.3s;" +
+		"    animation-delay: 0.3s;" +
+		"}" +
+		"[class^=\"shaft-load\"] .shaft7 {" +
+		"    -webkit-animation-delay: 0.35s;" +
+		"    -moz-animation-delay: 0.35s;" +
+		"    -o-animation-delay: 0.35s;" +
+		"    animation-delay: 0.35s;" +
+		"}" +
+		"[class^=\"shaft-load\"] .shaft8 {" +
+		"    -webkit-animation-delay: 0.4s;" +
+		"    -moz-animation-delay: 0.4s;" +
+		"    -o-animation-delay: 0.4s;" +
+		"    animation-delay: 0.4s;" +
+		"}" +
+		"[class^=\"shaft-load\"] .shaft9 {" +
+		"    -webkit-animation-delay: 0.45s;" +
+		"    -moz-animation-delay: 0.45s;" +
+		"    -o-animation-delay: 0.45s;" +
+		"    animation-delay: 0.45s;" +
+		"}" +
+		"[class^=\"shaft-load\"] .shaft10 {" +
+		"    -webkit-animation-delay: 0.5s;" +
+		"    -moz-animation-delay: 0.5s;" +
+		"    -o-animation-delay: 0.5s;" +
+		"    animation-delay: 0.5s;" +
+		"}" +
 
-	/* Shaft 1 */
-	".shaft-load > div {" +
-	"    -webkit-animation: loading 1.5s infinite ease-in-out;" +
-	"    -moz-animation: loading 1.5s infinite ease-in-out;" +
-	"    -o-animation: loading 1.5s infinite ease-in-out;" +
-	"    animation: loading 1.5s infinite ease-in-out;" +
-	"    -webkit-transform: scaleY(0.05) translateX(-10px);" +
-	"    -moz-transform: scaleY(0.05) translateX(-10px);" +
-	"    -ms-transform: scaleY(0.05) translateX(-10px);" +
-	"    -o-transform: scaleY(0.05) translateX(-10px);" +
-	"    transform: scaleY(0.05) translateX(-10px);" +
-	"}" +
+		/* Shaft 1 */
+		".shaft-load > div {" +
+		"    -webkit-animation: loading 1.5s infinite ease-in-out;" +
+		"    -moz-animation: loading 1.5s infinite ease-in-out;" +
+		"    -o-animation: loading 1.5s infinite ease-in-out;" +
+		"    animation: loading 1.5s infinite ease-in-out;" +
+		"    -webkit-transform: scaleY(0.05) translateX(-10px);" +
+		"    -moz-transform: scaleY(0.05) translateX(-10px);" +
+		"    -ms-transform: scaleY(0.05) translateX(-10px);" +
+		"    -o-transform: scaleY(0.05) translateX(-10px);" +
+		"    transform: scaleY(0.05) translateX(-10px);" +
+		"}" +
 
-	"@-webkit-keyframes loading {" +
-	"    50% {" +
-	"    -webkit-transform: scaleY(1.2) translateX(10px);" +
-	"    -moz-transform: scaleY(1.2) translateX(10px);" +
-	"    -ms-transform: scaleY(1.2) translateX(10px);" +
-	"    -o-transform: scaleY(1.2) translateX(10px);" +
-	"    transform: scaleY(1.2) translateX(10px);" +
-	"    background: #56D7C6;" +
-	"}" +
-	"}" +
-	"@-moz-keyframes loading {" +
-	"50% {" +
-	"-webkit-transform: scaleY(1.2) translateX(10px);" +
-	"-moz-transform: scaleY(1.2) translateX(10px);" +
-	"-ms-transform: scaleY(1.2) translateX(10px);" +
-	"-o-transform: scaleY(1.2) translateX(10px);" +
-	"transform: scaleY(1.2) translateX(10px);" +
-	"background: #56D7C6;" +
-	"}" +
-	"}" +
-	"@-o-keyframes loading {" +
-	"50% {" +
-	"-webkit-transform: scaleY(1.2) translateX(10px);" +
-	"-moz-transform: scaleY(1.2) translateX(10px);" +
-	"-ms-transform: scaleY(1.2) translateX(10px);" +
-	"-o-transform: scaleY(1.2) translateX(10px);" +
-	"transform: scaleY(1.2) translateX(10px);" +
-	"background: #56D7C6;" +
-	"}" +
-	"}" +
-	"@keyframes loading {" +
-	"50% {" +
-	"-webkit-transform: scaleY(1.2) translateX(10px);" +
-	"-moz-transform: scaleY(1.2) translateX(10px);" +
-	"-ms-transform: scaleY(1.2) translateX(10px);" +
-	"-o-transform: scaleY(1.2) translateX(10px);" +
-	"transform: scaleY(1.2) translateX(10px);" +
-	"background: #56D7C6;" +
-	"}" +
-	"}" +
-	"</style>" +
-	"<div class=\"shaft-load\">" +
-	"<div class=\"shaft1\"></div>" +
-	"<div class=\"shaft2\"></div>" +
-	"<div class=\"shaft3\"></div>" +
-	"<div class=\"shaft4\"></div>" +
-	"<div class=\"shaft5\"></div>" +
-	"<div class=\"shaft6\"></div>" +
-	"<div class=\"shaft7\"></div>" +
-	"<div class=\"shaft8\"></div>" +
-	"<div class=\"shaft9\"></div>" +
-	"<div class=\"shaft10\"></div>" +
-	"</div>";
+		"@-webkit-keyframes loading {" +
+		"    50% {" +
+		"    -webkit-transform: scaleY(1.2) translateX(10px);" +
+		"    -moz-transform: scaleY(1.2) translateX(10px);" +
+		"    -ms-transform: scaleY(1.2) translateX(10px);" +
+		"    -o-transform: scaleY(1.2) translateX(10px);" +
+		"    transform: scaleY(1.2) translateX(10px);" +
+		"    background: #56D7C6;" +
+		"}" +
+		"}" +
+		"@-moz-keyframes loading {" +
+		"50% {" +
+		"-webkit-transform: scaleY(1.2) translateX(10px);" +
+		"-moz-transform: scaleY(1.2) translateX(10px);" +
+		"-ms-transform: scaleY(1.2) translateX(10px);" +
+		"-o-transform: scaleY(1.2) translateX(10px);" +
+		"transform: scaleY(1.2) translateX(10px);" +
+		"background: #56D7C6;" +
+		"}" +
+		"}" +
+		"@-o-keyframes loading {" +
+		"50% {" +
+		"-webkit-transform: scaleY(1.2) translateX(10px);" +
+		"-moz-transform: scaleY(1.2) translateX(10px);" +
+		"-ms-transform: scaleY(1.2) translateX(10px);" +
+		"-o-transform: scaleY(1.2) translateX(10px);" +
+		"transform: scaleY(1.2) translateX(10px);" +
+		"background: #56D7C6;" +
+		"}" +
+		"}" +
+		"@keyframes loading {" +
+		"50% {" +
+		"-webkit-transform: scaleY(1.2) translateX(10px);" +
+		"-moz-transform: scaleY(1.2) translateX(10px);" +
+		"-ms-transform: scaleY(1.2) translateX(10px);" +
+		"-o-transform: scaleY(1.2) translateX(10px);" +
+		"transform: scaleY(1.2) translateX(10px);" +
+		"background: #56D7C6;" +
+		"}" +
+		"}" +
+		"</style>" +
+		"<div class=\"shaft-load\">" +
+		"<div class=\"shaft1\"></div>" +
+		"<div class=\"shaft2\"></div>" +
+		"<div class=\"shaft3\"></div>" +
+		"<div class=\"shaft4\"></div>" +
+		"<div class=\"shaft5\"></div>" +
+		"<div class=\"shaft6\"></div>" +
+		"<div class=\"shaft7\"></div>" +
+		"<div class=\"shaft8\"></div>" +
+		"<div class=\"shaft9\"></div>" +
+		"<div class=\"shaft10\"></div>" +
+		"</div>";
 
 	element = null;
 }
@@ -11754,7 +11795,7 @@ function fetchGDocStuff() {
 		var userID = theData.sn_user_id;
 		Parse.initialize("mh-autobot", "unused");
 		Parse.serverURL = 'https://mh-autobot.herokuapp.com/parse';
-		Parse.Cloud.run('nobMessage', {'user': userID}, {
+		Parse.Cloud.run('nobMessage', { 'user': userID }, {
 			success: function (data) {
 				nobStopLoading();
 				data = JSON.parse(data);
@@ -12244,14 +12285,14 @@ function nobCalculateTime(runOnly) {
 				});
 			}*/
 
-			if (runOnly == 'all')
-				nobCalculateOfflineTimers();
-		} catch (e) {
-			if (debug) console.log("updateTime ERR - " + e);
-		}
+		if (runOnly == 'all')
+			nobCalculateOfflineTimers();
+	} catch (e) {
+		if (debug) console.log("updateTime ERR - " + e);
 	}
+}
 
-	function nobCalculateOfflineTimers(runOnly) {
+function nobCalculateOfflineTimers(runOnly) {
 	//if (debug) console.log('nobCalculateOfflineTimers(' + runOnly + ')');
 	if (runOnly != 'seasonal' && runOnly != 'balack' && runOnly != 'fg')
 		runOnly = 'all';
@@ -12349,178 +12390,178 @@ function runAddonCode() {
 
 // Inject CnN Functions
 function bodyJS() { //don't know what this does but does not affect function
-var objDefaultFGAR = {
-	order: ['FG', 'AR'],
-	weapon: new Array(2).fill(''),
-	base: new Array(2).fill(''),
-	trinket: new Array(2).fill(''),
-	bait: new Array(2).fill('')
-};
-var objDefaultBCJOD = {
-	order: ['JOD', 'LOW', 'MID', 'HIGH'],
-	weapon: new Array(4).fill(''),
-	base: new Array(4).fill(''),
-	trinket: new Array(4).fill(''),
-	bait: new Array(4).fill('')
-};
-var objDefaultBWRift = {
-	order: ['NONE', 'GEARWORKS', 'ANCIENT', 'RUNIC', 'TIMEWARP', 'GUARD', 'SECURITY', 'FROZEN', 'FURNACE', 'INGRESS', 'PURSUER', 'ACOLYTE_CHARGING', 'ACOLYTE_DRAINING', 'ACOLYTE_DRAINED', 'LUCKY', 'HIDDEN'],
-	master: {
-		weapon: new Array(32).fill('Timesplit Dissonance Trap'),
-		base: new Array(32).fill('Clockwork Base'),
-		trinket: new Array(32).fill('Super Rift Vacuum Charm'),
-		bait: new Array(32).fill('Brie String'),
-		activate: new Array(32).fill(false),
-	},
-	specialActivate: {
-		forceActivate: new Array(32).fill(false),
-		remainingLootActivate: new Array(32).fill(1),
-		forceDeactivate: new Array(32).fill(false),
-		remainingLootDeactivate: new Array(32).fill(1)
-	},
-	gw: {
-		weapon: new Array(4).fill('MASTER'),
-		base: new Array(4).fill('MASTER'),
-		trinket: new Array(4).fill('MASTER'),
-		bait: new Array(4).fill('MASTER'),
-		activate: new Array(4).fill('MASTER'),
-	},
-	al: {
-		weapon: new Array(4).fill('MASTER'),
-		base: new Array(4).fill('MASTER'),
-		trinket: new Array(4).fill('MASTER'),
-		bait: new Array(4).fill('MASTER'),
-		activate: new Array(4).fill('MASTER'),
-	},
-	rl: {
-		weapon: new Array(4).fill('MASTER'),
-		base: new Array(4).fill('MASTER'),
-		trinket: new Array(4).fill('MASTER'),
-		bait: new Array(4).fill('MASTER'),
-		activate: new Array(4).fill('MASTER'),
-	},
-	gb: {
-		weapon: new Array(14).fill('MASTER'),
-		base: new Array(14).fill('MASTER'),
-		trinket: new Array(14).fill('MASTER'),
-		bait: new Array(14).fill('MASTER'),
-		activate: new Array(14).fill('MASTER'),
-	},
-	ic: {
-		weapon: new Array(8).fill('MASTER'),
-		base: new Array(8).fill('MASTER'),
-		trinket: new Array(8).fill('MASTER'),
-		bait: new Array(8).fill('MASTER'),
-		activate: new Array(8).fill('MASTER'),
-	},
-	fa: {
-		weapon: new Array(32).fill('MASTER'),
-		base: new Array(32).fill('MASTER'),
-		trinket: new Array(32).fill('MASTER'),
-		bait: new Array(32).fill('MASTER'),
-		activate: new Array(32).fill('MASTER'),
-	},
-	choosePortal: false,
-	choosePortalAfterCC: false,
-	priorities: ['SECURITY', 'FURNACE', 'PURSUER', 'GUARD', 'FROZEN', 'ACOLYTE', 'LUCKY', 'HIDDEN', 'TIMEWARP', 'RUNIC', 'ANCIENT', 'GEARWORKS', 'GEARWORKS'],
-	prioritiesCursed: ['SECURITY', 'FURNACE', 'PURSUER', 'ANCIENT', 'GEARWORKS', 'RUNIC', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS'],
-	minTimeSand: [70, 70, 55, 55, 55, 55, 45, 45, 999],
-	minRSCType: 'NUMBER',
-	minRSC: 60,
-	enterMinigameWCurse: false
-};
+	var objDefaultFGAR = {
+		order: ['FG', 'AR'],
+		weapon: new Array(2).fill(''),
+		base: new Array(2).fill(''),
+		trinket: new Array(2).fill(''),
+		bait: new Array(2).fill('')
+	};
+	var objDefaultBCJOD = {
+		order: ['JOD', 'LOW', 'MID', 'HIGH'],
+		weapon: new Array(4).fill(''),
+		base: new Array(4).fill(''),
+		trinket: new Array(4).fill(''),
+		bait: new Array(4).fill('')
+	};
+	var objDefaultBWRift = {
+		order: ['NONE', 'GEARWORKS', 'ANCIENT', 'RUNIC', 'TIMEWARP', 'GUARD', 'SECURITY', 'FROZEN', 'FURNACE', 'INGRESS', 'PURSUER', 'ACOLYTE_CHARGING', 'ACOLYTE_DRAINING', 'ACOLYTE_DRAINED', 'LUCKY', 'HIDDEN'],
+		master: {
+			weapon: new Array(32).fill('Timesplit Dissonance Trap'),
+			base: new Array(32).fill('Clockwork Base'),
+			trinket: new Array(32).fill('Super Rift Vacuum Charm'),
+			bait: new Array(32).fill('Brie String'),
+			activate: new Array(32).fill(false),
+		},
+		specialActivate: {
+			forceActivate: new Array(32).fill(false),
+			remainingLootActivate: new Array(32).fill(1),
+			forceDeactivate: new Array(32).fill(false),
+			remainingLootDeactivate: new Array(32).fill(1)
+		},
+		gw: {
+			weapon: new Array(4).fill('MASTER'),
+			base: new Array(4).fill('MASTER'),
+			trinket: new Array(4).fill('MASTER'),
+			bait: new Array(4).fill('MASTER'),
+			activate: new Array(4).fill('MASTER'),
+		},
+		al: {
+			weapon: new Array(4).fill('MASTER'),
+			base: new Array(4).fill('MASTER'),
+			trinket: new Array(4).fill('MASTER'),
+			bait: new Array(4).fill('MASTER'),
+			activate: new Array(4).fill('MASTER'),
+		},
+		rl: {
+			weapon: new Array(4).fill('MASTER'),
+			base: new Array(4).fill('MASTER'),
+			trinket: new Array(4).fill('MASTER'),
+			bait: new Array(4).fill('MASTER'),
+			activate: new Array(4).fill('MASTER'),
+		},
+		gb: {
+			weapon: new Array(14).fill('MASTER'),
+			base: new Array(14).fill('MASTER'),
+			trinket: new Array(14).fill('MASTER'),
+			bait: new Array(14).fill('MASTER'),
+			activate: new Array(14).fill('MASTER'),
+		},
+		ic: {
+			weapon: new Array(8).fill('MASTER'),
+			base: new Array(8).fill('MASTER'),
+			trinket: new Array(8).fill('MASTER'),
+			bait: new Array(8).fill('MASTER'),
+			activate: new Array(8).fill('MASTER'),
+		},
+		fa: {
+			weapon: new Array(32).fill('MASTER'),
+			base: new Array(32).fill('MASTER'),
+			trinket: new Array(32).fill('MASTER'),
+			bait: new Array(32).fill('MASTER'),
+			activate: new Array(32).fill('MASTER'),
+		},
+		choosePortal: false,
+		choosePortalAfterCC: false,
+		priorities: ['SECURITY', 'FURNACE', 'PURSUER', 'GUARD', 'FROZEN', 'ACOLYTE', 'LUCKY', 'HIDDEN', 'TIMEWARP', 'RUNIC', 'ANCIENT', 'GEARWORKS', 'GEARWORKS'],
+		prioritiesCursed: ['SECURITY', 'FURNACE', 'PURSUER', 'ANCIENT', 'GEARWORKS', 'RUNIC', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS'],
+		minTimeSand: [70, 70, 55, 55, 55, 55, 45, 45, 999],
+		minRSCType: 'NUMBER',
+		minRSC: 60,
+		enterMinigameWCurse: false
+	};
 
-function limitMinMax(value, min, max) {
-	value = parseInt(value);
-	min = parseInt(min);
-	max = parseInt(max);
-	if (value < min)
-		value = min;
-	else if (value > max)
-		value = max;
-	return value;
-}
+	function limitMinMax(value, min, max) {
+		value = parseInt(value);
+		min = parseInt(min);
+		max = parseInt(max);
+		if (value < min)
+			value = min;
+		else if (value > max)
+			value = max;
+		return value;
+	}
 
-function isNullOrUndefined(obj) {
-	return (obj === null || obj === undefined || obj === 'null' || obj === 'undefined' || (Array.isArray(obj) && obj.length === 0));
-}
+	function isNullOrUndefined(obj) {
+		return (obj === null || obj === undefined || obj === 'null' || obj === 'undefined' || (Array.isArray(obj) && obj.length === 0));
+	}
 
-function onIdRestoreClicked() {
-	var idRestore = document.getElementById('idRestore');
-	var inputFiles = document.getElementById('inputFiles');
-	if (window.FileReader) {
-		if (inputFiles && window.sessionStorage.getItem('bRestart') != 'true') {
-			inputFiles.click();
+	function onIdRestoreClicked() {
+		var idRestore = document.getElementById('idRestore');
+		var inputFiles = document.getElementById('inputFiles');
+		if (window.FileReader) {
+			if (inputFiles && window.sessionStorage.getItem('bRestart') != 'true') {
+				inputFiles.click();
+			}
+		}
+		else {
+			alert('The File APIs are not fully supported in this browser.');
 		}
 	}
-	else {
-		alert('The File APIs are not fully supported in this browser.');
-	}
-}
 
-function handleFiles(files) { //WTF
-	console.log("run handleFiles", files);
-	if (files.length < 1)
-		return;
-	var reader = new FileReader();
-	reader.onloadend = function (evt) {
-		if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-			var arr = evt.target.result.split('\r\n');
-			var arrSplit = [];
-			var bRestart = false;
-			var nIndex = -1;
-			var temp = "";
-			for (var i = 0; i < arr.length; i++) {
-				if (arr[i].indexOf('|') > -1) {
-					arrSplit = arr[i].split('|');
-					if (arrSplit.length == 2) {
-						nIndex = arrSplit[0].indexOf('Z');
-						temp = (nIndex > -1) ? arrSplit[0].substr(0, nIndex + 1) : arrSplit[0];
-						if (Number.isNaN(Date.parse(temp))) {
-							console.log(arrSplit);
-							window.localStorage.setItem(arrSplit[0], arrSplit[1]);
-							window.sessionStorage.setItem(arrSplit[0], arrSplit[1]);
-							bRestart = true;
+	function handleFiles(files) { //WTF
+		console.log("run handleFiles", files);
+		if (files.length < 1)
+			return;
+		var reader = new FileReader();
+		reader.onloadend = function (evt) {
+			if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+				var arr = evt.target.result.split('\r\n');
+				var arrSplit = [];
+				var bRestart = false;
+				var nIndex = -1;
+				var temp = "";
+				for (var i = 0; i < arr.length; i++) {
+					if (arr[i].indexOf('|') > -1) {
+						arrSplit = arr[i].split('|');
+						if (arrSplit.length == 2) {
+							nIndex = arrSplit[0].indexOf('Z');
+							temp = (nIndex > -1) ? arrSplit[0].substr(0, nIndex + 1) : arrSplit[0];
+							if (Number.isNaN(Date.parse(temp))) {
+								console.log(arrSplit);
+								window.localStorage.setItem(arrSplit[0], arrSplit[1]);
+								window.sessionStorage.setItem(arrSplit[0], arrSplit[1]);
+								bRestart = true;
+							}
+						}
+					}
+				}
+				if (bRestart) {
+					alert('Please restart browser to take effect!');
+					window.sessionStorage.setItem('bRestart', 'true');
+					document.getElementById('idRestore').firstChild.textContent = 'Restart browser is required!';
+					document.getElementById('idRestore').style = "color:red";
+				}
+				else {
+					alert('Invalid preference file!');
+				}
+			}
+		};
+		var blob = files[0].slice(0, files[0].size);
+		reader.readAsText(blob);
+	}
+	function onIdAdsClicked() {
+		document.getElementById('inputShowAds').value = 'Loading Ads...';
+		document.getElementById('inputShowAds').disabled = 'disabled';
+		var xmlHttp = new XMLHttpRequest();
+		xmlHttp.onreadystatechange = function () {
+			if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+				document.getElementById('inputShowAds').value = 'Click to Show Ads';
+				document.getElementById('inputShowAds').disabled = '';
+				var arr = xmlHttp.responseText.split("\r\n");
+				console.log(arr);
+				var win;
+				for (var i = 0; i < arr.length; i++) {
+					if (arr[i].indexOf("http") === 0) {
+						win = window.open(arr[i]);
+						if (!win) {
+							alert("Please allow popups for this site");
+							return;
 						}
 					}
 				}
 			}
-			if (bRestart) {
-				alert('Please restart browser to take effect!');
-				window.sessionStorage.setItem('bRestart', 'true');
-				document.getElementById('idRestore').firstChild.textContent = 'Restart browser is required!';
-				document.getElementById('idRestore').style = "color:red";
-			}
-			else {
-				alert('Invalid preference file!');
-			}
-		}
-	};
-	var blob = files[0].slice(0, files[0].size);
-	reader.readAsText(blob);
-}
-function onIdAdsClicked() {
-	document.getElementById('inputShowAds').value = 'Loading Ads...';
-	document.getElementById('inputShowAds').disabled = 'disabled';
-	var xmlHttp = new XMLHttpRequest();
-	xmlHttp.onreadystatechange = function () {
-		if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-			document.getElementById('inputShowAds').value = 'Click to Show Ads';
-			document.getElementById('inputShowAds').disabled = '';
-			var arr = xmlHttp.responseText.split("\r\n");
-			console.log(arr);
-			var win;
-			for (var i = 0; i < arr.length; i++) {
-				if (arr[i].indexOf("http") === 0) {
-					win = window.open(arr[i]);
-					if (!win) {
-						alert("Please allow popups for this site");
-						return;
-					}
-				}
-			}
-		}
-	};
+		};
 		xmlHttp.open("GET", "https://dl.dropboxusercontent.com/s/3cbo6en86lrpas1/Test.txt", true); // true for asynchronous
 		xmlHttp.send(null);
 		window.setTimeout(function () {
@@ -14266,7 +14307,7 @@ function onIdAdsClicked() {
 		window.sessionStorage.setItem('BWRift', JSON.stringify(storageValue));
 	}
 
-	function onSelectPricklyPlainsBait(){
+	function onSelectPricklyPlainsBait() {
 		//console.log("run onSelectPricklyPlainsBait()");
 		savePricklyPlains();
 	}
@@ -14990,7 +15031,7 @@ function onIdAdsClicked() {
 					initControlsGWH2016(data);
 				}
 			},
-			'Queso Canyon':{
+			'Queso Canyon': {
 				arr: ['trPricklyPlainsBait'],
 				init: function (data) {
 
