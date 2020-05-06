@@ -232,8 +232,8 @@
 		}
 	};
 
-	var bestRiftWeapon = 'Timesplit Dissonance';
-	var bestRiftBase = 'Clockwork Base';
+	var bestRiftWeapon = 'Celestial Dissonance';
+	var bestRiftBase = 'Prestige Base';
 	// // Fiery Warpath Preference
 	var commanderCharm = ['Super Warpath Commander\'s', 'Warpath Commander\'s'];
 	var objPopulation = {
@@ -928,11 +928,12 @@ function valourRift() {
 		// trinketEclipse: 'Rift Ultimate Power Charm',
 		// trinketEclipseUmbra: 'Rift Ultimate Power Charm',
 		trinketInside: 'Eggstra Charm', // for easter event
-		trinketInsideUmbra: 'Rift Airship Charm',
-		umbraHighThreshold: 9,
+		trinketInsideUmbra: ["Rift Super Power Charm", 'Rift Airship Charm'],
+		umbraHighMin: 9,
+		umbraHighMax: 56,
 		trinketInsideUmbraHigh: 'Rift Ultimate Power Charm', //more powerful charm at higher floors
-		trinketEclipse: 'Rift Ultimate Power Charm', //doesn't drop egg?
-		trinketEclipseUmbra: 'Eggstra Charm',
+		trinketEclipse: ["Rift Super Power Charm", 'Rift Airship Charm'], //doesn't drop egg?
+		trinketEclipseUmbra: 'Rift Ultimate Power Charm',
 		baitOutside: 'Brie String',
 		baitInside: 'Gauntlet String Cheese',
 		fireEclipse: true,
@@ -959,7 +960,7 @@ function valourRift() {
 				checkThenArm(null, 'trinket', objValourRift.trinketEclipseUmbra);
 				armDisarmFire(objValourRift.fireEclipseUmbra);
 			} else { //not eclipse
-				if (user.quests.QuestRiftValour.floor >= objValourRift.umbraHighThreshold) {
+				if (user.quests.QuestRiftValour.floor >= objValourRift.umbraHighMin && user.quests.QuestRiftValour.floor <= objValourRift.umbraHighMax) {
 					checkThenArm(null, 'trinket', objValourRift.trinketInsideUmbraHigh);
 				} else {
 					checkThenArm(null, 'trinket', objValourRift.trinketInsideUmbra);
