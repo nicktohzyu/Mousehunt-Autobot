@@ -1,7 +1,10 @@
 # Change Log
+## [2.5.2.3] 2019-05-11
+Temp bug fix for when a multioption arm is used and one runs out causing the other options not to be selected
+updated valor rift and queso geyser
+moved injected html display element to right place (due to change in game code)
 ## [2.5.2.2] 2019-04-23
 Global variables for coordination between event/location scripts
-moved injected html display element to right place (due to change in game code)
 Updated queso geyser
 Updated valor rift ultimate eclipse
 ## [2.5.2.1] 2019-02-01
