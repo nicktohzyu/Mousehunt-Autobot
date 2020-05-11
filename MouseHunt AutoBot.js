@@ -461,8 +461,11 @@
 	var separator = "~";
 	var selAlgo = getStorageToVariableStr("locationBot", "None");
 	var eventBot = getStorageToVariableStr("eventBot", "None");
-	var useCharm = false; //for event
-
+	var useCharm = true; //for event
+	if(!useCharm){
+		console.log("Warning: charm use turned off for location bots")
+	}
+	var genericCharm = "Unstable"; //for when there's no need to use a charm
 	// element in page
 	var titleElement;
 	var nextHornTimeElement;
@@ -923,16 +926,13 @@ function valourRift() {
 		weapon: bestRiftWeapon,
 		base: bestRiftBase,
 		trinketOutside: 'Super Rift Vacuum Charm',
-		// trinketInside: 'Super Rift Vacuum Charm',
-		// trinketInsideUmbra: 'Super Rift Vacuum Charm',
-		// trinketEclipse: 'Rift Ultimate Power Charm',
-		// trinketEclipseUmbra: 'Rift Ultimate Power Charm',
-		trinketInside: 'Eggstra Charm', // for easter event
-		trinketInsideUmbra: ["Rift Super Power Charm", 'Rift Airship Charm'],
-		umbraHighMin: 9,
-		umbraHighMax: 56,
-		trinketInsideUmbraHigh: 'Rift Ultimate Power Charm', //more powerful charm at higher floors
+		trinketInside: 'Super Rift Vacuum Charm',
 		trinketEclipse: ["Rift Super Power Charm", 'Rift Airship Charm'], //doesn't drop egg?
+		// trinketInsideUmbra: 'Super Rift Vacuum Charm',
+		trinketInsideUmbra: ["Rift Super Power Charm", 'Rift Airship Charm'],
+		umbraHighMin: 0,
+		umbraHighMax: 80,
+		trinketInsideUmbraHigh: 'Rift Ultimate Power Charm', //more powerful charm at higher floors
 		trinketEclipseUmbra: 'Rift Ultimate Power Charm',
 		baitOutside: 'Brie String',
 		baitInside: 'Gauntlet String Cheese',
@@ -1513,9 +1513,10 @@ function quesoGeyser() { // create object with equipment to use
 
 	}
 	var quesoList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", "Flamin' Queso", "Wildfire Queso"];
-	var charmList = ["none", "none", "Ancient Charm", "Rainbow Luck Charm", "Festive Ultimate Luck Charm", "Dragonbane Charm"]; //dragonbane?
-	var eruptionCharmList = ["none", "none", "Ancient Charm", "Rainbow Luck Charm", "Festive Ultimate Luck Charm", ["Super Dragonbane Charm", "Dragonbane Charm"]]; //dragonbane?
-	var eruptionTonicList = [false, false, false, false, true, true];
+	var eruptionBaitList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", "Wildfire Queso"];
+	var charmList = [genericCharm, genericCharm, "Ancient Charm", "Rainbow Luck Charm", "Festive Ultimate Luck Charm", "Dragonbane Charm"]; //dragonbane?
+	var eruptionCharmList = [genericCharm, genericCharm, genericCharm, "Ancient Charm", "Rainbow Luck Charm", ["Super Dragonbane Charm", "Dragonbane Charm"]]; //dragonbane?
+	var eruptionTonicList = [false, false, false, false, false, true];
 	var armQuesoButtons = []; //not in use
 	for (i = 0; i < 6; i++) {
 		armQuesoButtons[i] = document.getElementsByClassName("quesoHUD-bait-group-cheeseImage")[i].getElementsByClassName("mousehuntItem-boundingBox")[0];
@@ -1594,7 +1595,7 @@ function quesoGeyser() { // create object with equipment to use
 	}
 	else if (phase == "eruption") {
 		if (huntsRemaining > 0) {
-			checkThenArm(null, 'bait', quesoList[size + 1]);
+			checkThenArm(null, 'bait', eruptionBaitList[size]);
 			if (useCharm) {
 				checkThenArm(null, "charm", eruptionCharmList[size + 1]);
 			}
@@ -1616,6 +1617,7 @@ function quesoGeyser() { // create object with equipment to use
 	}
 	else if (phase == "none") {
 		var buildCork = true;
+		var craftSmallerCorksWhenEpicAvailable = true;
 		/*if(quesoQuantity[2]>0){
 			checkThenArm(null, 'bait', 'Medium Queso');
 		}
@@ -1630,9 +1632,9 @@ function quesoGeyser() { // create object with equipment to use
 			disarmTonic();
 		}
 		var corkSize = 0; //size of cork to build //small = 1, medium = 2, large = 3, epic = 4
-		if (craftingItemQuantity[3] >= 60) { //disabled until sure of no bugs
+		if (!craftSmallerCorksWhenEpicAvailable && craftingItemQuantity[3] >= 60) { 
 			if (craftingItemQuantity[0] >= 180) {
-				// corkSize = 4;
+				// corkSize = 4; //bot crafting epic disabled
 			}
 		} else if (craftingItemQuantity[2] >= 30) { //add check if enough cheese before building cork
 			if (craftingItemQuantity[0] >= 90) {
@@ -6448,6 +6450,11 @@ function action() {
 		if (!isKingReward) {
 			window.setTimeout(function () {
 				getJournalDetail();
+				if(user.trinket_quantity == 0){ 
+					//temp fix for when a multioption arm is used and one runs out causing the other options not to be selected
+					// TODO: fix within checkthenarm
+					disarmTrap("trinket")
+				}
 				locationBotCheck('action()');
 				//specialFeature('action()');
 				mapHunting();
@@ -6678,7 +6685,7 @@ function embedTimer(targetPage) {
 			var headerElement;
 			if (fbPlatform || hiFivePlatform || mhPlatform) {
 				// console.log("fb/mhPlatform");
-				headerElement = document.getElementsByClassName("pageFrameView-content")[0];
+				headerElement = document.getElementById("overlayContainer");//getElementsByClassName("pageFrameView-content")[0];
 			} else if (mhMobilePlatform) {
 				headerElement = document.getElementById('mobileHorn');
 			}
