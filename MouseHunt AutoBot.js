@@ -40,6 +40,7 @@
 	alert sound when trying to arm charm that user doesn't have
 	run on https://www.mousehuntgame.com/login.php
 	checkthenarm allow a string of preferences
+	alert when trying to arm charm with 0 quantity
 	*/
 
 	/*try {
@@ -1514,8 +1515,8 @@ function quesoGeyser() { // create object with equipment to use
 	}
 	var quesoList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", "Flamin' Queso", "Wildfire Queso"];
 	var eruptionBaitList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", "Wildfire Queso"];
-	var charmList = [genericCharm, genericCharm, "Ancient Charm", "Rainbow Luck Charm", "Festive Ultimate Luck Charm", "Dragonbane Charm"]; //dragonbane?
-	var eruptionCharmList = [genericCharm, genericCharm, genericCharm, "Ancient Charm", "Rainbow Luck Charm", ["Super Dragonbane Charm", "Dragonbane Charm"]]; //dragonbane?
+	var charmList = [genericCharm, genericCharm, "Ancient Charm", "Ancient Charm", "Festive Ultimate Luck Charm", "Dragonbane Charm"]; //dragonbane?
+	var eruptionCharmList = [genericCharm, genericCharm, genericCharm, "Ancient Charm", "Festive Ultimate Luck Charm", ["Super Dragonbane Charm", "Dragonbane Charm"]]; //dragonbane?
 	var eruptionTonicList = [false, false, false, false, false, true];
 	var armQuesoButtons = []; //not in use
 	for (i = 0; i < 6; i++) {
@@ -1626,7 +1627,7 @@ function quesoGeyser() { // create object with equipment to use
 		}*/
 		checkThenArm(null, 'bait', 'Mild Queso');
 		if (useCharm) {
-			disarmTrap("trinket");
+			checkThenArm(null, 'trinket', genericCharm);
 		}
 		if (tonicActive()) {
 			disarmTonic();
@@ -1634,6 +1635,7 @@ function quesoGeyser() { // create object with equipment to use
 		var corkSize = 0; //size of cork to build //small = 1, medium = 2, large = 3, epic = 4
 		if (!craftSmallerCorksWhenEpicAvailable && craftingItemQuantity[3] >= 60) { 
 			if (craftingItemQuantity[0] >= 180) {
+				playAlertSound();
 				// corkSize = 4; //bot crafting epic disabled
 			}
 		} else if (craftingItemQuantity[2] >= 30) { //add check if enough cheese before building cork
@@ -1692,7 +1694,7 @@ function tonicActive() {
 function quesoRiver() {
 	armTonic(false);
 	checkThenArm(null, "base", "Overgrown Ember Stone Base");
-	checkThenArm(null, "weapon", "Ember Prison Core Trap");
+	checkThenArm(null, "weapon", "Queso Factory");
 	checkThenArm(null, "trinket", "Queso Pump Charm");
 	checkThenArm(null, "bait", "Gouda");
 }
