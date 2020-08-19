@@ -233,7 +233,7 @@
 		}
 	};
 
-	var bestRiftWeapon = 'Celestial Dissonance';
+	var bestRiftWeapon = 'Chrome Celestial Dissonance';
 	var bestRiftBase = 'Prestige Base';
 	// // Fiery Warpath Preference
 	var commanderCharm = ['Super Warpath Commander\'s', 'Warpath Commander\'s'];
@@ -923,7 +923,6 @@ function valourRift() {
 	console.log("run Valour Rift bot");
 	var locationData = user.quests.QuestRiftValour;//JSON.parse(getPageVariable('JSON.stringify(user.quests.QuestRiftBristleWoods)'));
 	var objDefaultValourRift = {
-
 		weapon: bestRiftWeapon,
 		base: bestRiftBase,
 		trinketOutside: 'Super Rift Vacuum Charm',
