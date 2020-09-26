@@ -463,7 +463,7 @@
 	var selAlgo = getStorageToVariableStr("locationBot", "None");
 	var eventBot = getStorageToVariableStr("eventBot", "None");
 	var useCharm = true; //for event
-	if(!useCharm){
+	if (!useCharm) {
 		console.log("Warning: charm use turned off for location bots")
 	}
 	var genericCharm = "Unstable"; //for when there's no need to use a charm
@@ -927,25 +927,29 @@ function valourRift() {
 		base: bestRiftBase,
 		trinketOutside: 'Super Rift Vacuum Charm',
 		trinketInside: 'Super Rift Vacuum Charm',
-		trinketEclipse: ["Rift Super Power Charm", 'Rift Airship Charm'], //doesn't drop egg?
+		trinketEclipse: ['Rift Power Charm'], //doesn't drop egg?
 		// trinketInsideUmbra: 'Super Rift Vacuum Charm',
-		trinketInsideUmbra: ["Rift Super Power Charm", 'Rift Airship Charm'],
-		umbraHighMin: 0,
-		umbraHighMax: 80,
-		trinketInsideUmbraHigh: 'Rift Ultimate Power Charm', //more powerful charm at higher floors
-		trinketEclipseUmbra: 'Rift Ultimate Power Charm',
 		baitOutside: 'Brie String',
 		baitInside: 'Gauntlet String Cheese',
 		fireEclipse: true,
-		fireEclipseUmbra: true,
 		fireOtherwise: false,
-		fireOtherwiseUmbra: false
+		umbra: {
+			base: "Signature Series Denture Base",
+			eclipseBase: bestRiftBase,
+			trinketInsideUmbra: ["Rift Super Power Charm", 'Rift Spooky Charm', 'Rift Power Charm'],
+			umbraHighMin: 16,
+			umbraHighMax: 999,
+			trinketInsideUmbraHigh: ['Rift Ultimate Power Charm', 'Rift 2020 Charm', 'Rift Extreme Power Charm', 'Rift Power Charm'], //more powerful charm at higher floors
+			trinketEclipseUmbra: ['Ultimate Charm'], //don't use denture with ultimate
+			fireOtherwiseUmbra: true,
+			fireEclipseUmbra: true,
+		}
 	};
 	var objValourRift = objDefaultValourRift;//TODO: implement user selection
 	// console.log(locationData);
 	checkThenArm(null, 'weapon', objValourRift.weapon);
-	checkThenArm(null, 'base', objValourRift.base);
 	if (user.quests.QuestRiftValour.state == "farming") {
+		checkThenArm(null, 'base', objValourRift.base);
 		armDisarmFire(false);
 		checkThenArm(null, 'trinket', objValourRift.trinketOutside);
 		// console.log("out of tower, arming " + objValourRift.baitOutside);
@@ -956,18 +960,21 @@ function valourRift() {
 		checkThenArm(null, "bait", objValourRift.baitInside);
 		if (user.quests.QuestRiftValour.is_eclipse_mode) {// total eclipse
 			if (user.quests.QuestRiftValour.is_at_eclipse) { //implement eclipse types
+				checkThenArm(null, 'base', objValourRift.umbra.eclipseBase);
 				console.log("total eclipse");
-				checkThenArm(null, 'trinket', objValourRift.trinketEclipseUmbra);
-				armDisarmFire(objValourRift.fireEclipseUmbra);
+				checkThenArm(null, 'trinket', objValourRift.umbra.trinketEclipseUmbra);
+				armDisarmFire(objValourRift.umbra.fireEclipseUmbra);
 			} else { //not eclipse
-				if (user.quests.QuestRiftValour.floor >= objValourRift.umbraHighMin && user.quests.QuestRiftValour.floor <= objValourRift.umbraHighMax) {
-					checkThenArm(null, 'trinket', objValourRift.trinketInsideUmbraHigh);
+				checkThenArm(null, 'base', objValourRift.umbra.base);
+				if (user.quests.QuestRiftValour.floor >= objValourRift.umbra.umbraHighMin && user.quests.QuestRiftValour.floor <= objValourRift.umbra.umbraHighMax) {
+					checkThenArm(null, 'trinket', objValourRift.umbra.trinketInsideUmbraHigh);
 				} else {
-					checkThenArm(null, 'trinket', objValourRift.trinketInsideUmbra);
+					checkThenArm(null, 'trinket', objValourRift.umbra.trinketInsideUmbra);
 				}
-				armDisarmFire(objValourRift.fireOtherwiseUmbra);
+				armDisarmFire(objValourRift.umbra.fireOtherwiseUmbra);
 			}
 		} else {
+			checkThenArm(null, 'base', objValourRift.base);
 			if (user.quests.QuestRiftValour.is_at_eclipse) { //implement eclipse types
 				checkThenArm(null, 'trinket', objValourRift.trinketEclipse);
 				armDisarmFire(objValourRift.fireEclipse);
@@ -1632,7 +1639,7 @@ function quesoGeyser() { // create object with equipment to use
 			disarmTonic();
 		}
 		var corkSize = 0; //size of cork to build //small = 1, medium = 2, large = 3, epic = 4
-		if (!craftSmallerCorksWhenEpicAvailable && craftingItemQuantity[3] >= 60) { 
+		if (!craftSmallerCorksWhenEpicAvailable && craftingItemQuantity[3] >= 60) {
 			if (craftingItemQuantity[0] >= 180) {
 				playAlertSound();
 				// corkSize = 4; //bot crafting epic disabled
@@ -5013,7 +5020,7 @@ function FinalizePuzzleImageAnswer(answer) {
 }
 
 function receiveMessage(event) { //throws error in normal operation, but necessary for KRsolver
-	//if (debug) console.log("Event origin: " + event.origin);
+	if (debug) console.log("in receiveMessage, Event origin: " + event.origin);
 
 	if (!debugKR && !isAutoSolve)
 		return;
@@ -6451,7 +6458,7 @@ function action() {
 		if (!isKingReward) {
 			window.setTimeout(function () {
 				getJournalDetail();
-				if(user.trinket_quantity == 0){ 
+				if (user.trinket_quantity == 0) {
 					//temp fix for when a multioption arm is used and one runs out causing the other options not to be selected
 					// TODO: fix within checkthenarm
 					disarmTrap("trinket")
