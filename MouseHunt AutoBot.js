@@ -91,7 +91,7 @@
 
 
 	// // Play sound when encounter king's reward (true/false)
-	var isKingWarningSound = false;
+	var isKingWarningSound = true;
 
 	// // Which sound to play when encountering king's reward (need to be .mp3)
 	var kingWarningSound = 'https://raw.githubusercontent.com/nicktohzyu/MH/master/sound.mp3';
@@ -421,7 +421,7 @@
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 {
 	// // ERROR CHECKING ONLY: Script debug
-	var debug = false;
+	var debug = true;
 	// // ERROR CHECKING ONLY: KR debug
 	var debugKR = false;
 
@@ -10397,6 +10397,7 @@ function cheeseRearmedAction() {
 
 var alertSoundPlaying = false;
 function playAlertSound() {
+	if(debug) console.log("run playAlertSound");
 	if (alertSoundPlaying) {
 		return;
 	}
@@ -10435,6 +10436,7 @@ function kingRewardAction() {
 	// play music if needed
 
 	if (isKingWarningSound) {
+		if (debug) console.log("playing KR alert sound");
 		playAlertSound();
 	}
 	window.setTimeout(function () {
