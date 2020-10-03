@@ -934,14 +934,14 @@ function valourRift() {
 		fireEclipse: true,
 		fireOtherwise: false,
 		umbra: {
-			base: "Signature Series Denture Base",
+			base: bestRiftBase,
 			eclipseBase: bestRiftBase,
-			trinketInsideUmbra: ["Rift Super Power Charm", 'Rift Spooky Charm', 'Rift Power Charm'],
+			trinketInsideUmbra: ['Super Rift Vacuum Charm'],
 			umbraHighMin: 16,
-			umbraHighMax: 999,
-			trinketInsideUmbraHigh: ['Rift Ultimate Power Charm', 'Rift 2020 Charm', 'Rift Extreme Power Charm', 'Rift Power Charm'], //more powerful charm at higher floors
-			trinketEclipseUmbra: ['Ultimate Charm'], //don't use denture with ultimate
-			fireOtherwiseUmbra: true,
+			umbraHighMax: 50,
+			trinketInsideUmbraHigh: ['Super Rift Vacuum Charm'], //more powerful charm at higher floors
+			trinketEclipseUmbra: ['Rift Power Charm'], //don't use denture with ultimate
+			fireOtherwiseUmbra: false,
 			fireEclipseUmbra: true,
 		}
 	};
