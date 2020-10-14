@@ -778,8 +778,8 @@ function eventBotCheck(caller) {
 		console.log("Running \"" + eventBot + "\" event bot");
 	}
 	switch (eventBot) {
-		case 'Halloween 2019':
-			halloween2019();
+		case 'Halloween 2020':
+			halloween2020();
 			break;
 		case 'Winter 2019':
 			winter2019event();
@@ -885,31 +885,24 @@ function winter2019location() {
 	}
 }
 
-function halloween2019() {
-	//console.log("running halloween2019 bot");
-	var eventData = user.quests.QuestHalloween2019;
+function halloween2020() {
+	//console.log("running halloween2020 bot");
+	var eventData = user.quests.QuestHalloween2020;
 	if (isNullOrUndefined(eventData)) {
 		console.log("Data not available! Event has likely ended");
 		return;
 	}
 
-	if (currentLocation.indexOf("Queso River") >= 0) {
-		checkThenArm(null, "base", "Overgrown Ember Stone Base");
-		checkThenArm(null, "weapon", "Golem Guardian Physical Trap");
-		checkThenArm(null, "charm", "Unstable Charm");
-		checkThenArm(null, 'bait', "Ghastly Galleon Gouda"); //add check if have cheese, if not use bland
-	}
-
-	if (user.quests.QuestHalloween2019.has_reward) {
+	if (user.quests.QuestHalloween2020.has_reward) {
 		console.log("claiming reward");
 		document.getElementsByClassName("mousehuntActionButton halloweenHUD-campBanner-claimReward")[0].click();
 	}
-	if (!user.quests.QuestHalloween2019.is_cannon_enabled && !user.quests.QuestHalloween2019.is_long_range_cannon_enabled && user.bait_name != "Ghastly Galleon Gouda") {
+	if (!user.quests.QuestHalloween2020.is_cannon_enabled && !user.quests.QuestHalloween2020.is_long_range_cannon_enabled && user.bait_name != "Ghastly Galleon Gouda") {
 		console.log("cannon not firing");
-		if (user.quests.QuestHalloween2019.items.long_range_cannonball_stat_item.quantity > 0) {
+		if (user.quests.QuestHalloween2020.items.long_range_cannonball_stat_item.quantity > 0) {
 			console.log("arming ghostfire cannonball");
 			document.getElementsByClassName("halloweenHUD-campBanner-cannonBall-button default")[1].click();
-		} else if (user.quests.QuestHalloween2019.items.ethereal_cannonball_stat_item.quantity > 0) {
+		} else if (user.quests.QuestHalloween2020.items.ethereal_cannonball_stat_item.quantity > 0) {
 			console.log("arming regular cannonball");
 			document.getElementsByClassName("halloweenHUD-campBanner-cannonBall-button default")[0].click();
 		}
@@ -7446,7 +7439,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<td style="height:24px">';
 				preferenceHTMLStr += '<select id="eventBotSelect" style="width:150px" onChange="window.sessionStorage.setItem(\'eventBot\', value); showOrHideTr(value);">';
 				preferenceHTMLStr += '<option value="None">None</option>';
-				preferenceHTMLStr += '<option value="Halloween 2019">Halloween 2019</option>';
+				preferenceHTMLStr += '<option value="Halloween 2020">Halloween 2020</option>';
 				preferenceHTMLStr += '<option value="Winter 2019">Winter 2019</option>';
 				preferenceHTMLStr += '<option value="Lunar New Year 2019">Lunar New Year 2019</option>';
 				preferenceHTMLStr += '<option value="Birthday 2020">Birthday 2020</option>';
