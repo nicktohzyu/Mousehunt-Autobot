@@ -5067,7 +5067,7 @@ function CallKRSolver() {
 		if (debug) console.log("Captcha Image fetched:")
 		if (debug) console.log(img);
 
-		frame.src = img.style.backgroundImage.slice(4, -1).replace(/"/g, "");
+		frame.src = img.querySelector('img').src;
 		/*} else {
 			img = document.getElementById('puzzleImage');
 			frame.src = img.src;
