@@ -1,7 +1,7 @@
 {
 	// ==UserScript== // @name        MouseHunt AutoBot ENHANCED + REVAMP
 	// @author      ntzy, NobodyRandom, Hazado, Ooi Keng Siang, CnN
-	// @version    	2.5.2.1
+	// @version    	2.5.2.2
 	// @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 	// @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 	// @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -5301,6 +5301,7 @@ function exeScript() {
 				window.location.href == "http://www.mousehuntgame.com/canvas/#" ||
 				window.location.href == "https://www.mousehuntgame.com/canvas/" ||
 				window.location.href == "https://www.mousehuntgame.com/canvas/#" ||
+				window.location.href == "https://www.mousehuntgame.com/camp.php" ||
 				window.location.href.indexOf("mousehuntgame.com/canvas/index.php") != -1 ||
 				window.location.href.indexOf("mousehuntgame.com/canvas/turn.php") != -1 ||
 				window.location.href.indexOf("mousehuntgame.com/canvas/?newpuzzle") != -1 ||
@@ -5342,6 +5343,7 @@ function exeScript() {
 				window.location.href == "https://www.mousehuntgame.com/" ||
 				window.location.href == "https://www.mousehuntgame.com/#" ||
 				window.location.href == "https://www.mousehuntgame.com/?switch_to=standard" ||
+				window.location.href == "https://www.mousehuntgame.com/camp.php" ||
 				window.location.href.indexOf("mousehuntgame.com/turn.php") != -1 ||
 				window.location.href.indexOf("mousehuntgame.com/?newpuzzle") != -1 ||
 				window.location.href.indexOf("mousehuntgame.com/index.php") != -1) {
@@ -6693,10 +6695,12 @@ function embedTimer(targetPage) {
 
 			if (headerElement) {
 				var timerDivElement = document.createElement('div');
+				timerDivElement.setAttribute('id', 'timerDivElement');
 
 				// show bot title and version
 				var titleElement = document.createElement('div');
 				titleElement.setAttribute('id', 'titleElement');
+				console.log("added titleElement")
 				if (targetPage && aggressiveMode) {
 					titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/32971-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing" + (isNewUI ? " ~ Beta UI" : "") + "</b> - <font color='red'>Aggressive Mode</font>";
 				} else {
