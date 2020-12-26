@@ -6890,6 +6890,7 @@ function embedTimer(targetPage) {
 
 					// player currently navigating other page instead of hunter camp
 					var helpTextElement = document.createElement('div');
+					setTimeout(playAlertSound, 300*1000); //alert user after 5 mins
 					helpTextElement.setAttribute('id', 'helpTextElement');
 					if (fbPlatform) {
 						if (secureConnection) {
@@ -10394,7 +10395,7 @@ function cheeseRearmedAction() {
 
 var alertSoundPlaying = false;
 function playAlertSound() {
-	if(debug) console.log("run playAlertSound");
+	if (debug) console.log("run playAlertSound");
 	if (alertSoundPlaying) {
 		return;
 	}
