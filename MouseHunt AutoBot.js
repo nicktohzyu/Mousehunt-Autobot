@@ -665,8 +665,8 @@ function locationBotCheck(caller) {
 		case 'Winter 2015':
 			Winter2015();
 			break;
-		case 'Winter 2019':
-			winter2019location();
+		case 'Winter 2020':
+			winter2020location();
 			break;
 		case 'GWH2016R':
 			gwh();
@@ -784,9 +784,6 @@ function eventBotCheck(caller) {
 		case 'Halloween 2020':
 			halloween2020();
 			break;
-		case 'Winter 2019':
-			winter2019event();
-			break;
 		case 'Lunar New Year 2019':
 			lny2020event();
 			break;
@@ -834,62 +831,96 @@ function lny2020event() {
 	}
 }
 
-function winter2019event() {
-	//console.log("running winter 2019 bot");
-	//add date check
-	//var advent_calendar_claims = document.getElementsByClassName("canClaim")
-	// if(advent_calendar_claims.length > 0){
-	// 	console.log("claiming advent calendar");
-	// 	advent_calendar_claims[0].click();
-	// } else{
-	// 	console.log("no advent calendar claim available");
-	// }
-}
+function winter2020location() {
+	const NUM_GOLEMS_TO_USE = 1;
+	// TODO: max golem level
+	const ALERT_IF_NO_PARTS = true;
+	const BUILD_GOLEMS = true;
+	const ALERT_IF_CAN_UPGRADE = true;
+	const BUILD_IF_CAN_UPGRADE = true;
+	const DEFAULT_CHEESE = "SUPER|brie+";
+	const DEFAULT_CHARM = "Winter Charm";
+	console.log("running winter 2020 location bot");
 
-function winter2019location() {
-	console.log("running winter 2019 location bot");
 	if (getCurrentLocation().indexOf("Festive Comet") < 0 && getCurrentLocation().indexOf("Frozen Vacant Lot") < 0) {
 		return;
 	}
-	if (getBaitQuantity() < 1) {
-		checkThenArm(null, "bait", "Gouda");
+
+	// checkThenArm(null, "base", ["Gift of the Day Base", bestPowerBase]);
+	
+	if (getBaitQuantity() < 1) { //out of PP
+		checkThenArm(null, "bait", DEFAULT_CHEESE);
+		checkThenArm(null, "trinket", DEFAULT_CHARM);
 	}
-	if (user.quests.QuestWinterHunt2019.comet.can_explode) {
+
+	const golems = user.quests.QuestWinterHunt2020.golems;
+	if (user.quests.QuestWinterHunt2020.comet.can_explode) {
 		console.log("detonate");
-		document.getElementsByClassName("winterHunt2019HUD-dynamiteButton active")[0].click();
-		setTimeout(winter2019location, rand(600, 800));
+		document.getElementsByClassName("winterHunt2020HUD-dynamiteButton active")[0].click();
+		setTimeout(winter2020location, rand(600, 800));
 		return;
 	}
-	if (user.quests.QuestWinterHunt2019.items.golem_part_head_stat_item.quantity < 1 ||
-		user.quests.QuestWinterHunt2019.items.golem_part_torso_stat_item.quantity < 1 ||
-		user.quests.QuestWinterHunt2019.items.golem_part_limb_stat_item.quantity < 4) {
+
+	function sufficientPartsToBuild() {
+		return user.quests.QuestWinterHunt2020.items.golem_part_head_stat_item.quantity >= 1 &&
+			user.quests.QuestWinterHunt2020.items.golem_part_torso_stat_item.quantity >= 1 &&
+			user.quests.QuestWinterHunt2020.items.golem_part_limb_stat_item.quantity >= 4
+	}
+	if (ALERT_IF_NO_PARTS && !sufficientPartsToBuild()) {
 		playAlertSound();
 	}
+
+	function checkCanUpgrade() {
+		for (let i = 0; i < NUM_GOLEMS_TO_USE; i++) {
+			if (golems[i].can_upgrade) {
+				console.log("can upgrade golem " + i);
+				playAlertSound();
+				return true;
+			}
+		}
+		return false;
+	}
+	const canUpgrade = checkCanUpgrade();
+
 	checkGolem(0);
 	function checkGolem(n) {
-		if (n > 2) return; //only do 2 golems
-		var golems = user.quests.QuestWinterHunt2019.golems;
-		console.log("check golem " + n);
-		if (golems[n].can_claim) {
-			console.log("claiming golem " + n);
-			document.getElementsByClassName("winterHunt2019HUD-golemBuilder   mousehuntTooltipParent canClaim plural")[0].click();
-			setTimeout(winter2019location, rand(600, 800)); //after claim check if can explode
+		if (n >= NUM_GOLEMS_TO_USE) {
 			return;
 		}
-		else if (golems[n].can_build) {
+		console.log("checking golem " + n);
+		if (golems[n].can_claim) {
+			console.log("claiming golem " + n);
+			document.getElementsByClassName("winterHunt2020HUD-golemBuilder   mousehuntTooltipParent canClaim plural")[0].click();
+			setTimeout(winter2020location, rand(600, 800)); //after claim check if can explode
+			return;
+		}
+		if (golems[n].can_build) {
+			if (!BUILD_GOLEMS) { //can build but don't
+				playAlertSound();
+				next();
+				return;
+			}
+			if (canUpgrade){
+				if(ALERT_IF_CAN_UPGRADE){
+					playAlertSound();
+				}
+				if(!BUILD_IF_CAN_UPGRADE){
+					next();
+					return;
+				}
+			}
 			console.log("building golem " + n);
-			document.getElementsByClassName("winterHunt2019HUD-golemBuilder-status canBuild")[n].children[0].click();
+			document.getElementsByClassName("winterHunt2020HUD-golemBuilder-status canBuild")[n].children[0].click();
 			setTimeout(function () {
-				document.getElementsByClassName("winterHunt2019HUD-popup-sendGolemButton")[n].click();
+				document.getElementsByClassName("winterHunt2020HUD-popup-sendGolemButton")[n].click();
 				setTimeout(reloadPage, rand(2000, 2500), n);
 			}, rand(1000, 1200));
 			return;
 		}
-		if (golems[n].can_upgrade && n === 0) { //can upgrade, alert user
-			console.log("can upgrade golem " + n);
-			playAlertSound();
+
+		function next(){
+			setTimeout(checkGolem, rand(600, 800), n + 1); //check the next golem
 		}
-		setTimeout(checkGolem, rand(600, 800), n + 1); //check the next golem
 	}
 }
 
@@ -7453,7 +7484,6 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<select id="eventBotSelect" style="width:150px" onChange="window.sessionStorage.setItem(\'eventBot\', value); showOrHideTr(value);">';
 				preferenceHTMLStr += '<option value="None">None</option>';
 				preferenceHTMLStr += '<option value="Halloween 2020">Halloween 2020</option>';
-				preferenceHTMLStr += '<option value="Winter 2019">Winter 2019</option>';
 				preferenceHTMLStr += '<option value="Lunar New Year 2019">Lunar New Year 2019</option>';
 				preferenceHTMLStr += '<option value="Birthday 2020">Birthday 2020</option>';
 				preferenceHTMLStr += '</select>';
@@ -7472,7 +7502,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Bristle Woods Rift">Bristle Woods Rift</option>';
 				preferenceHTMLStr += '<option value="Queso Canyon">Queso Canyon</option>';
 				preferenceHTMLStr += '<option value="Valour Rift">Valour Rift</option>';
-				// preferenceHTMLStr += '<option value="Winter 2019">Winter 2019</option>';
+				preferenceHTMLStr += '<option value="Winter 2020">Winter 2020</option>';
 				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
 				/*preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
 				preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
