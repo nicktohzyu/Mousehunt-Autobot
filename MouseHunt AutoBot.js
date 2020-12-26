@@ -760,7 +760,10 @@ function locationBotCheck(caller) {
 		case 'Furoma Rift':
 			fRift();
 			break;
+		case 'None':
+			break;
 		default:
+			console.log("Error: invalid location bot choice of \"" + selAlgo + "\"");
 			break;
 	}
 }
@@ -789,6 +792,11 @@ function eventBotCheck(caller) {
 			break;
 		case 'Birthday 2020':
 			birthday2020();
+			break;
+		case 'None':
+			break;
+		default:
+			console.log("Error: invalid event bot choice of \"" + eventBot + "\"");
 			break;
 	}
 }
