@@ -1,13 +1,18 @@
 # Change Log
-## [2.5.2.3] 2019-05-11
+## [2.5.3.0] 2021-01-04
+fix functionality to match changes on MH side (2020-10)
+add error detection in bot caller
+add alert when away from main page for certain time
+winter 2020 event functionality
+## [2.5.2.3] 2020-05-11
 Temp bug fix for when a multioption arm is used and one runs out causing the other options not to be selected
 updated valor rift and queso geyser
 moved injected html display element to right place (due to change in game code)
-## [2.5.2.2] 2019-04-23
+## [2.5.2.2] 2020-04-23
 Global variables for coordination between event/location scripts
 Updated queso geyser
 Updated valor rift ultimate eclipse
-## [2.5.2.1] 2019-02-01
+## [2.5.2.1] 2020-02-01
 Updated queso geyser
 Updated valor rift
 ## [2.5.2.0] 2020-01-28
