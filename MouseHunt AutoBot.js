@@ -832,13 +832,13 @@ function lny2020event() {
 }
 
 function winter2020location() {
-	const NUM_GOLEMS_TO_USE = 1;
+	const NUM_GOLEMS_TO_USE = 3;
 	// TODO: max golem level
 	const ALERT_IF_NO_PARTS = true;
 	const BUILD_GOLEMS = true;
 	const ALERT_IF_CAN_UPGRADE = true;
 	const BUILD_IF_CAN_UPGRADE = true;
-	const DEFAULT_CHEESE = "SUPER|brie+";
+	const DEFAULT_CHEESE = "gouda";
 	const DEFAULT_CHARM = "Winter Charm";
 	console.log("running winter 2020 location bot");
 
@@ -856,7 +856,7 @@ function winter2020location() {
 	const golems = user.quests.QuestWinterHunt2020.golems;
 	if (user.quests.QuestWinterHunt2020.comet.can_explode) {
 		console.log("detonate");
-		document.getElementsByClassName("winterHunt2020HUD-dynamiteButton active")[0].click();
+		document.getElementsByClassName("winterHunt2020HUD-dynamiteButton")[0].click();
 		setTimeout(winter2020location, rand(600, 800));
 		return;
 	}
@@ -891,7 +891,7 @@ function winter2020location() {
 		if (golems[n].can_claim) {
 			console.log("claiming golem " + n);
 			document.getElementsByClassName("winterHunt2020HUD-golemBuilder   mousehuntTooltipParent canClaim plural")[0].click();
-			setTimeout(winter2020location, rand(600, 800)); //after claim check if can explode
+			setTimeout(reloadPage, rand(2000, 2500));
 			return;
 		}
 		if (golems[n].can_build) {
@@ -913,10 +913,11 @@ function winter2020location() {
 			document.getElementsByClassName("winterHunt2020HUD-golemBuilder-status canBuild")[n].children[0].click();
 			setTimeout(function () {
 				document.getElementsByClassName("winterHunt2020HUD-popup-sendGolemButton")[n].click();
-				setTimeout(reloadPage, rand(2000, 2500), n);
+				setTimeout(reloadPage, rand(2000, 2500));
 			}, rand(1000, 1200));
 			return;
 		}
+		next();
 
 		function next(){
 			setTimeout(checkGolem, rand(600, 800), n + 1); //check the next golem
@@ -6929,7 +6930,7 @@ function embedTimer(targetPage) {
 
 					// player currently navigating other page instead of hunter camp
 					var helpTextElement = document.createElement('div');
-					setTimeout(playAlertSound, 300*1000); //alert user after 5 mins
+					setTimeout(playAlertSound, 60*1000); //alert user after 1 min (somehow if set to 5 min it doesn't work properly)
 					helpTextElement.setAttribute('id', 'helpTextElement');
 					if (fbPlatform) {
 						if (secureConnection) {
