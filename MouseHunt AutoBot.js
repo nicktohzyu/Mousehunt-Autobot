@@ -788,8 +788,8 @@ function eventBotCheck(caller) {
 		case 'Lunar New Year 2019':
 			lny2020event();
 			break;
-		case 'Birthday 2020':
-			birthday2020();
+		case 'Birthday 2021':
+			birthday2021();
 			break;
 		case 'None':
 			break;
@@ -799,13 +799,13 @@ function eventBotCheck(caller) {
 	}
 }
 
-function birthday2020() { //basic, just equips stuff
+function birthday2021() { //basic, just equips stuff
 	console.log("In Birthday2020(), getting location");
 	if (getCurrentLocation().indexOf("SUPER|brie+ Factory") < 0) {
 		return;
 	}
 	// console.log("getting bait quantity");
-	if (getBaitQuantity() == 0 || user.quests.QuestBirthday2020.factory_atts.boss_warning) {
+	if (getBaitQuantity() == 0 || user.quests.QuestSuperBrieFactory.factory_atts.boss_warning) {
 		checkThenArm(null, 'bait', 'Gouda Cheese');
 	}
 
@@ -814,9 +814,9 @@ function birthday2020() { //basic, just equips stuff
 		checkThenArm(null, 'trinket', 'Enerchi Charm');
 		checkThenArm(null, 'base', 'Attuned Enerchi Induction Base');
 	}
-	if (user.quests.QuestBirthday2020.factory_atts.can_claim) {
+	if (user.quests.QuestSuperBrieFactory.factory_atts.can_claim) {
 		console.log("can claim");
-		document.getElementsByClassName("birthday2020HUD-claimButton mousehuntTooltipParent")[0].click();
+		document.getElementsByClassName("superBrieFactoryHUD-claimButton")[0].click();
 	}
 	return;
 }
@@ -7487,7 +7487,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="None">None</option>';
 				preferenceHTMLStr += '<option value="Halloween 2020">Halloween 2020</option>';
 				preferenceHTMLStr += '<option value="Lunar New Year 2019">Lunar New Year 2019</option>';
-				preferenceHTMLStr += '<option value="Birthday 2020">Birthday 2020</option>';
+				preferenceHTMLStr += '<option value="Birthday 2021">Birthday 2021</option>';
 				preferenceHTMLStr += '</select>';
 				preferenceHTMLStr += '</td>';
 				preferenceHTMLStr += '</tr>';
