@@ -1,29 +1,30 @@
+// ==UserScript== 
+// @name        MouseHunt AutoBot ENHANCED + REVAMP
+// @author      ntzy, NobodyRandom, Hazado, Ooi Keng Siang, CnN
+// @version    	2.5.3.0
+// @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
+// @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
+// @require     https://code.jquery.com/jquery-2.2.2.min.js
+// @require     https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=132819
+// @require     https://greasyfork.org/scripts/16046-ocrad/code/OCRAD.js?version=100053
+// @require     https://greasyfork.org/scripts/16036-mh-auto-kr-solver/code/MH%20Auto%20KR%20Solver.js?version=102270
+// @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
+// @license 	GPL-3.0+; http://www.gnu.org/copyleft/gpl.html
+// @include		http://mousehuntgame.com/*
+// @include		https://mousehuntgame.com/*
+// @include		http://www.mousehuntgame.com/*
+// @include		https://www.mousehuntgame.com/*
+// @include		http://apps.facebook.com/mousehunt/*
+// @include		https://apps.facebook.com/mousehunt/*
+// @include		http://hi5.com/friend/games/MouseHunt*
+// @include		http://mousehunt.hi5.hitgrab.com/*
+// @exclude		http://*.google.com/*
+// @exclude		https://*.google.com/*
+// @grant		unsafeWindow
+// @grant		GM_info
+// @run-at		document-end
+// ==/UserScript==
 {
-	// ==UserScript== // @name        MouseHunt AutoBot ENHANCED + REVAMP
-	// @author      ntzy, NobodyRandom, Hazado, Ooi Keng Siang, CnN
-	// @version    	2.5.3.0
-	// @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
-	// @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
-	// @require     https://code.jquery.com/jquery-2.2.2.min.js
-	// @require     https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=132819
-	// @require     https://greasyfork.org/scripts/16046-ocrad/code/OCRAD.js?version=100053
-	// @require     https://greasyfork.org/scripts/16036-mh-auto-kr-solver/code/MH%20Auto%20KR%20Solver.js?version=102270
-	// @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
-	// @license 	GPL-3.0+; http://www.gnu.org/copyleft/gpl.html
-	// @include		http://mousehuntgame.com/*
-	// @include		https://mousehuntgame.com/*
-	// @include		http://www.mousehuntgame.com/*
-	// @include		https://www.mousehuntgame.com/*
-	// @include		http://apps.facebook.com/mousehunt/*
-	// @include		https://apps.facebook.com/mousehunt/*
-	// @include		http://hi5.com/friend/games/MouseHunt*
-	// @include		http://mousehunt.hi5.hitgrab.com/*
-	// @exclude		http://*.google.com/*
-	// @exclude		https://*.google.com/*
-	// @grant		unsafeWindow
-	// @grant		GM_info
-	// @run-at		document-end
-	// ==/UserScript==
 	/* TODO:
 	rewrite script so locationBotcheck is settled before sounding horn (on load set flag to false, only horn when true),
 	work on default best trap/base settings/global "best trap of x power type",
