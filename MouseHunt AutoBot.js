@@ -1555,7 +1555,7 @@ function quesoGeyser() { // create object with equipment to use
 
 	}
 	var quesoList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", "Flamin' Queso", "Wildfire Queso"];
-	var eruptionBaitList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", "Wildfire Queso"];
+	var eruptionBaitList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", ["Wildfire Queso", "Flamin' Queso"]];
 	var charmList = [genericCharm, genericCharm, "Ancient Charm", "Ancient Charm", "Festive Ultimate Luck Charm", "Dragonbane Charm"]; //dragonbane?
 	var eruptionCharmList = [genericCharm, genericCharm, genericCharm, "Ancient Charm", "Festive Ultimate Luck Charm", ["Super Dragonbane Charm", "Dragonbane Charm"]]; //dragonbane?
 	var eruptionTonicList = [false, false, false, false, false, true];
@@ -1667,7 +1667,7 @@ function quesoGeyser() { // create object with equipment to use
 	}
 	else if (phase == "none") {
 		var buildCork = true;
-		var craftSmallerCorksWhenEpicAvailable = true;
+		var skipEpic = false;
 		/*if(quesoQuantity[2]>0){
 			checkThenArm(null, 'bait', 'Medium Queso');
 		}
@@ -1682,7 +1682,7 @@ function quesoGeyser() { // create object with equipment to use
 			disarmTonic();
 		}
 		var corkSize = 0; //size of cork to build //small = 1, medium = 2, large = 3, epic = 4
-		if (!craftSmallerCorksWhenEpicAvailable && craftingItemQuantity[3] >= 60) {
+		if (!skipEpic && craftingItemQuantity[3] >= 60) {
 			if (craftingItemQuantity[0] >= 180) {
 				playAlertSound();
 				// corkSize = 4; //bot crafting epic disabled
