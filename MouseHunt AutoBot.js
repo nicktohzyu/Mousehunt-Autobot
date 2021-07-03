@@ -236,6 +236,7 @@
 
 	var bestRiftWeapon = 'Chrome Celestial Dissonance';
 	var bestRiftBase = 'Prestige Base';
+	var bestPowerBase = 'Prestige Base';
 	// // Fiery Warpath Preference
 	var commanderCharm = ['Super Warpath Commander\'s', 'Warpath Commander\'s'];
 	var objPopulation = {
@@ -1145,11 +1146,11 @@ function bwRift() { //interface does not work; settings must be done in code
 		objDefaultBWRift.master.activate[14] = true;
 		objDefaultBWRift.master.activate[15] = true;
 
-		objDefaultBWRift.master.trinket[4] = 'Rift Wealth Charm';
-		objDefaultBWRift.master.trinket[12] = 'Rift Wealth Charm';
-		objDefaultBWRift.master.trinket[13] = 'Rift Wealth Charm';
-		objDefaultBWRift.master.trinket[14] = 'Rift Wealth Charm';
-		objDefaultBWRift.master.trinket[15] = 'Rift Wealth Charm';
+		// objDefaultBWRift.master.trinket[4] = 'Rift Wealth Charm';
+		// objDefaultBWRift.master.trinket[12] = 'Rift Wealth Charm';
+		// objDefaultBWRift.master.trinket[13] = 'Rift Wealth Charm';
+		// objDefaultBWRift.master.trinket[14] = 'Rift Wealth Charm';
+		// objDefaultBWRift.master.trinket[15] = 'Rift Wealth Charm';
 	}
 
 	objBWRift = objDefaultBWRift;
@@ -1525,7 +1526,7 @@ function quesoGeyser() { // create object with equipment to use
 		return;
 	}
 	//console.log("running queso geyser bot");
-	checkThenArm(null, "base", "Minotaur Base");
+	checkThenArm(null, "base", bestPowerBase);
 	checkThenArm(null, "weapon", "Chrome Storm Wrought Ballista");
 
 	//get number of resources & each cheese
@@ -1644,14 +1645,22 @@ function quesoGeyser() { // create object with equipment to use
 		}
 		var claimAvailable = document.getElementsByClassName("quesoGeyserHUD-claimContainer reveal").length > 0; //true if avail, false otherwise
 		// console.log("claim available?", claimAvailable);
+		const claimEpic = false;
+		const disarmAfterClaim = false;
+		const alertAfterClaim = true;
 		if (huntsRemaining == 0) { //or check //claim loot after eruption complete
-			playAlertSound();
-			disarmTrap("bait");
-			//disarmTrap("trinket");
-			if (size < 4) { // only claims non-epic
+			if(alertAfterClaim){
+				playAlertSound();
+			}
+			if(disarmAfterClaim){
+				disarmTrap("bait");
+			}
+			if (size < 4 || claimEpic) { //non-epic
 				document.getElementsByClassName("quesoGeyserHUD-claimNestButton default")[0].click(); // can click when not available, just returns unavailable dialogue	
 				//document.getElementsByClassName("jsDialogClose button")[0].click(); //continue button
 				setTimeout(reloadPage, 30000);
+			} else{
+
 			}
 		}
 
@@ -15126,4 +15135,3 @@ function bodyJS() { //don't know what this does but does not affect function
 		initControlsMapHunting();
 		//initControlsSpecialFeature();
 	}
-}
