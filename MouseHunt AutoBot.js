@@ -15135,3 +15135,4 @@ function bodyJS() { //don't know what this does but does not affect function
 		initControlsMapHunting();
 		//initControlsSpecialFeature();
 	}
+}
