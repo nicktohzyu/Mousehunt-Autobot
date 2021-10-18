@@ -610,7 +610,26 @@ function returnRaffle() {
 		}
 	}
 }
+
+function acceptAndReturnAllGifts() { //from the bottom
+	console.log("Accepting and returning all gifts from bottom up");
+	if(!window.confirm("Are you sure you want to accept all gifts? (Starts from the bottom)")){
+		return;
+	}
+
+	document.getElementById("hgbar_freegifts").click();//open inbox tab
+	setTimeout(getEntries, rand(1000, 1100));//wait for it to load
+
+	function getEntries() {
+		const entries = document.getElementsByClassName("mousehuntActionButton return tiny");
+		setTimeout(send, rand(250, 300), entries.length-1);//wait for it to load
+		function send(n) {
+			if(n < 0){
+				return;
 			}
+			console.log("accept-and-return-ing gift " + n);
+			entries[n].click();
+			setTimeout(send, rand(250, 300), n-1);
 		}
 	}
 }
@@ -6905,6 +6924,12 @@ function embedTimer(targetPage) {
 					returnRaffleButton.title = "Returns raffle tickets";
 					returnRaffleButton.onclick = returnRaffle;
 					timerDivElement.appendChild(returnRaffleButton);
+
+					var acceptReturnGiftsButton = document.createElement('span');
+					acceptReturnGiftsButton.innerHTML = '<a> Return all gifts </a> &#126; ';
+					acceptReturnGiftsButton.title = "Accepts and returns all gifts from bottom up";
+					acceptReturnGiftsButton.onclick = acceptAndReturnAllGifts;
+					timerDivElement.appendChild(acceptReturnGiftsButton);
 
 					var sendPresentsButton = document.createElement('span');
 					sendPresentsButton.innerHTML = '<a> Send presents </a>';
