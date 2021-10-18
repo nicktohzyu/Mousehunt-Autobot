@@ -598,13 +598,18 @@ function returnRaffle() {
 	setTimeout(getEntries, rand(1000, 1100));//wait for it to load
 
 	function getEntries() {
-		var entries = document.getElementsByClassName("sendBallot");
-		setTimeout(send, rand(150, 200), 0);//wait for it to load
+		const entries = document.getElementsByClassName("sendBallot");
+		setTimeout(send, rand(150, 200), entries.length-1);//wait for it to load
 		function send(n) {
-			if (n < entries.length) {
-				console.log("returning raffle " + n);
-				entries[n].click();
-				setTimeout(send, rand(200, 250), n + 1);
+			if(n < 0){
+				return;
+			}
+			console.log("returning raffle " + n);
+			entries[n].click();
+			setTimeout(send, rand(200, 250), n-1);
+		}
+	}
+}
 			}
 		}
 	}
@@ -6899,7 +6904,6 @@ function embedTimer(targetPage) {
 					returnRaffleButton.innerHTML = '<a> Return Raffle Tickets </a> &#126; ';
 					returnRaffleButton.title = "Returns raffle tickets";
 					returnRaffleButton.onclick = returnRaffle;
-					//sendPresentsButton.style = "font-size: 15px;";
 					timerDivElement.appendChild(returnRaffleButton);
 
 					var sendPresentsButton = document.createElement('span');
