@@ -599,21 +599,21 @@ function returnRaffle() {
 
 	function getEntries() {
 		const entries = document.getElementsByClassName("sendBallot");
-		setTimeout(send, rand(150, 200), entries.length-1);//wait for it to load
+		setTimeout(send, rand(150, 200), entries.length - 1);//wait for it to load
 		function send(n) {
-			if(n < 0){
+			if (n < 0) {
 				return;
 			}
 			console.log("returning raffle " + n);
 			entries[n].click();
-			setTimeout(send, rand(200, 250), n-1);
+			setTimeout(send, rand(200, 250), n - 1);
 		}
 	}
 }
 
 function acceptAndReturnAllGifts() { //from the bottom
 	console.log("Accepting and returning all gifts from bottom up");
-	if(!window.confirm("Are you sure you want to accept all gifts? (Starts from the bottom)")){
+	if (!window.confirm("Are you sure you want to accept all gifts? (Starts from the bottom)")) {
 		return;
 	}
 
@@ -622,14 +622,14 @@ function acceptAndReturnAllGifts() { //from the bottom
 
 	function getEntries() {
 		const entries = document.getElementsByClassName("mousehuntActionButton return tiny");
-		setTimeout(send, rand(250, 300), entries.length-1);//wait for it to load
+		setTimeout(send, rand(250, 300), entries.length - 1);//wait for it to load
 		function send(n) {
-			if(n < 0){
+			if (n < 0) {
 				return;
 			}
 			console.log("accept-and-return-ing gift " + n);
 			entries[n].click();
-			setTimeout(send, rand(250, 300), n-1);
+			setTimeout(send, rand(250, 300), n - 1);
 		}
 	}
 }
@@ -873,7 +873,7 @@ function winter2020location() {
 	}
 
 	// checkThenArm(null, "base", ["Gift of the Day Base", bestPowerBase]);
-	
+
 	if (getBaitQuantity() < 1) { //out of PP
 		checkThenArm(null, "bait", DEFAULT_CHEESE);
 		checkThenArm(null, "trinket", DEFAULT_CHARM);
@@ -926,11 +926,11 @@ function winter2020location() {
 				next();
 				return;
 			}
-			if (canUpgrade){
-				if(ALERT_IF_CAN_UPGRADE){
+			if (canUpgrade) {
+				if (ALERT_IF_CAN_UPGRADE) {
 					playAlertSound();
 				}
-				if(!BUILD_IF_CAN_UPGRADE){
+				if (!BUILD_IF_CAN_UPGRADE) {
 					next();
 					return;
 				}
@@ -945,7 +945,7 @@ function winter2020location() {
 		}
 		next();
 
-		function next(){
+		function next() {
 			setTimeout(checkGolem, rand(600, 800), n + 1); //check the next golem
 		}
 	}
@@ -1700,17 +1700,17 @@ function quesoGeyser() { // create object with equipment to use
 		const disarmAfterClaim = false;
 		const alertAfterClaim = true;
 		if (huntsRemaining == 0) { //or check //claim loot after eruption complete
-			if(alertAfterClaim){
+			if (alertAfterClaim) {
 				playAlertSound();
 			}
-			if(disarmAfterClaim){
+			if (disarmAfterClaim) {
 				disarmTrap("bait");
 			}
 			if (size < 4 || claimEpic) { //non-epic
 				document.getElementsByClassName("quesoGeyserHUD-claimNestButton default")[0].click(); // can click when not available, just returns unavailable dialogue	
 				//document.getElementsByClassName("jsDialogClose button")[0].click(); //continue button
 				setTimeout(reloadPage, 30000);
-			} else{
+			} else {
 
 			}
 		}
@@ -6996,7 +6996,7 @@ function embedTimer(targetPage) {
 
 					// player currently navigating other page instead of hunter camp
 					var helpTextElement = document.createElement('div');
-					setTimeout(playAlertSound, 60*1000); //alert user after 1 min (somehow if set to 5 min it doesn't work properly)
+					setTimeout(playAlertSound, 60 * 1000); //alert user after 1 min (somehow if set to 5 min it doesn't work properly)
 					helpTextElement.setAttribute('id', 'helpTextElement');
 					if (fbPlatform) {
 						if (secureConnection) {
