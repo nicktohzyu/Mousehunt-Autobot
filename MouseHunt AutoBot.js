@@ -1082,7 +1082,6 @@ function travelToLocation() { //early draft. should only run on https://www.mous
 function bwRift() { //interface does not work; settings must be done in code
 	if (getCurrentLocation().indexOf("Bristle Woods Rift") < 0)
 		return;
-
 	var objDefaultBWRift = {
 		order: ['NONE', 'GEARWORKS', 'ANCIENT', 'RUNIC', 'TIMEWARP', 'GUARD', 'SECURITY', 'FROZEN', 'FURNACE', 'INGRESS', 'PURSUER', 'ACOLYTE_CHARGING', 'ACOLYTE_DRAINING', 'ACOLYTE_DRAINED', 'LUCKY', 'HIDDEN'],
 		master: {
@@ -1142,39 +1141,61 @@ function bwRift() { //interface does not work; settings must be done in code
 		},
 		choosePortal: true,
 		choosePortalAfterCC: false,
-		priorities: ['SECURITY', 'FURNACE', 'PURSUER', 'GUARD', 'FROZEN', 'ACOLYTE', 'LUCKY', 'HIDDEN', 'TIMEWARP', 'ANCIENT', 'RUNIC', 'GEARWORKS', 'GEARWORKS'],
+		priorities: 			['SECURITY', 'FURNACE', 'PURSUER', 'ACOLYTE', 'GUARD', 'FROZEN', 'TIMEWARP', 'ANCIENT', 'HIDDEN', 'LUCKY', 'RUNIC', 'GEARWORKS', 'GEARWORKS'],
+		prioritiesEnoughSand: 	['SECURITY', 'FURNACE', 'PURSUER', 'ACOLYTE', 'GUARD', 'FROZEN', 'ANCIENT', 'HIDDEN', 'TIMEWARP', 'LUCKY', 'RUNIC', 'GEARWORKS', 'GEARWORKS'],
 		prioritiesCursed: ['SECURITY', 'FURNACE', 'PURSUER', 'ANCIENT', 'GEARWORKS', 'RUNIC', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS'],
-		minTimeSand: [70, 70, 65, 65, 60, 60, 55, 55, 999, 999], //8: cursed, 9:second attempt at acolyte
+		//index 0-7 is bitmask of 4th portal, acolyte influence, paladin's bane
+		//8: cursed, 9:second attempt at acolyte (recalculated later)
+		minTimeSand: [65, 65, 60, 60, 55, 55, 50, 50, 999, 999],
 		minRSCType: 'NUMBER',
 		minRSC: 40,
 		enterMinigameWCurse: false
 	};
+	const chambers = {
+		NONE: 0,
+		GEARWORKS: 1,
+		ANCIENT: 2,
+		RUNIC: 3,
+		TIMEWARP: 4,
+		GUARD: 5,
+		SECURITY: 6,
+		FROZEN: 7,
+		FURNACE: 8,
+		INGRESS: 9,
+		PURSUER: 10,
+		ACOLYTE_CHARGING: 11,
+		ACOLYTE_DRAINING: 12,
+		ACOLYTE_DRAINED: 13,
+		LUCKY: 14,
+		HIDDEN: 15
+	}
 	{
-		objDefaultBWRift.master.bait[3] = 'Ancient String';
-		objDefaultBWRift.master.bait[4] = 'Runic String';
-		objDefaultBWRift.master.bait[5] = 'Runic String';
-		objDefaultBWRift.master.bait[7] = 'Runic String';
-		objDefaultBWRift.master.bait[9] = 'Runic String';
-		objDefaultBWRift.master.bait[11] = 'Runic String';
-		objDefaultBWRift.master.bait[12] = 'Runic String';
-		objDefaultBWRift.master.bait[13] = 'Runic String';
-		objDefaultBWRift.master.bait[14] = 'Runic String';
-		objDefaultBWRift.master.bait[15] = 'Runic String';
+		objDefaultBWRift.master.bait[chambers.RUNIC] = 'Ancient String';
+		objDefaultBWRift.master.bait[chambers.TIMEWARP] = 'Runic String';
+		objDefaultBWRift.master.bait[chambers.GUARD] = 'Runic String';
+		objDefaultBWRift.master.bait[chambers.FROZEN] = 'Runic String';
+		objDefaultBWRift.master.bait[chambers.INGRESS] = 'Runic String';
+		objDefaultBWRift.master.bait[chambers.ACOLYTE_CHARGING] = 'Runic String';
+		objDefaultBWRift.master.bait[chambers.ACOLYTE_DRAINING] = 'Runic String';
+		objDefaultBWRift.master.bait[chambers.ACOLYTE_DRAINED] = 'Runic String';
+		objDefaultBWRift.master.bait[chambers.LUCKY] = 'Runic String';
+		objDefaultBWRift.master.bait[chambers.HIDDEN] = 'Runic String';
 
-		objDefaultBWRift.master.activate[4] = true;
-		objDefaultBWRift.master.activate[5] = true;
-		objDefaultBWRift.master.activate[7] = true;
-		objDefaultBWRift.master.activate[9] = true;
-		objDefaultBWRift.master.activate[11] = true;
-		objDefaultBWRift.master.activate[13] = true;
-		objDefaultBWRift.master.activate[14] = true;
-		objDefaultBWRift.master.activate[15] = true;
+		objDefaultBWRift.master.activate[chambers.TIMEWARP] = true;
+		objDefaultBWRift.master.activate[chambers.GUARD] = true;
+		objDefaultBWRift.master.activate[chambers.FROZEN] = true;
+		objDefaultBWRift.master.activate[chambers.INGRESS] = true;
+		objDefaultBWRift.master.activate[chambers.ACOLYTE_CHARGING] = true;
+		objDefaultBWRift.master.activate[chambers.ACOLYTE_DRAINED] = true;
+		objDefaultBWRift.master.activate[chambers.LUCKY] = true;
+		objDefaultBWRift.master.activate[chambers.HIDDEN] = true;
 
 		// objDefaultBWRift.master.trinket[4] = 'Rift Wealth Charm';
 		// objDefaultBWRift.master.trinket[12] = 'Rift Wealth Charm';
 		// objDefaultBWRift.master.trinket[13] = 'Rift Wealth Charm';
 		// objDefaultBWRift.master.trinket[14] = 'Rift Wealth Charm';
 		// objDefaultBWRift.master.trinket[15] = 'Rift Wealth Charm';
+		// objDefaultBWRift.master.trinket[chambers.ACOLYTE_CHARGING] = "Rift Antiskele Charm";
 	}
 
 	objBWRift = objDefaultBWRift;
@@ -1240,7 +1261,6 @@ function bwRift() { //interface does not work; settings must be done in code
 	}
 	if (nTimeSand > objBWRift.minTimeSand[nIndexBuffCurse]) { //Prioritize timesand first, then farm potions while searching for acolyte portal
 		console.log("Enough timesand, using alternate priorities");
-		objBWRift.priorities = ['SECURITY', 'FURNACE', 'PURSUER', 'GUARD', 'FROZEN', 'ACOLYTE', 'LUCKY', 'HIDDEN', 'ANCIENT', 'RUNIC', 'TIMEWARP', 'GEARWORKS', 'GEARWORKS'];
 		objBWRift.master.trinket[4] = 'Rift Super Vacuum Charm';
 		objBWRift.master.activate[4] = false;
 	}
@@ -1263,7 +1283,14 @@ function bwRift() { //interface does not work; settings must be done in code
 				arrIndex: new Array(classPortalContainer[0].children.length).fill(Number.MAX_SAFE_INTEGER)
 			};
 			var i, j;
-			var arrPriorities = (nIndexBuffCurse == 8) ? objBWRift.prioritiesCursed : objBWRift.priorities;
+			let arrPriorities;
+			if (nIndexBuffCurse == 8) {
+				arrPriorities = objBWRift.prioritiesCursed;
+			} else if (nTimeSand > objBWRift.minTimeSand[nIndexBuffCurse]) {
+				arrPriorities = objBWRift.prioritiesEnoughSand;
+			} else {
+				arrPriorities = objBWRift.priorities;
+			}
 			var nIndexCustom = -1;
 			for (i = 0; i < arrPriorities.length; i++) {
 				if (arrPriorities[i].indexOf('AL/RL') > -1) {
