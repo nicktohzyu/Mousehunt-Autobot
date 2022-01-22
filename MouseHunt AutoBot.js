@@ -2500,22 +2500,22 @@ function wwrift() {
 		factionFocus: "CC",
 		factionFocusNext: "Remain",
 		faction: {
-			weapon: new Array(3).fill(''),
-			base: new Array(3).fill(''),
+			weapon: new Array(3).fill(bestRiftWeapon),
+			base: new Array(3).fill(bestRiftBase),
 			trinket: new Array(3).fill('None'),
 			bait: new Array(3).fill('None')
 		},
 		MBW: {
 			minRageLLC: 40,
 			rage4044: {
-				weapon: new Array(7).fill(''),
-				base: new Array(7).fill(''),
+				weapon: new Array(7).fill(bestRiftWeapon),
+				base: new Array(7).fill(bestRiftBase),
 				trinket: new Array(7).fill('None'),
 				bait: new Array(7).fill('None')
 			},
 			rage4548: {
-				weapon: new Array(8).fill(''),
-				base: new Array(8).fill(''),
+				weapon: new Array(8).fill(bestRiftWeapon),
+				base: new Array(8).fill(bestRiftBase),
 				trinket: new Array(8).fill('None'),
 				bait: new Array(8).fill('None')
 			},
@@ -2603,25 +2603,51 @@ function wwrift() {
 		if (objWWRift.MBW.rage4548.trinket[nIndex].indexOf('FSC') > -1) {
 			nIndexCharm = objWWRift.funnelCharm.indexOf(charmArmed);
 			nLimit = (nIndex >= 3) ? 44 : 25;
-			if (nIndexCharm > -1) {
-				if (objWWRift.rage[nIndexCharm] >= nLimit) {
-					temp = minIndex(objWWRift.rage);
-					if (temp > -1)
-						objWWRift.MBW.rage4548.trinket[nIndex] = objWWRift.funnelCharm[temp];
-				}
-				else
-					objWWRift.MBW.rage4548.trinket[nIndex] = charmArmed;
+			temp = minIndex(objWWRift.rage);
+			if (temp > -1) {
+				objWWRift.MBW.rage4548.trinket[nIndex] = objWWRift.funnelCharm[temp];
 			}
-			else {
-				temp = minIndex(objWWRift.rage);
-				if (temp > -1)
-					objWWRift.MBW.rage4548.trinket[nIndex] = objWWRift.funnelCharm[temp];
-			}
+			// if (nIndexCharm > -1) {
+			// 	if (objWWRift.rage[nIndexCharm] >= nLimit) {
+			// 		temp = minIndex(objWWRift.rage);
+			// 		if (temp > -1)
+			// 			objWWRift.MBW.rage4548.trinket[nIndex] = objWWRift.funnelCharm[temp];
+			// 	}
+			// 	else
+			// 		objWWRift.MBW.rage4548.trinket[nIndex] = charmArmed;
+			// }
+			// else {
+			// 	temp = minIndex(objWWRift.rage);
+			// 	if (temp > -1)
+			// 		objWWRift.MBW.rage4548.trinket[nIndex] = objWWRift.funnelCharm[temp];
+			// }
 		}
 		checkThenArm(null, 'trinket', objWWRift.MBW.rage4548.trinket[nIndex]);
 		checkThenArm(null, 'bait', objWWRift.MBW.rage4548.bait[nIndex]);
-	}
-	else {
+	} else if (objWWRift.factionFocus == 'Charge') {
+		console.log("running charge protocol");
+		if(max(objWWRift.rage) >= 1){
+			disarmTrap('bait');
+			playAlertSound();
+			return;
+		}
+		for (i = 0; i < 3; i++) {
+			if (objWWRift.rage[i] >= 25)
+				nBar25++;
+		}
+		if (nBar25 >= 3) {
+			for (i = 0; i < 3; i++) {
+				if (objWWRift.rage[i] >= 44)
+					nBar44++;
+			}
+		}
+		nIndex = nBar25 + nBar44;
+		checkThenArm(null, 'weapon', bestRiftWeapon);
+		checkThenArm(null, 'base', bestRiftBase);
+		charm = objWWRift.funnelCharm[minIndex(objWWRift.rage)];
+		checkThenArm(null, 'trinket', charm);
+		checkThenArm(null, 'bait', nIndex >= 3 ? 'Brie String Cheese' : 'Magical String Cheese');
+	} else {
 		temp = objWWRift.order.indexOf(objWWRift.factionFocus);
 		if (temp == -1)
 			return;
@@ -7572,6 +7598,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Valour Rift">Valour Rift</option>';
 				preferenceHTMLStr += '<option value="Winter 2021">Winter 2021</option>';
 				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
+				preferenceHTMLStr += '<option value="WWRift">WWRift</option>';
 				/*preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
 				preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
 				preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
@@ -7592,7 +7619,6 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
 				preferenceHTMLStr += '<option value="Sunken City Custom">Sunken City Custom</option>';
 				preferenceHTMLStr += '<option value="Test">Test</option>';
-				preferenceHTMLStr += '<option value="WWRift">WWRift</option>';
 				preferenceHTMLStr += '<option value="Zokor">Zokor</option>';
 				preferenceHTMLStr += '<option value="ZT">Zugzwang\'s Tower</option>';*/
 				preferenceHTMLStr += '</select>';
@@ -8122,6 +8148,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="DL">Deep Lagoon</option>';
 				preferenceHTMLStr += '<option value="MBW_40_44">MBW 40 &le; Rage &le; 44</option>';
 				preferenceHTMLStr += '<option value="MBW_45_48">MBW 45 &le; Rage &le; 48</option>';
+				preferenceHTMLStr += '<option value="Charge">Charge rage</option>';
 				preferenceHTMLStr += '</select>';
 				preferenceHTMLStr += '</td>';
 				preferenceHTMLStr += '</tr>';
@@ -8203,6 +8230,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '</td>';
 				preferenceHTMLStr += '<td style="height:24px">';
 				preferenceHTMLStr += '<select id="selectWWRiftMBWTrapWeapon" onchange="saveWWRift();">';
+				preferenceHTMLStr += '<option value="Chrome Celestial Dissonance Trap">CCDT</option>';
 				preferenceHTMLStr += '<option value="Timesplit Dissonance Trap">TDW</option>';
 				preferenceHTMLStr += '<option value="Mysteriously unYielding">MYNORCA</option>';
 				preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
