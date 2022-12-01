@@ -5193,6 +5193,7 @@ function returnGifts() {
 
 function CurrentArmedBait() {
 	return document.getElementsByClassName("mousehuntHud-userStat bait")[0].title;
+	//return user.bait_name;
 }
 
 // CNN KR SOLVER START
@@ -5601,7 +5602,9 @@ function exeScript() {
 				window.location.href.indexOf("mousehuntgame.com/?newpuzzle") != -1 ||
 				window.location.href.indexOf("mousehuntgame.com/index.php") != -1) {
 				// page to execute the script!
-
+				if (debug) {
+					console.log("running on mhPlatform");
+				}
 				// make sure all the preference already loaded
 				loadPreferenceSettingFromStorage();
 
@@ -5676,7 +5679,10 @@ function exeScript() {
 			}
 		}
 	} catch (e) {
-		if (debug) console.log('exeScript error - ' + e)
+		if (debug){
+			console.log('exeScript error - ' + e)
+			console.log(e.stack)
+		}
 	}
 }
 
@@ -6719,6 +6725,7 @@ function action() {
 		}
 	} catch (e) {
 		console.log("action() ERROR - " + e);
+		// console.log(e.stack);
 	}
 }
 
@@ -10666,7 +10673,7 @@ function playAlertSound() {
 	var stopMusicButton = document.createElement('button');
 	stopMusicButton.setAttribute('id', "stopAudio");
 	stopMusicButton.setAttribute('style', 'position: fixed; bottom: 0;');
-	stopMusicButton.setAttribute('onclick', 'hornAudio.pause();');
+	stopMusicButton.setAttribute('onclick', 'hornAudio.pause(); alertSoundPlaying = false;');
 	stopMusicButton.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
 	//stopMusicButton.setAttribute('zIndex', 10); learn to use zIndex
 	targetArea[0].appendChild(stopMusicButton);
