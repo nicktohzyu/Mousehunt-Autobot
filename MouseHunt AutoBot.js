@@ -1,8 +1,8 @@
 // ==UserScript== 
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      ntzy, NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.5.3.0
-// @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
+// @version    	2.6.0
+// @description Automates MouseHunt gameplay.
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
 // @require     https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=132819
@@ -22,7 +22,7 @@
 // @exclude		https://*.google.com/*
 // @grant		unsafeWindow
 // @grant		GM_info
-// @run-at		document-end
+// @run-at		document-idle
 // ==/UserScript==
 {
 	/* TODO:
@@ -468,7 +468,7 @@
 	if (!useCharm) {
 		console.log("Warning: charm use turned off for location bots")
 	}
-	var genericCharm = "Unstable"; //for when there's no need to use a charm
+	var genericCharm = ""; //for when there's no need to use a charm
 	// element in page
 	var titleElement;
 	var nextHornTimeElement;
@@ -479,7 +479,7 @@
 	var travelElement;
 	var hornButton = 'hornbutton';
 	var campButton = 'campbutton';
-	var header = 'header';
+	var header = 'envHeaderImg';
 	var hornReady = 'hornready';
 	var isNewUI = false;
 
@@ -529,6 +529,11 @@
 		}]
 	];
 }
+
+const BAIT = "bait";
+const TRINKET = "trinket";
+const TRAP = "trap";
+
 //remove commas before parseInt
 (function () {
 	var proxied = parseInt;
@@ -622,14 +627,14 @@ function acceptAndReturnAllGifts() { //from the bottom
 
 	function getEntries() {
 		const entries = document.getElementsByClassName("mousehuntActionButton return tiny");
-		setTimeout(send, rand(250, 300), entries.length - 1);//wait for it to load
+		setTimeout(send, rand(1000, 1100), entries.length - 1);//wait for it to load
 		function send(n) {
 			if (n < 0) {
 				return;
 			}
 			console.log("accept-and-return-ing gift " + n);
 			entries[n].click();
-			setTimeout(send, rand(250, 300), n - 1);
+			setTimeout(send, rand(1000, 1100), n - 1);
 		}
 	}
 }
@@ -1123,27 +1128,28 @@ function valourRift() {
 	if (getCurrentLocation().indexOf("Valour Rift") < 0) {
 		return;
 	}
+	const VACUUM_CHARMS = ['Rift Super Vacuum Charm', 'Rift Vacuum Charm'];
 	console.log("run Valour Rift bot");
 	var locationData = user.quests.QuestRiftValour;//JSON.parse(getPageVariable('JSON.stringify(user.quests.QuestRiftBristleWoods)'));
 	var objDefaultValourRift = {
 		weapon: bestRiftWeapon,
 		base: bestRiftBase,
-		trinketOutside: 'Rift Super Vacuum Charm',
-		trinketInside: 'Rift Super Vacuum Charm',
+		trinketOutside: VACUUM_CHARMS,
+		trinketInside: VACUUM_CHARMS,
 		trinketEclipse: ['Rift Power Charm'], //doesn't drop egg?
 		// trinketInsideUmbra: 'Rift Super Vacuum Charm',
-		baitOutside: 'Brie String',
+		baitOutside: 'None',
 		baitInside: 'Gauntlet String Cheese',
 		fireEclipse: true,
 		fireOtherwise: false,
 		umbra: {
 			base: bestRiftBase,
 			eclipseBase: bestRiftBase,
-			trinketInsideUmbra: ['Rift Super Vacuum Charm'],
+			trinketInsideUmbra: VACUUM_CHARMS,
 			umbraHighMin: 16,
 			umbraHighMax: 50,
-			trinketInsideUmbraHigh: ['Rift Super Vacuum Charm'], //more powerful charm at higher floors
-			trinketEclipseUmbra: ['Rift Power Charm'], //don't use denture with ultimate
+			trinketInsideUmbraHigh: VACUUM_CHARMS, //more powerful charm at higher floors
+			trinketEclipseUmbra: ['Rift Ultimate Lucky Power Charm'], //don't use denture with ultimate
 			fireOtherwiseUmbra: false,
 			fireEclipseUmbra: true,
 		}
@@ -1224,14 +1230,16 @@ function travelToLocation() { //early draft. should only run on https://www.mous
 }
 
 function bwRift() { //interface does not work; settings must be done in code
-	if (getCurrentLocation().indexOf("Bristle Woods Rift") < 0)
+	if (getCurrentLocation().indexOf("Bristle Woods Rift") < 0) {
 		return;
+	}
+	const VACUUM_CHARMS = ['Rift Super Vacuum Charm', 'Rift Vacuum Charm'];
 	var objDefaultBWRift = {
 		order: ['NONE', 'GEARWORKS', 'ANCIENT', 'RUNIC', 'TIMEWARP', 'GUARD', 'SECURITY', 'FROZEN', 'FURNACE', 'INGRESS', 'PURSUER', 'ACOLYTE_CHARGING', 'ACOLYTE_DRAINING', 'ACOLYTE_DRAINED', 'LUCKY', 'HIDDEN'],
 		master: {
 			weapon: new Array(32).fill(bestRiftWeapon),
 			base: new Array(32).fill(bestRiftBase),
-			trinket: new Array(32).fill('Rift Super Vacuum Charm'),
+			trinket: new Array(32).fill(VACUUM_CHARMS),
 			bait: new Array(32).fill('Brie String'),
 			activate: new Array(32).fill(false),
 		},
@@ -1285,8 +1293,8 @@ function bwRift() { //interface does not work; settings must be done in code
 		},
 		choosePortal: true,
 		choosePortalAfterCC: false,
-		priorities: 			['SECURITY', 'FURNACE', 'PURSUER', 'ACOLYTE', 'GUARD', 'FROZEN', 'TIMEWARP', 'ANCIENT', 'HIDDEN', 'LUCKY', 'RUNIC', 'GEARWORKS', 'GEARWORKS'],
-		prioritiesEnoughSand: 	['SECURITY', 'FURNACE', 'PURSUER', 'ACOLYTE', 'GUARD', 'FROZEN', 'ANCIENT', 'HIDDEN', 'TIMEWARP', 'LUCKY', 'RUNIC', 'GEARWORKS', 'GEARWORKS'],
+		priorities: ['SECURITY', 'FURNACE', 'PURSUER', 'ACOLYTE', 'GUARD', 'FROZEN', 'TIMEWARP', 'ANCIENT', 'HIDDEN', 'LUCKY', 'RUNIC', 'GEARWORKS', 'GEARWORKS'],
+		prioritiesEnoughSand: ['SECURITY', 'FURNACE', 'PURSUER', 'ACOLYTE', 'GUARD', 'FROZEN', 'ANCIENT', 'HIDDEN', 'TIMEWARP', 'LUCKY', 'RUNIC', 'GEARWORKS', 'GEARWORKS'],
 		prioritiesCursed: ['SECURITY', 'FURNACE', 'PURSUER', 'ANCIENT', 'GEARWORKS', 'RUNIC', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS'],
 		//index 0-7 is bitmask of 4th portal, acolyte influence, paladin's bane
 		//8: cursed, 9:second attempt at acolyte (recalculated later)
@@ -1325,14 +1333,14 @@ function bwRift() { //interface does not work; settings must be done in code
 		objDefaultBWRift.master.bait[chambers.LUCKY] = 'Runic String';
 		objDefaultBWRift.master.bait[chambers.HIDDEN] = 'Runic String';
 
-		objDefaultBWRift.master.activate[chambers.TIMEWARP] = true;
+		// objDefaultBWRift.master.activate[chambers.TIMEWARP] = true;
 		objDefaultBWRift.master.activate[chambers.GUARD] = true;
 		objDefaultBWRift.master.activate[chambers.FROZEN] = true;
 		objDefaultBWRift.master.activate[chambers.INGRESS] = true;
 		objDefaultBWRift.master.activate[chambers.ACOLYTE_CHARGING] = true;
 		objDefaultBWRift.master.activate[chambers.ACOLYTE_DRAINED] = true;
-		objDefaultBWRift.master.activate[chambers.LUCKY] = true;
-		objDefaultBWRift.master.activate[chambers.HIDDEN] = true;
+		// objDefaultBWRift.master.activate[chambers.LUCKY] = true;
+		// objDefaultBWRift.master.activate[chambers.HIDDEN] = true;
 
 		// objDefaultBWRift.master.trinket[4] = 'Rift Wealth Charm';
 		// objDefaultBWRift.master.trinket[12] = 'Rift Wealth Charm';
@@ -1405,7 +1413,7 @@ function bwRift() { //interface does not work; settings must be done in code
 	}
 	if (nTimeSand > objBWRift.minTimeSand[nIndexBuffCurse]) { //Prioritize timesand first, then farm potions while searching for acolyte portal
 		console.log("Enough timesand, using alternate priorities");
-		objBWRift.master.trinket[4] = 'Rift Super Vacuum Charm';
+		objBWRift.master.trinket[4] = VACUUM_CHARMS;
 		objBWRift.master.activate[4] = false;
 	}
 	console.log(/*'Buff & Curse Index:', nIndexBuffCurse, 'Obj:', objUser.status_effects, */"Min sand to enter acolyte chamber:", objBWRift.minTimeSand[nIndexBuffCurse]);
@@ -2643,22 +2651,22 @@ function wwrift() {
 		factionFocus: "CC",
 		factionFocusNext: "Remain",
 		faction: {
-			weapon: new Array(3).fill(bestRiftWeapon),
-			base: new Array(3).fill(bestRiftBase),
+			weapon: new Array(3).fill(''),
+			base: new Array(3).fill(''),
 			trinket: new Array(3).fill('None'),
 			bait: new Array(3).fill('None')
 		},
 		MBW: {
 			minRageLLC: 40,
 			rage4044: {
-				weapon: new Array(7).fill(bestRiftWeapon),
-				base: new Array(7).fill(bestRiftBase),
+				weapon: new Array(7).fill(''),
+				base: new Array(7).fill(''),
 				trinket: new Array(7).fill('None'),
 				bait: new Array(7).fill('None')
 			},
 			rage4548: {
-				weapon: new Array(8).fill(bestRiftWeapon),
-				base: new Array(8).fill(bestRiftBase),
+				weapon: new Array(8).fill(''),
+				base: new Array(8).fill(''),
 				trinket: new Array(8).fill('None'),
 				bait: new Array(8).fill('None')
 			},
@@ -2746,51 +2754,25 @@ function wwrift() {
 		if (objWWRift.MBW.rage4548.trinket[nIndex].indexOf('FSC') > -1) {
 			nIndexCharm = objWWRift.funnelCharm.indexOf(charmArmed);
 			nLimit = (nIndex >= 3) ? 44 : 25;
-			temp = minIndex(objWWRift.rage);
-			if (temp > -1) {
-				objWWRift.MBW.rage4548.trinket[nIndex] = objWWRift.funnelCharm[temp];
+			if (nIndexCharm > -1) {
+				if (objWWRift.rage[nIndexCharm] >= nLimit) {
+					temp = minIndex(objWWRift.rage);
+					if (temp > -1)
+						objWWRift.MBW.rage4548.trinket[nIndex] = objWWRift.funnelCharm[temp];
+				}
+				else
+					objWWRift.MBW.rage4548.trinket[nIndex] = charmArmed;
 			}
-			// if (nIndexCharm > -1) {
-			// 	if (objWWRift.rage[nIndexCharm] >= nLimit) {
-			// 		temp = minIndex(objWWRift.rage);
-			// 		if (temp > -1)
-			// 			objWWRift.MBW.rage4548.trinket[nIndex] = objWWRift.funnelCharm[temp];
-			// 	}
-			// 	else
-			// 		objWWRift.MBW.rage4548.trinket[nIndex] = charmArmed;
-			// }
-			// else {
-			// 	temp = minIndex(objWWRift.rage);
-			// 	if (temp > -1)
-			// 		objWWRift.MBW.rage4548.trinket[nIndex] = objWWRift.funnelCharm[temp];
-			// }
+			else {
+				temp = minIndex(objWWRift.rage);
+				if (temp > -1)
+					objWWRift.MBW.rage4548.trinket[nIndex] = objWWRift.funnelCharm[temp];
+			}
 		}
 		checkThenArm(null, 'trinket', objWWRift.MBW.rage4548.trinket[nIndex]);
 		checkThenArm(null, 'bait', objWWRift.MBW.rage4548.bait[nIndex]);
-	} else if (objWWRift.factionFocus == 'Charge') {
-		console.log("running charge protocol");
-		if(max(objWWRift.rage) >= 1){
-			disarmTrap('bait');
-			playAlertSound();
-			return;
-		}
-		for (i = 0; i < 3; i++) {
-			if (objWWRift.rage[i] >= 25)
-				nBar25++;
-		}
-		if (nBar25 >= 3) {
-			for (i = 0; i < 3; i++) {
-				if (objWWRift.rage[i] >= 44)
-					nBar44++;
-			}
-		}
-		nIndex = nBar25 + nBar44;
-		checkThenArm(null, 'weapon', bestRiftWeapon);
-		checkThenArm(null, 'base', bestRiftBase);
-		charm = objWWRift.funnelCharm[minIndex(objWWRift.rage)];
-		checkThenArm(null, 'trinket', charm);
-		checkThenArm(null, 'bait', nIndex >= 3 ? 'Brie String Cheese' : 'Magical String Cheese');
-	} else {
+	}
+	else {
 		temp = objWWRift.order.indexOf(objWWRift.factionFocus);
 		if (temp == -1)
 			return;
@@ -7736,12 +7718,12 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<td style="height:24px">';
 				preferenceHTMLStr += '<select id="locationBotSelect" style="width:150px" onChange="window.sessionStorage.setItem(\'locationBot\', value); showOrHideTr(value);">';
 				preferenceHTMLStr += '<option value="None">None</option>';
+				preferenceHTMLStr += '<option value="Floating Islands">Floating Islands</option>';
 				preferenceHTMLStr += '<option value="Bristle Woods Rift">Bristle Woods Rift</option>';
 				preferenceHTMLStr += '<option value="Queso Canyon">Queso Canyon</option>';
 				preferenceHTMLStr += '<option value="Valour Rift">Valour Rift</option>';
 				preferenceHTMLStr += '<option value="Winter 2021">Winter 2021</option>';
 				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
-				preferenceHTMLStr += '<option value="WWRift">WWRift</option>';
 				/*preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
 				preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
 				preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
@@ -7762,6 +7744,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
 				preferenceHTMLStr += '<option value="Sunken City Custom">Sunken City Custom</option>';
 				preferenceHTMLStr += '<option value="Test">Test</option>';
+				preferenceHTMLStr += '<option value="WWRift">WWRift</option>';
 				preferenceHTMLStr += '<option value="Zokor">Zokor</option>';
 				preferenceHTMLStr += '<option value="ZT">Zugzwang\'s Tower</option>';*/
 				preferenceHTMLStr += '</select>';
@@ -8291,7 +8274,6 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="DL">Deep Lagoon</option>';
 				preferenceHTMLStr += '<option value="MBW_40_44">MBW 40 &le; Rage &le; 44</option>';
 				preferenceHTMLStr += '<option value="MBW_45_48">MBW 45 &le; Rage &le; 48</option>';
-				preferenceHTMLStr += '<option value="Charge">Charge rage</option>';
 				preferenceHTMLStr += '</select>';
 				preferenceHTMLStr += '</td>';
 				preferenceHTMLStr += '</tr>';
@@ -8373,7 +8355,6 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '</td>';
 				preferenceHTMLStr += '<td style="height:24px">';
 				preferenceHTMLStr += '<select id="selectWWRiftMBWTrapWeapon" onchange="saveWWRift();">';
-				preferenceHTMLStr += '<option value="Chrome Celestial Dissonance Trap">CCDT</option>';
 				preferenceHTMLStr += '<option value="Timesplit Dissonance Trap">TDW</option>';
 				preferenceHTMLStr += '<option value="Mysteriously unYielding">MYNORCA</option>';
 				preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
