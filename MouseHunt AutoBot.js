@@ -786,6 +786,9 @@ function locationBotCheck(caller) {
 		case 'Furoma Rift':
 			fRift();
 			break;
+		case 'Floating Islands':
+			floatingIslands();
+			break;
 		case 'None':
 			break;
 		default:
@@ -973,6 +976,146 @@ function halloween2020() {
 			console.log("arming regular cannonball");
 			document.getElementsByClassName("halloweenHUD-campBanner-cannonBall-button default")[0].click();
 		}
+	}
+}
+
+function floatingIslands() {
+	if (getCurrentLocation().indexOf("Floating Islands") < 0) {
+		return;
+	}
+	const EMPOWERED_SB = "Empowered SUPER|brie+";
+	const CLOUD_CHEESECAKE = "Cloud Cheesecake";
+	const ERCC = "Extra Rich Cloud Cheesecake";
+	const PIRATE_CHEESE = "Sky Pirate Swiss Cheese";
+	const WARDEN_TRAP = "Slumbering Boulder";
+	const PIRATE_TRAP = "Slumbering Boulder";
+	const locationData = user.quests.QuestFloatingIslands;
+	const powerType = locationData.saved_trap_setup.name;
+	const TRAPS_BY_TYPE = {
+		"Arcane": "Circlet of Seeking",
+		"Draconic": "Chrome Storm Wrought Ballista",
+		"Forgotten": "Chrome Thought Obliterator",
+		"Hydro": "Chrome School of Sharks",
+		"Law": "S.T.I.N.G.E.R.",
+		"Physical": "Golem Guardian Physical",
+		"Shadow": "Chrome Temporal Turbine",
+		"Tactical": "Slumbering Boulder",
+	};
+	const FULPC = "Festive Ultimate Lucky Power Charm";
+	const ANCIENT = "Ancient Charm";
+	const HUNT_PIRATES = true;
+
+	function activateWind() {
+		if (locationData.hunting_site_atts.is_fuel_enabled) {
+			return;
+		}
+		document.getElementsByClassName("floatingIslandsHUD-fuel-button")[0].click();
+	}
+	function deactivateWind() {
+		if (!locationData.hunting_site_atts.is_fuel_enabled) {
+			return;
+		}
+		document.getElementsByClassName("floatingIslandsHUD-fuel-button active")[0].click();
+	}
+
+	if (locationData.hunting_site_atts.island_type === "launch_pad_island") {
+		console.log("At launch pad");
+		playAlertSound();
+	} else if (locationData.hunting_site_atts.island_term === "island") {
+		if (locationData.hunting_site_atts.has_defeated_enemy && locationData.hunting_site_atts.is_island_fully_explored) {
+			//TODO: probably a better way to check that end of island reached
+			// playAlertSound();
+			// disarmTrap("bait");
+			// return;
+		}
+		if (locationData.hunting_site_atts.is_high_tier_island === true) {
+			//high altitude island
+			console.log("At high altitude island");
+			if (locationData.hunting_site_atts.is_enemy_encounter) {
+				//paragon
+				console.log("Encountering paragon");
+				// playAlertSound();
+				checkThenArm(null, BAIT, EMPOWERED_SB);
+				checkThenArm(null, TRINKET, FULPC);
+			} else {
+				checkThenArm(null, BAIT, CLOUD_CHEESECAKE);
+				// if (locationData.hunting_site_atts.island_progress >= 30) {
+				// 	checkThenArm(null, TRINKET, "Eggstra Charge Charm"); //easter
+				// 	deactivateWind();
+				// } else {
+				// 	checkThenArm(null, TRINKET, "Festive Ultimate Luck Charm");
+				// }
+				checkThenArm(null, TRINKET, ANCIENT);
+			}
+		} else {
+			//low altitude island
+			console.log("At low altitude island");
+			if (locationData.hunting_site_atts.is_enemy_encounter) {
+				//warden
+				console.log("Encountering warden");
+				// playAlertSound();
+				checkThenArm(null, BAIT, EMPOWERED_SB);
+				checkThenArm(null, TRINKET, FULPC);
+				checkThenArm(null, TRAP, WARDEN_TRAP)
+			} else {
+				//not warden
+				let pirateLevel = 0;
+				for (const modType of locationData.hunting_site_atts.activated_island_mod_types) {
+					if (modType === "sky_pirates") {
+						pirateLevel++;
+					}
+				}
+				if (pirateLevel >= 2 && HUNT_PIRATES) {
+					console.log("All pirates");
+					checkThenArm(null, TRAP, PIRATE_TRAP)
+					checkThenArm(null, BAIT, [PIRATE_CHEESE, CLOUD_CHEESECAKE]);
+				} else {
+					console.log("Normal mice");
+					// const savedWeaponName = locationData.saved_trap_setup.items.weapon.name; //doesn't work for golem guardian
+					checkThenArm(null, TRAP, TRAPS_BY_TYPE[powerType]);
+					checkThenArm(null, BAIT, CLOUD_CHEESECAKE);
+				}
+				// if (locationData.hunting_site_atts.island_progress >= 30) {
+				// 	checkThenArm(null, TRINKET, "Eggstra Charge Charm"); //easter
+				// 	deactivateWind();
+				// } else {
+				// 	checkThenArm(null, TRINKET, "Festive Ultimate Luck Charm");
+				// }
+				checkThenArm(null, TRINKET, ANCIENT);
+			}
+		}
+		//things to do for all islands
+		if (locationData.hunting_site_atts.island_progress >= 20) {
+			// deactivateWind(); //disable during easter event
+		}
+	} else if (locationData.is_at_sky_palace === true) {
+		console.log("At sky palace");
+		if (locationData.hunting_site_atts.is_enemy_encounter) {
+			// playAlertSound();
+			// disarmTrap("bait");
+		}
+
+		if (locationData.hunting_site_atts.is_enemy_encounter) {
+			//empress
+			console.log("Encountering empress");
+			// playAlertSound();
+			checkThenArm(null, BAIT, EMPOWERED_SB);
+			checkThenArm(null, TRINKET, "Eggstra Charm"); //easter
+		} else {
+			checkThenArm(null, BAIT, ERCC);
+			if (locationData.hunting_site_atts.island_progress >= 30) {
+				checkThenArm(null, TRINKET, "Eggstra Charm"); //easter
+				deactivateWind();
+			} else if (locationData.hunting_site_atts.island_progress >= 20) {
+				checkThenArm(null, TRINKET, "Eggstra Charm"); //easter
+				activateWind();
+			} else {
+				checkThenArm(null, TRINKET, "Festive Ultimate Luck Charm");
+				activateWind();
+			}
+		}
+	} else {
+
 	}
 }
 
