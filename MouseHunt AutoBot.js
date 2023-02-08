@@ -696,8 +696,8 @@ function locationBotCheck(caller) {
 		case 'Winter 2015':
 			Winter2015();
 			break;
-		case 'Winter 2021':
-			winter2021location();
+		case 'winter 2022':
+			winter2022location();
 			break;
 		case 'GWH2016R':
 			gwh();
@@ -865,9 +865,9 @@ function lny2020event() {
 	}
 }
 
-function winter2021location() {
-	const keyStr = "QuestWinterHunt2021";
-	const questObj = user.quests[keyStr];
+function winter2022location() {
+	const questObj = user.quests.QuestCinnamonTreeGrove || user.quests.QuestGolemWorkshop || user.quests.QuestIceFortress;
+	const golems = questObj.golems;
 	const NUM_GOLEMS_TO_USE = 1;
 	// TODO: max golem level
 	const ALERT_IF_NO_PARTS = true;
@@ -875,10 +875,13 @@ function winter2021location() {
 	const ALERT_IF_CAN_UPGRADE = true;
 	const BUILD_IF_CAN_UPGRADE = true;
 	const DEFAULT_CHEESE = "gouda";
-	const DEFAULT_CHARM = "Winter Charm";
-	console.log("running winter 2021 location bot");
+	const DEFAULT_CHARM = "Snowball Charm";
+	console.log("running winter 2022 location bot");
 
-	if (getCurrentLocation().indexOf("Festive Comet") < 0 && getCurrentLocation().indexOf("Frozen Vacant Lot") < 0) {
+	if (getCurrentLocation().indexOf("Cinnamon Hill") < 0 
+		&& getCurrentLocation().indexOf("Golem Workshop") < 0
+		&& getCurrentLocation().indexOf("Ice Fortress") < 0) {
+		console.log("not in right location");
 		return;
 	}
 
@@ -889,13 +892,13 @@ function winter2021location() {
 		checkThenArm(null, "trinket", DEFAULT_CHARM);
 	}
 
-	const golems = questObj.golems;
-	if (questObj.comet.can_explode) {
-		console.log("detonate");
-		document.getElementsByClassName("winterHunt2021HUD-dynamiteButton")[0].click();
-		setTimeout(winter2021location, rand(600, 800));
-		return;
-	}
+
+	// if (questObj.comet.can_explode) {
+	// 	console.log("detonate");
+	// 	document.getElementsByClassName("winterHunt2021HUD-dynamiteButton")[0].click();
+	// 	setTimeout(winter2022location, rand(600, 800));
+	// 	return;
+	// }
 
 	function sufficientPartsToBuild() {
 		return questObj.items.golem_part_head_stat_item.quantity >= 1 &&
@@ -916,6 +919,10 @@ function winter2021location() {
 		return false;
 	}
 	const canUpgrade = checkCanUpgrade();
+	
+	if (canUpgrade && ALERT_IF_CAN_UPGRADE) {
+		playAlertSound();
+	}
 
 	checkGolem(0);
 	function checkGolem(n) {
@@ -925,7 +932,7 @@ function winter2021location() {
 		console.log("checking golem " + n);
 		if (golems[n].can_claim) {
 			console.log("claiming golem " + n);
-			document.getElementsByClassName("winterHunt2021HUD-golemBuilder   mousehuntTooltipParent canClaim plural")[0].click();
+			document.getElementsByClassName("headsUpDisplayWinterHuntRegionView__golemClaimRewardButton headsUpDisplayWinterHuntRegionView__golemActionButton")[n].click();
 			setTimeout(reloadPage, rand(2000, 2500));
 			return;
 		}
@@ -935,19 +942,15 @@ function winter2021location() {
 				next();
 				return;
 			}
-			if (canUpgrade) {
-				if (ALERT_IF_CAN_UPGRADE) {
-					playAlertSound();
-				}
-				if (!BUILD_IF_CAN_UPGRADE) {
-					next();
-					return;
-				}
+			if (canUpgrade && !BUILD_IF_CAN_UPGRADE) {
+				next();
+				return;
 			}
 			console.log("building golem " + n);
-			document.getElementsByClassName("winterHunt2021HUD-golemBuilder-status canBuild")[n].children[0].click();
+			//there appears to be 2 html button elems for each golem
+			document.getElementsByClassName("headsUpDisplayWinterHuntRegionView__golemBuildButton headsUpDisplayWinterHuntRegionView__golemActionButton")[n*2].click();
 			setTimeout(function () {
-				document.getElementsByClassName("winterHunt2021HUD-popup-sendGolemButton")[n].click();
+				document.getElementsByClassName("greatWinterHuntDialogView__bigButton greatWinterHuntGolemManagerLaunchTabView__buildButton")[0].click();
 				setTimeout(reloadPage, rand(2000, 2500));
 			}, rand(1000, 1200));
 			return;
@@ -7729,7 +7732,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Bristle Woods Rift">Bristle Woods Rift</option>';
 				preferenceHTMLStr += '<option value="Queso Canyon">Queso Canyon</option>';
 				preferenceHTMLStr += '<option value="Valour Rift">Valour Rift</option>';
-				preferenceHTMLStr += '<option value="Winter 2021">Winter 2021</option>';
+				preferenceHTMLStr += '<option value="winter 2022">winter 2022</option>';
 				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
 				/*preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
 				preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
