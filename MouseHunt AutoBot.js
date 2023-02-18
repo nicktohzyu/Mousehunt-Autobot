@@ -1,4 +1,4 @@
-// ==UserScript== 
+// ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      ntzy, NobodyRandom, Hazado, Ooi Keng Siang, CnN
 // @version    	2.6.0
@@ -878,7 +878,7 @@ function winter2022location() {
 	const DEFAULT_CHARM = "Snowball Charm";
 	console.log("running winter 2022 location bot");
 
-	if (getCurrentLocation().indexOf("Cinnamon Hill") < 0 
+	if (getCurrentLocation().indexOf("Cinnamon Hill") < 0
 		&& getCurrentLocation().indexOf("Golem Workshop") < 0
 		&& getCurrentLocation().indexOf("Ice Fortress") < 0) {
 		console.log("not in right location");
@@ -919,7 +919,7 @@ function winter2022location() {
 		return false;
 	}
 	const canUpgrade = checkCanUpgrade();
-	
+
 	if (canUpgrade && ALERT_IF_CAN_UPGRADE) {
 		playAlertSound();
 	}
@@ -5682,7 +5682,7 @@ function exeScript() {
 			}
 		}
 	} catch (e) {
-		if (debug){
+		if (debug) {
 			console.log('exeScript error - ' + e)
 			console.log(e.stack)
 		}
@@ -7091,7 +7091,7 @@ function embedTimer(targetPage) {
 					var tempSpan3 = document.createElement('span');
 					tempSpan3.innerHTML = ' &#126; <a id="nobPresent" href="#" title="Sends back the presents in inventory.">Return presents</a>';
 
-					
+
 					//var tempSpan = document.createElement('span');
 					//tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Submit a bug report/feedback</a>';
 					loadLinkToUpdateDiv.appendChild(tempDiv);
@@ -10328,7 +10328,7 @@ function soundHorn() {
 	// safety mode, check the horn image is there or not before sound the horn
 	var headerElement = document.getElementById(header);
 
-	if(!headerElement) {
+	if (!headerElement) {
 		// something wrong, can't even found the header...
 		// reload the page see if thing get fixed
 		reloadWithMessage("Fail to find the horn header. Reloading...", false);
@@ -10340,8 +10340,7 @@ function soundHorn() {
 	for (var i = 0; i < hornElements.length; ++i) {
 		var tempHornElement = hornElements[i];
 		var title = tempHornElement.getAttribute('title');
-		if (title && title.indexOf('Horn') != -1)
-		{
+		if (title && title.indexOf('Horn') != -1) {
 			hornElement = tempHornElement;
 			break;
 		}
@@ -10369,8 +10368,7 @@ function soundHorn() {
 	}
 
 	var hornStatus = hornElement.getAttribute('class');
-	if (hornStatus.indexOf("ready") != -1 && hornStatus.indexOf("reveal") != -1)
-	{
+	if (hornStatus.indexOf("ready") != -1 && hornStatus.indexOf("reveal") != -1) {
 		// found the horn image, let's sound the horn!
 		//if (debug) console.log("Header status prior to sounding horn: " + headerStatus);
 
@@ -10418,7 +10416,7 @@ function soundHorn() {
 		// loop again
 		window.setTimeout(function () { countdownTimer() }, timerRefreshInterval * 1000);
 	}
-		
+
 
 }
 
