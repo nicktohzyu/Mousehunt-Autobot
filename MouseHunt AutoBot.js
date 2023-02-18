@@ -948,7 +948,7 @@ function winter2022location() {
 			}
 			console.log("building golem " + n);
 			//there appears to be 2 html button elems for each golem
-			document.getElementsByClassName("headsUpDisplayWinterHuntRegionView__golemBuildButton headsUpDisplayWinterHuntRegionView__golemActionButton")[n*2].click();
+			document.getElementsByClassName("headsUpDisplayWinterHuntRegionView__golemBuildButton headsUpDisplayWinterHuntRegionView__golemActionButton")[n * 2].click();
 			setTimeout(function () {
 				document.getElementsByClassName("greatWinterHuntDialogView__bigButton greatWinterHuntGolemManagerLaunchTabView__buildButton")[0].click();
 				setTimeout(reloadPage, rand(2000, 2500));
@@ -1762,9 +1762,9 @@ function quesoGeyser() { // create object with equipment to use
 	}
 	var quesoList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", "Flamin' Queso", "Wildfire Queso"];
 	var eruptionBaitList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", ["Wildfire Queso", "Flamin' Queso"]];
-	var charmList = [genericCharm, genericCharm, "Ancient Charm", "Ancient Charm", "Festive Ultimate Luck Charm", "Dragonbane Charm"]; //dragonbane?
-	var eruptionCharmList = [genericCharm, genericCharm, genericCharm, "Ancient Charm", "Festive Ultimate Luck Charm", ["Super Dragonbane Charm", "Dragonbane Charm"]]; //dragonbane?
-	var eruptionTonicList = [false, false, false, false, false, true];
+	var corkedCharmList = [genericCharm, genericCharm, "Ancient Charm", "Ancient Charm", "Festive Ultimate Luck Charm", "none"]; //emberstone scaled low minluck
+	var eruptionCharmList = [genericCharm, genericCharm, genericCharm, "Ancient Charm", ["Extreme Party Charm", "Extreme Snowball Charm"], ["Extreme Dragonbane Charm", "Super Dragonbane Charm", "Dragonbane Charm"]]; //dragonbane?
+	var eruptionTonicList = [false, false, false, false, true, true];
 	var armQuesoButtons = []; //not in use
 	for (i = 0; i < 6; i++) {
 		armQuesoButtons[i] = document.getElementsByClassName("quesoHUD-bait-group-cheeseImage")[i].getElementsByClassName("mousehuntItem-boundingBox")[0];
@@ -1816,9 +1816,9 @@ function quesoGeyser() { // create object with equipment to use
 		if (pressureNeeded <= 10 && presurePerHuntNeeded < 3) {
 			quesoToArm = 1;
 			disarmTrap("trinket");
-		} else if (pressureNeeded <= 30 && presurePerHuntNeeded <= 10) {
+		} else if (pressureNeeded <= 15 && presurePerHuntNeeded <= 10) {
 			quesoToArm = 2;
-		} else if (pressureNeeded <= 200 && presurePerHuntNeeded <= 30) {
+		} else if (pressureNeeded <= 80 && presurePerHuntNeeded <= 30) {
 			quesoToArm = 3;
 		} else if (pressureNeeded <= 600 && presurePerHuntNeeded <= 160) { //change when values when implementing epic eruption
 			quesoToArm = 4; //with tonic
@@ -1836,7 +1836,7 @@ function quesoGeyser() { // create object with equipment to use
 		console.log("queso to arm:", quesoList[quesoToArm]);
 		checkThenArm(null, 'bait', quesoList[quesoToArm]);
 		if (useCharm) {
-			checkThenArm(null, "charm", charmList[quesoToArm]);
+			checkThenArm(null, "charm", corkedCharmList[quesoToArm]);
 		}
 		armTonic(useTonic);
 		//implement using tonic for wildfire queso
@@ -1852,8 +1852,9 @@ function quesoGeyser() { // create object with equipment to use
 		var claimAvailable = document.getElementsByClassName("quesoGeyserHUD-claimContainer reveal").length > 0; //true if avail, false otherwise
 		// console.log("claim available?", claimAvailable);
 		const claimEpic = false;
-		const disarmAfterClaim = false;
+		const disarmAfterClaim = true;
 		const alertAfterClaim = true;
+		// TODO: dust epic
 		if (huntsRemaining == 0) { //or check //claim loot after eruption complete
 			if (alertAfterClaim) {
 				playAlertSound();
@@ -1862,7 +1863,7 @@ function quesoGeyser() { // create object with equipment to use
 				disarmTrap("bait");
 			}
 			if (size < 4 || claimEpic) { //non-epic
-				document.getElementsByClassName("quesoGeyserHUD-claimNestButton default")[0].click(); // can click when not available, just returns unavailable dialogue	
+				document.getElementsByClassName("quesoGeyserHUD-claimNestButton default")[0].click(); // can click when not available, just returns unavailable dialogue
 				//document.getElementsByClassName("jsDialogClose button")[0].click(); //continue button
 				setTimeout(reloadPage, 30000);
 			} else {
@@ -1890,8 +1891,11 @@ function quesoGeyser() { // create object with equipment to use
 		var corkSize = 0; //size of cork to build //small = 1, medium = 2, large = 3, epic = 4
 		if (!skipEpic && craftingItemQuantity[3] >= 60) {
 			if (craftingItemQuantity[0] >= 180) {
-				playAlertSound();
-				// corkSize = 4; //bot crafting epic disabled
+				if (craftEpic) {
+					corkSize = 4;
+				} else {
+					playAlertSound();
+				}
 			}
 		} else if (craftingItemQuantity[2] >= 30) { //add check if enough cheese before building cork
 			if (craftingItemQuantity[0] >= 90) {
