@@ -67,8 +67,8 @@
 	var checkTimeDelayMin = 0;
 	var checkTimeDelayVariance = 10;
 
-	var botStopHour = 0;
-	var botStartHour = 8;
+	var botStopHour = 1;
+	var botStartHour = 9;
 
 
 	var hornTimeDelayMax = 15; //old code
@@ -1011,6 +1011,8 @@ function floatingIslands() {
 	};
 	const FULPC = "Festive Ultimate Lucky Power Charm";
 	const ANCIENT = "Ancient Charm";
+	const NORMAL_CHARM = ANCIENT;
+	const PIRATE_CHARM = "Ultimate Snowball Charm";
 	const HUNT_PIRATES = true;
 
 	function activateWind() {
@@ -1053,7 +1055,7 @@ function floatingIslands() {
 				// } else {
 				// 	checkThenArm(null, TRINKET, "Festive Ultimate Luck Charm");
 				// }
-				checkThenArm(null, TRINKET, ANCIENT);
+				checkThenArm(null, TRINKET, NORMAL_CHARM);
 			}
 		} else {
 			//low altitude island
@@ -1077,11 +1079,13 @@ function floatingIslands() {
 					console.log("All pirates");
 					checkThenArm(null, TRAP, PIRATE_TRAP)
 					checkThenArm(null, BAIT, [PIRATE_CHEESE, CLOUD_CHEESECAKE]);
+					checkThenArm(null, TRINKET, PIRATE_CHARM);
 				} else {
 					console.log("Normal mice");
 					// const savedWeaponName = locationData.saved_trap_setup.items.weapon.name; //doesn't work for golem guardian
 					checkThenArm(null, TRAP, TRAPS_BY_TYPE[powerType]);
 					checkThenArm(null, BAIT, CLOUD_CHEESECAKE);
+					checkThenArm(null, TRINKET, NORMAL_CHARM);
 				}
 				// if (locationData.hunting_site_atts.island_progress >= 30) {
 				// 	checkThenArm(null, TRINKET, "Eggstra Charge Charm"); //easter
@@ -1089,7 +1093,6 @@ function floatingIslands() {
 				// } else {
 				// 	checkThenArm(null, TRINKET, "Festive Ultimate Luck Charm");
 				// }
-				checkThenArm(null, TRINKET, ANCIENT);
 			}
 		}
 		//things to do for all islands
@@ -1851,7 +1854,7 @@ function quesoGeyser() { // create object with equipment to use
 		}
 		var claimAvailable = document.getElementsByClassName("quesoGeyserHUD-claimContainer reveal").length > 0; //true if avail, false otherwise
 		// console.log("claim available?", claimAvailable);
-		const claimEpic = false;
+		const claimEpic = true;
 		const disarmAfterClaim = true;
 		const alertAfterClaim = true;
 		// TODO: dust epic
@@ -1875,6 +1878,7 @@ function quesoGeyser() { // create object with equipment to use
 	else if (phase == "none") {
 		var buildCork = true;
 		var skipEpic = false;
+		var craftEpic = true;
 		/*if(quesoQuantity[2]>0){
 			checkThenArm(null, 'bait', 'Medium Queso');
 		}
