@@ -1005,12 +1005,12 @@ function floatingIslands() {
 		"Forgotten": "Chrome Thought Obliterator",
 		"Hydro": "Chrome School of Sharks",
 		"Law": "S.T.I.N.G.E.R.",
-		"Physical": "Golem Guardian Physical",
+		"Physical": "Smoldering Sentinel",
 		"Shadow": "Chrome Temporal Turbine",
 		"Tactical": "Slumbering Boulder",
 	};
 	const FULPC = "Festive Ultimate Lucky Power Charm";
-	const ANCIENT = "Ancient Charm";
+	const ANCIENT = "Ultimate Ancient Charm";
 	const NORMAL_CHARM = ANCIENT;
 	const PIRATE_CHARM = "Ultimate Snowball Charm";
 	const HUNT_PIRATES = true;
@@ -1070,15 +1070,19 @@ function floatingIslands() {
 			} else {
 				//not warden
 				let pirateLevel = 0;
+				let keyLevel = 0;
 				for (const modType of locationData.hunting_site_atts.activated_island_mod_types) {
 					if (modType === "sky_pirates") {
 						pirateLevel++;
 					}
+					else if (modType === "loot_cache") {
+						keyLevel++;
+					}
 				}
-				if (pirateLevel >= 2 && HUNT_PIRATES) {
+				if (pirateLevel >= 2 && keyLevel < 2 && HUNT_PIRATES) {
 					console.log("All pirates");
 					checkThenArm(null, TRAP, PIRATE_TRAP)
-					checkThenArm(null, BAIT, [PIRATE_CHEESE, CLOUD_CHEESECAKE]);
+					checkThenArm(null, BAIT, [PIRATE_CHEESE, CLOUD_CHEESECAKE]); //TODO: should we default to CC if no pirate cheese? or warn user?
 					checkThenArm(null, TRINKET, PIRATE_CHARM);
 				} else {
 					console.log("Normal mice");
