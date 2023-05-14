@@ -696,7 +696,7 @@ function locationBotCheck(caller) {
 		case 'Winter 2015':
 			Winter2015();
 			break;
-		case 'winter 2022':
+		case 'Winter 2022':
 			winter2022location();
 			break;
 		case 'GWH2016R':
@@ -5269,7 +5269,7 @@ async function FinalizePuzzleImageAnswer(answer) {
 		if (!puzzleSubmitButton) {
 			if (debug) console.plog("puzzleSubmit: " + puzzleSubmitButton);
 			return;
-	}
+		}
 		fireEvent(puzzleSubmitButton, 'click');
 		kingsRewardRetry = 0;
 		setStorage("KingsRewardRetry", kingsRewardRetry);
@@ -5290,7 +5290,7 @@ async function simulateTyping(inputElement, text) {
 	function sleep(ms) {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
-	for(key of text) {
+	for (key of text) {
 		console.log("dispatching: " + key);
 		const downEvent = new KeyboardEvent('keydown', { key });
 		inputElement.dispatchEvent(downEvent);
@@ -5374,7 +5374,7 @@ function CheckKRAnswerCorrectness() {
 		reloadPage();
 		return;
 	}
-	if(debug) console.log("CheckKRAnswerCorrectness: puzzle not solved")
+	if (debug) console.log("CheckKRAnswerCorrectness: puzzle not solved")
 	var strTemp = '';
 	var codeError = document.getElementsByClassName("mousehuntPage-puzzle-form-code-error");
 	for (var i = 0; i < codeError.length; i++) {
@@ -7754,12 +7754,12 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<td style="height:24px">';
 				preferenceHTMLStr += '<select id="locationBotSelect" style="width:150px" onChange="window.sessionStorage.setItem(\'locationBot\', value); showOrHideTr(value);">';
 				preferenceHTMLStr += '<option value="None">None</option>';
-				preferenceHTMLStr += '<option value="Floating Islands">Floating Islands</option>';
 				preferenceHTMLStr += '<option value="Bristle Woods Rift">Bristle Woods Rift</option>';
+				preferenceHTMLStr += '<option value="Floating Islands">Floating Islands</option>';
+				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
 				preferenceHTMLStr += '<option value="Queso Canyon">Queso Canyon</option>';
 				preferenceHTMLStr += '<option value="Valour Rift">Valour Rift</option>';
-				preferenceHTMLStr += '<option value="winter 2022">winter 2022</option>';
-				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
+				preferenceHTMLStr += '<option value="Winter 2022">Winter 2022</option>';
 				/*preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
 				preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
 				preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
