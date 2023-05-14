@@ -6386,7 +6386,7 @@ function retrieveDataFirst() {//needs revamp
 					var hornTimerString = scriptString.substring(hornTimeStartIndex, hornTimeEndIndex);
 					nextActiveTime = parseInt(hornTimerString);
 					//if (debug) console.log("From substr: " + nextActiveTime + ", from page var: " + getPageVariable("user.next_activeturn_seconds"));
-
+					//TODO: separate delay generation and persistence
 					hornTimeDelay = CalculateDelay(false, checkTime, nextActiveTime);
 					hornTime = nextActiveTime + hornTimeDelay;
 					if (hornTime < 15) {
@@ -6487,25 +6487,23 @@ function retrieveDataFirst() {//needs revamp
 }
 
 function GetHornTime() {
-	var huntTimerElement = document.getElementById('huntTimer');
+	if (debug) console.log("Run GetHornTime");
+	const huntTimerElement = document.getElementsByClassName('huntersHornView__timerState huntersHornView__timerState--type-countdown huntersHornView__countdown')[0];
 	var totalSec = 900;
-	if (huntTimerElement !== null) {
-		huntTimerElement = huntTimerElement.textContent;
-		if (huntTimerElement.toLowerCase().indexOf('ready') > -1)
-			totalSec = 0;
-		else if (isNewUI) {
-			var arrTime = huntTimerElement.split(":");
-			if (arrTime.length == 2) {
-				for (var i = 0; i < arrTime.length; i++)
-					arrTime[i] = parseInt(arrTime[i]);
-				totalSec = arrTime[0] * 60 + arrTime[1];
-			}
-		} else {
-			var temp = parseInt(huntTimerElement);
-			if (Number.isInteger(temp))
-				totalSec = temp * 60;
-		}
+	if (huntTimerElement == null) {
+		console.log("Error retriving horn time from page display element")
+		return totalSec;
 	}
+	const timerText = huntTimerElement.textContent;
+	if (timerText.toLowerCase().indexOf('ready') > -1) {
+		return 0;
+	}
+	const arrTime = timerText.split(":");
+	if (arrTime.length != 2) {
+		console.log("Error parsing horn time")
+	}
+	const arrTimeInt = arrTime.map(numStr => parseInt(numStr));
+	totalSec = arrTimeInt[0] * 60 + arrTimeInt[1];
 	return totalSec;
 }
 
@@ -6778,7 +6776,9 @@ function countdownTimer() {
 		window.setTimeout(function () {
 			reloadWithMessage("Fail to click on camp button. Reloading...", false);
 		}, 5000);
-	} else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
+		return;
+	}
+	if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
 		// update timer
 		displayTimer("Out of pre-defined hunting location...", "Out of pre-defined hunting location...", "Out of pre-defined hunting location...");
 		if (fbPlatform) {
@@ -6801,131 +6801,132 @@ function countdownTimer() {
 			}
 		}
 		displayKingRewardSumTime(null);
-
+		return;
 		// pause script
-	} else if (baitQuantity == 0) {
+	}
+	if (baitQuantity == 0) {
 		// update timer
 		displayTimer("No more cheese!", "Cannot hunt without the cheese...", "Cannot hunt without the cheese...");
 		displayLocation(huntLocation);
 		displayKingRewardSumTime(null);
-
 		noCheeseAction();
+		return;
+	}
+	var dateNow = new Date();
+	var intervalTime = timeElapsed(lastDateRecorded, dateNow);
+	lastDateRecorded = undefined; //???
+	lastDateRecorded = dateNow;
+	dateNow = undefined;
 
-		// pause the script
-	} else {
-		var dateNow = new Date();
-		var intervalTime = timeElapsed(lastDateRecorded, dateNow);
-		lastDateRecorded = undefined; //???
-		lastDateRecorded = dateNow;
-		dateNow = undefined;
+	// Update time
+	//TODO: grab fresh horn/check values instead of using timers and decrement
+	hornTime -= intervalTime;
+	if (lastKingRewardSumTime != -1) {
+		lastKingRewardSumTime += intervalTime;
+	}
+	if (enableTrapCheck) {
+		checkTime -= intervalTime;
+	}
+	intervalTime = undefined;
 
-		// Update time
-		hornTime -= intervalTime;
-		if (lastKingRewardSumTime != -1) {
-			lastKingRewardSumTime += intervalTime;
-		}
-		if (enableTrapCheck)
-			checkTime -= intervalTime;
+	// Check event location 60s before trap check
+	if (enableTrapCheck && checkTime == 30) {
+		locationBotCheck();
+	}
+	if (hornTime <= 0) {
+		// blow the horn!
+		hornTime = 0;
+		soundHorn();
+		return;
+	}
+	if (enableTrapCheck && checkTime <= 0) {
+		// trap check!
+		checkTime = 0;
+		trapCheck(); //reloads page with message
+		return;
+	}
+	if (enableTrapCheck) {
+		// update timer
+		if (!aggressiveMode) {
+			displayTimer("Horn: " + timeFormat(hornTime) + " | Check: " + timeFormat(checkTime),
+				timeFormat(hornTime) + "  <i>(included extra " + timeFormat(hornTimeDelay) + " delay & +/- 5 seconds different from MouseHunt timer)</i>",
+				timeFormat(checkTime) + "  <i>(included extra " + timeFormat(checkTimeDelay) + " delay)</i>");
 
-		intervalTime = undefined;
+			// check if user manaually sounded the horn
+			var scriptNode = document.getElementById("scriptNode");
+			if (scriptNode) {
+				var isHornSounded = scriptNode.getAttribute("soundedHornAtt");
+				if (isHornSounded == "true") {
+					// sound horn function do the rest
+					soundHorn();
 
-		// Check event location 60s before trap check
-		if (enableTrapCheck && checkTime == 30)
-			locationBotCheck();
-
-		if (hornTime <= 0) {
-			// blow the horn!
-			hornTime = 0;
-			soundHorn();
-		} else if (enableTrapCheck && checkTime <= 0) {
-			// trap check!
-			checkTime = 0;
-			trapCheck(); //function only reloads page with message
-		} else {
-			if (enableTrapCheck) {
-				// update timer
-				if (!aggressiveMode) {
-					displayTimer("Horn: " + timeFormat(hornTime) + " | Check: " + timeFormat(checkTime),
-						timeFormat(hornTime) + "  <i>(included extra " + timeFormat(hornTimeDelay) + " delay & +/- 5 seconds different from MouseHunt timer)</i>",
-						timeFormat(checkTime) + "  <i>(included extra " + timeFormat(checkTimeDelay) + " delay)</i>");
-
-					// check if user manaually sounded the horn
-					var scriptNode = document.getElementById("scriptNode");
-					if (scriptNode) {
-						var isHornSounded = scriptNode.getAttribute("soundedHornAtt");
-						if (isHornSounded == "true") {
-							// sound horn function do the rest
-							soundHorn();
-
-							// stop loopping
-							return;
-						}
-						isHornSounded = undefined;
-					}
-					scriptNode = undefined;
-
-					if (hornTime - hornTimeDelay == 0) //nani??
-						locationBotCheck();
-				} else {
-					displayTimer("Horn: " + timeFormat(hornTime) + " | Check: " + timeFormat(checkTime),
-						timeFormat(hornTime) + "  <i>(lot faster than MouseHunt timer)</i>",
-						timeFormat(checkTime) + "  <i>(included extra " + timeFormat(checkTimeDelay) + " delay)</i>");
+					// stop loopping
+					return;
 				}
-			} else {
-				// update timer
-				if (!aggressiveMode) {
-					displayTimer("Horn: " + timeFormat(hornTime),
-						timeFormat(hornTime) + "  <i>(included extra " + timeFormat(hornTimeDelay) + " delay & +/- 5 seconds different from MouseHunt timer)</i>",
-						"-");
+				isHornSounded = undefined;
+			}
+			scriptNode = undefined;
 
-					// check if user manaually sounded the horn
-					var scriptNode = document.getElementById("scriptNode");
-					if (scriptNode) {
-						var isHornSounded = scriptNode.getAttribute("soundedHornAtt");
-						if (isHornSounded == "true") {
-							// sound horn function do the rest
-							soundHorn();
+			if (hornTime - hornTimeDelay == 0) //nani??
+				locationBotCheck();
+		} else {
+			displayTimer("Horn: " + timeFormat(hornTime) + " | Check: " + timeFormat(checkTime),
+				timeFormat(hornTime) + "  <i>(lot faster than MouseHunt timer)</i>",
+				timeFormat(checkTime) + "  <i>(included extra " + timeFormat(checkTimeDelay) + " delay)</i>");
+		}
+	} else {
+		// update timer
+		if (!aggressiveMode) {
+			displayTimer("Horn: " + timeFormat(hornTime),
+				timeFormat(hornTime) + "  <i>(included extra " + timeFormat(hornTimeDelay) + " delay & +/- 5 seconds different from MouseHunt timer)</i>",
+				"-");
 
-							// stop loopping
-							return;
-						}
-						isHornSounded = undefined;
-					}
-					scriptNode = undefined;
+			// check if user manaually sounded the horn
+			var scriptNode = document.getElementById("scriptNode");
+			if (scriptNode) {
+				var isHornSounded = scriptNode.getAttribute("soundedHornAtt");
+				if (isHornSounded == "true") {
+					// sound horn function do the rest
+					soundHorn();
 
-					if (hornTime - hornTimeDelay == 0)
-						locationBotCheck();
-				} else {
-					displayTimer("Horn: " + timeFormat(hornTime),
-						timeFormat(hornTime) + "  <i>(lot faster than MouseHunt timer)</i>",
-						"-");
+					// stop loopping
+					return;
+				}
+				isHornSounded = undefined;
+			}
+			scriptNode = undefined;
 
-					// agressive mode should sound the horn whenever it is possible to do so.
-					var headerElement = document.getElementById(header).firstChild;
-					if (headerElement) {
-						// the horn image appear before the timer end
-						if (headerElement.getAttribute('class').indexOf(hornReady) != -1) {
-							// who care, blow the horn first!
-							soundHorn();
+			if (hornTime - hornTimeDelay == 0)
+				locationBotCheck();
+		} else {
+			displayTimer("Horn: " + timeFormat(hornTime),
+				timeFormat(hornTime) + "  <i>(lot faster than MouseHunt timer)</i>",
+				"-");
 
-							headerElement = undefined;
+			// agressive mode should sound the horn whenever it is possible to do so.
+			var headerElement = document.getElementById(header).firstChild;
+			if (headerElement) {
+				// the horn image appear before the timer end
+				if (headerElement.getAttribute('class').indexOf(hornReady) != -1) {
+					// who care, blow the horn first!
+					soundHorn();
 
-							// skip all the code below
-							return;
-						}
-					}
 					headerElement = undefined;
+
+					// skip all the code below
+					return;
 				}
 			}
-
-			// set king reward sum time
-			displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
-
-			window.setTimeout(function () {
-				(countdownTimer)()
-			}, timerRefreshInterval * 1000);
+			headerElement = undefined;
 		}
 	}
+
+	// set king reward sum time
+	displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
+
+	window.setTimeout(function () {
+		(countdownTimer)()
+	}, timerRefreshInterval * 1000);
 }
 
 function reloadPage(unusedVariable) {
@@ -10971,6 +10972,7 @@ function trapCheck() {
 function CalculateNextTrapCheckInMinute() { //sets the value of checkTime
 	//console.log("running CalculateNextTrapCheckInMinute");
 	var now = new Date(Date.now() + g_nTimeOffset * 1000); //g_nTimeOffset usually = 0
+	//TODO: separate delay generation and persistence
 	checkTimeDelay = CalculateDelay(true);
 	checkTime = (trapCheckTimeDiff * 60) - (now.getMinutes() * 60 + now.getSeconds()) + checkTimeDelay;
 	if (now.getMinutes() >= trapCheckTimeDiff) {
