@@ -533,6 +533,18 @@
 const BAIT = "bait";
 const TRINKET = "trinket";
 const TRAP = "trap";
+const BASE = "base";
+const TRAPS_BY_TYPE = {
+	"Arcane": "Circlet of Seeking",
+	"Draconic": "Chrome Storm Wrought Ballista",
+	"Forgotten": "Chrome Thought Obliterator",
+	"Hydro": "Chrome School of Sharks",
+	"Law": "S.T.I.N.G.E.R.",
+	"Physical": "Charming PrinceBot",
+	"Shadow": "Chrome Temporal Turbine",
+	"Tactical": "Slumbering Boulder",
+};
+const BEST_BASE = "Prestige Base";
 
 //remove commas before parseInt
 (function () {
@@ -999,16 +1011,6 @@ function floatingIslands() {
 	const PIRATE_TRAP = "Slumbering Boulder";
 	const locationData = user.quests.QuestFloatingIslands;
 	const powerType = locationData.saved_trap_setup.name;
-	const TRAPS_BY_TYPE = {
-		"Arcane": "Circlet of Seeking",
-		"Draconic": "Chrome Storm Wrought Ballista",
-		"Forgotten": "Chrome Thought Obliterator",
-		"Hydro": "Chrome School of Sharks",
-		"Law": "S.T.I.N.G.E.R.",
-		"Physical": "Smoldering Sentinel",
-		"Shadow": "Chrome Temporal Turbine",
-		"Tactical": "Slumbering Boulder",
-	};
 	const FULPC = "Festive Ultimate Lucky Power Charm";
 	const ANCIENT = "Ultimate Ancient Charm";
 	const NORMAL_CHARM = ANCIENT;
