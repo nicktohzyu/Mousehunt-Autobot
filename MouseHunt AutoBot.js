@@ -806,6 +806,9 @@ function locationBotCheck(caller) {
 		case 'Floating Islands':
 			floatingIslands();
 			break;
+		case 'Bountiful Beanstalk':
+			beanstalk();
+			break;
 		case 'None':
 			break;
 		default:
@@ -996,6 +999,122 @@ function halloween2020() {
 			console.log("arming regular cannonball");
 			document.getElementsByClassName("halloweenHUD-campBanner-cannonBall-button default")[0].click();
 		}
+	}
+}
+
+function beanstalk() {
+	if (getCurrentLocation().indexOf("Bountiful Beanstalk") < 0) {
+		return;
+	}
+	if (debug) {
+		console.log("running beanstalk bot");
+	}
+	const locationData = user.quests.QuestBountifulBeanstalk;
+	function toggleFuel() {
+		document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__fuelToggleButton")[0].click();
+	}
+	function setFuelOn() {
+		if (!locationData.is_fuel_enabled) {
+			toggleFuel();
+		}
+	}
+	function setFuelOff() {
+		if (locationData.is_fuel_enabled) {
+			toggleFuel();
+		}
+	}
+	function setFuel(targetOn) {
+		if (targetOn) {
+			setFuelOn();
+		} else {
+			setFuelOff();
+		}
+	}
+	function armPlainCheese() {
+		checkThenArm(null, BAIT, "Gouda");
+	}
+	function armGreenBeansterCheese() {
+		checkThenArm(null, BAIT, "Beanster Cheese");
+	}
+	function armLavishBeansterCheese() {
+		checkThenArm(null, BAIT, "Lavish Beanster Cheese");
+	}
+	function armRoyalBeansterCheese() {
+		checkThenArm(null, BAIT, "Royal Beanster Cheese");
+	}
+	const useFuelAtVinneus = true;
+	checkThenArm(null, BASE, BEST_BASE);
+	checkThenArm(null, TRAP, TRAPS_BY_TYPE["Physical"]);
+	if (!locationData.in_castle) {
+		if (debug) console.log("on beanstalk");
+		if (locationData.beanstalk.is_boss_encounter) {
+			//TODO: more logic on multiplier
+			if (debug) console.log("vinneus encounter");
+			setFuel(useFuelAtVinneus);
+		} else {
+			setFuelOff();
+		}
+		checkThenArm(null, TRINKET, "Rift Charm");
+		armPlainCheese();
+	}
+	else if (locationData.castle.current_floor.name == "Dungeon Floor") {
+		if (debug) console.log("in castle dungeon");
+		if (locationData.castle.current_room.loot_multiplier == 8) {
+			checkThenArm(null, TRINKET, "Rift Ultimate Power Charm");
+			armGreenBeansterCheese();
+		} else {
+			//lower multiplier room
+			checkThenArm(null, TRINKET, "Rift Charm");
+			armPlainCheese();
+		}
+
+		//only use CC at boss
+		if (locationData.castle.is_boss_encounter) {
+			if (debug) console.log("dungeon boss");
+			setFuelOn();
+		} else {
+			setFuelOff();
+		}
+	} else if (locationData.castle.current_floor.name == "Ballroom Floor") {
+		if (debug) console.log("in castle ballroom");
+		if (locationData.castle.current_room.loot_multiplier == 8 && locationData.castle.is_boss_chase) {
+			checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+			armLavishBeansterCheese();
+		} else if (locationData.castle.current_room.loot_multiplier == 8) {
+			checkThenArm(null, TRINKET, "Rift Ultimate Power Charm");
+			armLavishBeansterCheese();
+		} else if (locationData.castle.current_room.loot_multiplier == 4
+			&& locationData.castle.is_boss_chase
+			&& (locationData.castle.current_room.type == 'string_extreme_room'
+			|| locationData.castle.current_room.type == 'mystery_extreme_room')) {
+			checkThenArm(null, TRINKET, "Rift Ultimate Power Charm");
+			armGreenBeansterCheese();
+		} else if (locationData.castle.current_room.loot_multiplier == 4
+			&& locationData.castle.is_boss_chase) { //does chase => encounter?
+			checkThenArm(null, TRINKET, "Rift Ultimate Power Charm");
+			armGreenBeansterCheese();
+		} else {
+			//lower multiplier room
+			checkThenArm(null, TRINKET, "Rift Charm");
+			armPlainCheese();
+		}
+
+		if (locationData.castle.is_boss_encounter) {
+			if (debug) console.log("ballroom boss");
+			setFuelOn();
+		} else if (locationData.castle.current_room.loot_multiplier == 8 && locationData.castle.is_boss_chase) {
+			if (debug) console.log("giant chase and 8x room: activating CC");
+			setFuelOn();
+		} else if (locationData.castle.current_room.loot_multiplier == 4
+			&& locationData.castle.is_boss_chase
+			&& locationData.castle.current_room.type == 'string_extreme_room') {
+			if (debug) console.log("4x harp room and chase: activating CC");
+			setFuelOn();
+		} else {
+			setFuelOff();
+		}
+	} else {
+		playAlertSound();
 	}
 }
 
@@ -7754,6 +7873,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<td style="height:24px">';
 				preferenceHTMLStr += '<select id="locationBotSelect" style="width:150px" onChange="window.sessionStorage.setItem(\'locationBot\', value); showOrHideTr(value);">';
 				preferenceHTMLStr += '<option value="None">None</option>';
+				preferenceHTMLStr += '<option value="Bountiful Beanstalk">Bountiful Beanstalk</option>';
 				preferenceHTMLStr += '<option value="Bristle Woods Rift">Bristle Woods Rift</option>';
 				preferenceHTMLStr += '<option value="Floating Islands">Floating Islands</option>';
 				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
