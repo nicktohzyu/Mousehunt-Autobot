@@ -1365,7 +1365,7 @@ function bwRift() { //interface does not work; settings must be done in code
 		return;
 	}
 	const VACUUM_CHARMS = ['Rift Super Vacuum Charm', 'Rift Vacuum Charm'];
-	var objDefaultBWRift = {
+	var defaultBWRiftConfig = {
 		order: ['NONE', 'GEARWORKS', 'ANCIENT', 'RUNIC', 'TIMEWARP', 'GUARD', 'SECURITY', 'FROZEN', 'FURNACE', 'INGRESS', 'PURSUER', 'ACOLYTE_CHARGING', 'ACOLYTE_DRAINING', 'ACOLYTE_DRAINED', 'LUCKY', 'HIDDEN'],
 		master: {
 			weapon: new Array(32).fill(bestRiftWeapon),
@@ -1453,23 +1453,23 @@ function bwRift() { //interface does not work; settings must be done in code
 		HIDDEN: 15
 	}
 	{
-		objDefaultBWRift.master.bait[chambers.RUNIC] = 'Ancient String';
-		objDefaultBWRift.master.bait[chambers.TIMEWARP] = 'Runic String';
-		objDefaultBWRift.master.bait[chambers.GUARD] = 'Runic String';
-		objDefaultBWRift.master.bait[chambers.FROZEN] = 'Runic String';
-		objDefaultBWRift.master.bait[chambers.INGRESS] = 'Runic String';
-		objDefaultBWRift.master.bait[chambers.ACOLYTE_CHARGING] = 'Runic String';
-		objDefaultBWRift.master.bait[chambers.ACOLYTE_DRAINING] = 'Runic String';
-		objDefaultBWRift.master.bait[chambers.ACOLYTE_DRAINED] = 'Runic String';
-		objDefaultBWRift.master.bait[chambers.LUCKY] = 'Runic String';
-		objDefaultBWRift.master.bait[chambers.HIDDEN] = 'Runic String';
+		defaultBWRiftConfig.master.bait[chambers.RUNIC] = 'Ancient String';
+		defaultBWRiftConfig.master.bait[chambers.TIMEWARP] = 'Runic String';
+		defaultBWRiftConfig.master.bait[chambers.GUARD] = 'Runic String';
+		defaultBWRiftConfig.master.bait[chambers.FROZEN] = 'Runic String';
+		defaultBWRiftConfig.master.bait[chambers.INGRESS] = 'Runic String';
+		defaultBWRiftConfig.master.bait[chambers.ACOLYTE_CHARGING] = 'Runic String';
+		defaultBWRiftConfig.master.bait[chambers.ACOLYTE_DRAINING] = 'Runic String';
+		defaultBWRiftConfig.master.bait[chambers.ACOLYTE_DRAINED] = 'Runic String';
+		defaultBWRiftConfig.master.bait[chambers.LUCKY] = 'Runic String';
+		defaultBWRiftConfig.master.bait[chambers.HIDDEN] = 'Runic String';
 
 		// objDefaultBWRift.master.activate[chambers.TIMEWARP] = true;
-		objDefaultBWRift.master.activate[chambers.GUARD] = true;
-		objDefaultBWRift.master.activate[chambers.FROZEN] = true;
-		objDefaultBWRift.master.activate[chambers.INGRESS] = true;
-		objDefaultBWRift.master.activate[chambers.ACOLYTE_CHARGING] = true;
-		objDefaultBWRift.master.activate[chambers.ACOLYTE_DRAINED] = true;
+		defaultBWRiftConfig.master.activate[chambers.GUARD] = true;
+		defaultBWRiftConfig.master.activate[chambers.FROZEN] = true;
+		defaultBWRiftConfig.master.activate[chambers.INGRESS] = true;
+		defaultBWRiftConfig.master.activate[chambers.ACOLYTE_CHARGING] = true;
+		defaultBWRiftConfig.master.activate[chambers.ACOLYTE_DRAINED] = true;
 		// objDefaultBWRift.master.activate[chambers.LUCKY] = true;
 		// objDefaultBWRift.master.activate[chambers.HIDDEN] = true;
 
@@ -1481,15 +1481,15 @@ function bwRift() { //interface does not work; settings must be done in code
 		// objDefaultBWRift.master.trinket[chambers.ACOLYTE_CHARGING] = "Rift Antiskele Charm";
 	}
 
-	objBWRift = objDefaultBWRift;
+	bwRiftConfig = defaultBWRiftConfig;
 	//console.log("Storage BWR settings:", getStorageToObject('BWRift'));
-	//setStorage('BWRift', JSON.stringify(objBWRift));
-	//window.sessionStorage.setItem('BWRift', JSON.stringify(objBWRift));
-	//var objBWRift = getStorageToObject('BWRift', objDefaultBWRift);
+	//setStorage('BWRift', JSON.stringify(bwRiftConfig));
+	//window.sessionStorage.setItem('BWRift', JSON.stringify(bwRiftConfig));
+	//var bwRiftConfig = getStorageToObject('BWRift', objDefaultBWRift);
 
 	var objUser = JSON.parse(getPageVariable('JSON.stringify(user.quests.QuestRiftBristleWoods)'));
 	var nTimeSand = parseInt(objUser.items.rift_hourglass_sand_stat_item.quantity);
-	console.log("RUN BWRift() using:", objBWRift);
+	console.log("RUN BWRift() using:", bwRiftConfig);
 
 	var nIndex = -1;
 	var nLootRemaining = objUser.progress_remaining;
@@ -1512,12 +1512,12 @@ function bwRift() { //interface does not work; settings must be done in code
 			nLootRemaining = Number.MAX_SAFE_INTEGER;
 		}
 		//console.plog('Status:', strStatus, 'Obelisk:', objUser.minigame.acolyte_chamber.obelisk_charge, 'Acolyte Sand:', objUser.minigame.acolyte_chamber.acolyte_sand);
-		nIndex = objBWRift.order.indexOf(strStatus);
+		nIndex = bwRiftConfig.order.indexOf(strStatus);
 	} else if (strChamberName == 'RIFT')
 		nIndex = 0;
 	else {
 		if (nLootRemaining > 0)
-			nIndex = objBWRift.order.indexOf(strChamberName);
+			nIndex = bwRiftConfig.order.indexOf(strChamberName);
 		else
 			nIndex = 0;
 	}
@@ -1539,15 +1539,15 @@ function bwRift() { //interface does not work; settings must be done in code
 	}
 	if (objUser.obelisk_percent == 100) {
 		//console.log("second run at acolyte");
-		objBWRift.minTimeSand[9] = objBWRift.minTimeSand[nIndexBuffCurse] / 2 - 20 + objUser.acolyte_sand * 1.3;
+		bwRiftConfig.minTimeSand[9] = bwRiftConfig.minTimeSand[nIndexBuffCurse] / 2 - 20 + objUser.acolyte_sand * 1.3;
 		nIndexBuffCurse = 9;
 	}
-	if (nTimeSand > objBWRift.minTimeSand[nIndexBuffCurse]) { //Prioritize timesand first, then farm potions while searching for acolyte portal
+	if (nTimeSand > bwRiftConfig.minTimeSand[nIndexBuffCurse]) { //Prioritize timesand first, then farm potions while searching for acolyte portal
 		console.log("Enough timesand, using alternate priorities");
-		objBWRift.master.trinket[4] = VACUUM_CHARMS;
-		objBWRift.master.activate[4] = false;
+		bwRiftConfig.master.trinket[4] = VACUUM_CHARMS;
+		bwRiftConfig.master.activate[4] = false;
 	}
-	console.log(/*'Buff & Curse Index:', nIndexBuffCurse, 'Obj:', objUser.status_effects, */"Min sand to enter acolyte chamber:", objBWRift.minTimeSand[nIndexBuffCurse]);
+	console.log(/*'Buff & Curse Index:', nIndexBuffCurse, 'Obj:', objUser.status_effects, */"Min sand to enter acolyte chamber:", bwRiftConfig.minTimeSand[nIndexBuffCurse]);
 	if (nIndex === 0 || objUser.chamber_status == 'open') {
 		// Choosing portal
 		//console.log("choosing portal", nIndex, objUser.chamber_status);
@@ -1568,11 +1568,11 @@ function bwRift() { //interface does not work; settings must be done in code
 			var i, j;
 			let arrPriorities;
 			if (nIndexBuffCurse == 8) {
-				arrPriorities = objBWRift.prioritiesCursed;
-			} else if (nTimeSand > objBWRift.minTimeSand[nIndexBuffCurse]) {
-				arrPriorities = objBWRift.prioritiesEnoughSand;
+				arrPriorities = bwRiftConfig.prioritiesCursed;
+			} else if (nTimeSand > bwRiftConfig.minTimeSand[nIndexBuffCurse]) {
+				arrPriorities = bwRiftConfig.prioritiesEnoughSand;
 			} else {
-				arrPriorities = objBWRift.priorities;
+				arrPriorities = bwRiftConfig.priorities;
 			}
 			var nIndexCustom = -1;
 			for (i = 0; i < arrPriorities.length; i++) {
@@ -1601,8 +1601,8 @@ function bwRift() { //interface does not work; settings must be done in code
 				if (objPortal.arrIndex[i] < 0)
 					objPortal.arrIndex[i] = Number.MAX_SAFE_INTEGER;
 			}
-			if (objBWRift.choosePortal) {
-				if (nIndex === 0 || (nIndex > 0 && objUser.chamber_status == 'open' && objBWRift.choosePortalAfterCC)) {
+			if (bwRiftConfig.choosePortal) {
+				if (nIndex === 0 || (nIndex > 0 && objUser.chamber_status == 'open' && bwRiftConfig.choosePortalAfterCC)) {
 					//console.log(i, arrPriorities.indexOf(objPortal.arrName[i]), objPortal.arrIndex[i]);
 					var nIndexOld = nIndex;
 					var arrIndices = [];
@@ -1615,11 +1615,11 @@ function bwRift() { //interface does not work; settings must be done in code
 							nTotalRSC = Number.MAX_SAFE_INTEGER;
 						//console.plog('RSC Pot:', nRSCPot, 'RSC:', nRSC, 'Total RSC:', nTotalRSC);
 						var nMinRSC = -1;
-						if (objBWRift.minRSCType == 'NUMBER')
-							nMinRSC = objBWRift.minRSC;
-						else if (objBWRift.minRSCType == 'GEQ')
-							nMinRSC = objBWRift.minTimeSand[nIndexBuffCurse];
-						if (nTotalRSC < nMinRSC || nTimeSand < objBWRift.minTimeSand[nIndexBuffCurse]) {
+						if (bwRiftConfig.minRSCType == 'NUMBER')
+							nMinRSC = bwRiftConfig.minRSC;
+						else if (bwRiftConfig.minRSCType == 'GEQ')
+							nMinRSC = bwRiftConfig.minTimeSand[nIndexBuffCurse];
+						if (nTotalRSC < nMinRSC || nTimeSand < bwRiftConfig.minTimeSand[nIndexBuffCurse]) {
 							arrIndices = getAllIndices(objPortal.arrName, 'ACOLYTE');
 							for (i = 0; i < arrIndices.length; i++)
 								objPortal.arrIndex[arrIndices[i]] = Number.MAX_SAFE_INTEGER - 1;
@@ -1628,7 +1628,7 @@ function bwRift() { //interface does not work; settings must be done in code
 					var arrTemp = ['TIMEWARP', 'GUARD'];
 					for (i = 0; i < arrTemp.length; i++) {
 						nIndexTemp = objPortal.arrName.indexOf(arrTemp[i]);
-						/*if (nIndexTemp > -1 && nTimeSand >= objBWRift.minTimeSand[nIndexBuffCurse]) {
+						/*if (nIndexTemp > -1 && nTimeSand >= bwRiftConfig.minTimeSand[nIndexBuffCurse]) {
 							arrIndices = getAllIndices(objPortal.arrName, arrTemp[i]);
 							for (j = 0; j < arrIndices.length; j++)
 								objPortal.arrIndex[arrIndices[j]] = Number.MAX_SAFE_INTEGER-2; //Disables selecting timewarp when enough sand
@@ -1637,7 +1637,7 @@ function bwRift() { //interface does not work; settings must be done in code
 					arrTemp = ['GUARD', 'FROZEN', 'INGRESS'];
 					for (i = 0; i < arrTemp.length; i++) {
 						nIndexTemp = objPortal.arrName.indexOf(arrTemp[i]);
-						if (nIndexTemp > -1 && nIndexBuffCurse == 8 && objBWRift.enterMinigameWCurse === false) {
+						if (nIndexTemp > -1 && nIndexBuffCurse == 8 && bwRiftConfig.enterMinigameWCurse === false) {
 							arrIndices = getAllIndices(objPortal.arrName, arrTemp[i]);
 							for (j = 0; j < arrIndices.length; j++)
 								objPortal.arrIndex[arrIndices[j]] = Number.MAX_SAFE_INTEGER - 1;
@@ -1694,12 +1694,12 @@ function bwRift() { //interface does not work; settings must be done in code
 							return;
 						}
 						if (objPortal.arrName[nMinIndex] == 'ENTER')
-							nIndex = objBWRift.order.indexOf('GEARWORKS');
+							nIndex = bwRiftConfig.order.indexOf('GEARWORKS');
 						else
-							nIndex = objBWRift.order.indexOf(objPortal.arrName[nMinIndex]);
+							nIndex = bwRiftConfig.order.indexOf(objPortal.arrName[nMinIndex]);
 						if (nIndex > -1) {
 							//console.plog('Chosen Portal:', objPortal.arrName[nMinIndex], 'Index:', nIndex);
-							strChamberName = objBWRift.order[nIndex];
+							strChamberName = bwRiftConfig.order[nIndex];
 							fireEvent(classPortalContainer[0].children[nMinIndex], 'click');
 							window.setTimeout(function () {
 								fireEvent(document.getElementsByClassName('mousehuntActionButton small')[1], 'click');
@@ -1740,7 +1740,7 @@ function bwRift() { //interface does not work; settings must be done in code
 			nCleaverAvailable += 2;
 		for (var prop in objTemp) {
 			if (objTemp.hasOwnProperty(prop))
-				objTemp[prop] = (objBWRift[strTemp][prop][nCleaverAvailable] == 'MASTER') ? objBWRift.master[prop][nIndex] : objBWRift[strTemp][prop][nCleaverAvailable];
+				objTemp[prop] = (bwRiftConfig[strTemp][prop][nCleaverAvailable] == 'MASTER') ? bwRiftConfig.master[prop][nIndex] : bwRiftConfig[strTemp][prop][nCleaverAvailable];
 		}
 	} else if (strChamberName == 'GUARD') {
 		var nAlertLvl = (isNullOrUndefined(objUser.minigame.guard_chamber)) ? -1 : parseInt(objUser.minigame.guard_chamber.status.split("_")[1]);
@@ -1749,7 +1749,7 @@ function bwRift() { //interface does not work; settings must be done in code
 			// Not alerted yet
 			for (var prop in objTemp) {
 				if (objTemp.hasOwnProperty(prop))
-					objTemp[prop] = objBWRift.master[prop][nIndex];
+					objTemp[prop] = bwRiftConfig.master[prop][nIndex];
 			}
 		} else {
 			// Alert on
@@ -1758,7 +1758,7 @@ function bwRift() { //interface does not work; settings must be done in code
 
 			for (var prop in objTemp) {
 				if (objTemp.hasOwnProperty(prop))
-					objTemp[prop] = (objBWRift.gb[prop][nAlertLvl] == 'MASTER') ? objBWRift.master[prop][nIndex] : objBWRift.gb[prop][nAlertLvl];
+					objTemp[prop] = (bwRiftConfig.gb[prop][nAlertLvl] == 'MASTER') ? bwRiftConfig.master[prop][nIndex] : bwRiftConfig.gb[prop][nAlertLvl];
 			}
 		}
 	}
@@ -1769,7 +1769,7 @@ function bwRift() { //interface does not work; settings must be done in code
 	else {
 		for (var prop in objTemp) {
 			if (objTemp.hasOwnProperty(prop))
-				objTemp[prop] = objBWRift.master[prop][nIndex];
+				objTemp[prop] = bwRiftConfig.master[prop][nIndex];
 		}
 	}
 
@@ -1791,11 +1791,11 @@ function bwRift() { //interface does not work; settings must be done in code
 	var bForce = false;
 	var bToggle = false;
 	if (objTemp.activate) {
-		bForce = (objBWRift.specialActivate.forceDeactivate[nIndex] && nLootRemaining <= objBWRift.specialActivate.remainingLootDeactivate[nIndex]);
+		bForce = (bwRiftConfig.specialActivate.forceDeactivate[nIndex] && nLootRemaining <= bwRiftConfig.specialActivate.remainingLootDeactivate[nIndex]);
 		if (bForce === bPocketwatchActive)
 			bToggle = true;
 	} else {
-		bForce = (objBWRift.specialActivate.forceActivate[nIndex] && nLootRemaining <= objBWRift.specialActivate.remainingLootActivate[nIndex]);
+		bForce = (bwRiftConfig.specialActivate.forceActivate[nIndex] && nLootRemaining <= bwRiftConfig.specialActivate.remainingLootActivate[nIndex]);
 		if (bForce !== bPocketwatchActive)
 			bToggle = true;
 	}
