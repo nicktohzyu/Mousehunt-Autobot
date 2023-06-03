@@ -1221,8 +1221,8 @@ function floatingIslands() {
 			}
 		}
 		//things to do for all islands
-		if (locationData.hunting_site_atts.island_progress >= 20) {
-			// deactivateWind(); //disable during easter event
+		if (locationData.hunting_site_atts.island_progress >= 30) {
+			deactivateWind(); //disable during easter event
 		}
 	} else if (locationData.is_at_sky_palace === true) {
 		console.log("At sky palace");
