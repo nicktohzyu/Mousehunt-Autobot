@@ -555,6 +555,10 @@ const BEST_BASE = "Prestige Base";
 	};
 })();
 
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function sendGiftsToFavourites() {
 	console.log("sending gifts to friends");
 	var listOfFavourites = null;
