@@ -1432,7 +1432,7 @@ function bwRift() { //interface does not work; settings must be done in code
 		master: {
 			weapon: new Array(32).fill(bestRiftWeapon),
 			base: new Array(32).fill(bestRiftBase),
-			trinket: new Array(32).fill(VACUUM_CHARMS),
+			trinket: new Array(32).fill('Rift Vacuum Charm'),
 			bait: new Array(32).fill('Brie String'),
 			activate: new Array(32).fill(false),
 		},
@@ -1491,7 +1491,7 @@ function bwRift() { //interface does not work; settings must be done in code
 		prioritiesCursed: ['SECURITY', 'FURNACE', 'PURSUER', 'ANCIENT', 'GEARWORKS', 'RUNIC', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS'],
 		//index 0-7 is bitmask of 4th portal, acolyte influence, paladin's bane
 		//8: cursed, 9:second attempt at acolyte (recalculated later)
-		minTimeSand: [65, 65, 60, 60, 55, 55, 50, 50, 999, 999],
+		minTimeSand: [55, 55, 50, 50, 45, 45, 40, 40, 999, 999],
 		minRSCType: 'NUMBER',
 		minRSC: 40,
 		enterMinigameWCurse: false
@@ -1526,28 +1526,29 @@ function bwRift() { //interface does not work; settings must be done in code
 		defaultBWRiftConfig.master.bait[chambers.LUCKY] = 'Runic String';
 		defaultBWRiftConfig.master.bait[chambers.HIDDEN] = 'Runic String';
 
-		// objDefaultBWRift.master.activate[chambers.TIMEWARP] = true;
+		// defaultBWRiftConfig.master.activate[chambers.TIMEWARP] = true;
 		defaultBWRiftConfig.master.activate[chambers.GUARD] = true;
 		defaultBWRiftConfig.master.activate[chambers.FROZEN] = true;
 		defaultBWRiftConfig.master.activate[chambers.INGRESS] = true;
 		defaultBWRiftConfig.master.activate[chambers.ACOLYTE_CHARGING] = true;
 		defaultBWRiftConfig.master.activate[chambers.ACOLYTE_DRAINED] = true;
-		// objDefaultBWRift.master.activate[chambers.LUCKY] = true;
-		// objDefaultBWRift.master.activate[chambers.HIDDEN] = true;
+		// defaultBWRiftConfig.master.activate[chambers.LUCKY] = true;
+		// defaultBWRiftConfig.master.activate[chambers.HIDDEN] = true;
 
-		// objDefaultBWRift.master.trinket[4] = 'Rift Wealth Charm';
-		// objDefaultBWRift.master.trinket[12] = 'Rift Wealth Charm';
-		// objDefaultBWRift.master.trinket[13] = 'Rift Wealth Charm';
-		// objDefaultBWRift.master.trinket[14] = 'Rift Wealth Charm';
-		// objDefaultBWRift.master.trinket[15] = 'Rift Wealth Charm';
-		// objDefaultBWRift.master.trinket[chambers.ACOLYTE_CHARGING] = "Rift Antiskele Charm";
+		defaultBWRiftConfig.master.trinket[chambers.TIMEWARP] = 'Rift Wealth Charm';
+		defaultBWRiftConfig.master.trinket[chambers.ACOLYTE_CHARGING] = VACUUM_CHARMS;
+		// defaultBWRiftConfig.master.trinket[12] = 'Rift Wealth Charm';
+		// defaultBWRiftConfig.master.trinket[13] = 'Rift Wealth Charm';
+		// defaultBWRiftConfig.master.trinket[14] = 'Rift Wealth Charm';
+		// defaultBWRiftConfig.master.trinket[15] = 'Rift Wealth Charm';
+		// defaultBWRiftConfig.master.trinket[chambers.ACOLYTE_CHARGING] = "Rift Antiskele Charm";
 	}
 
 	bwRiftConfig = defaultBWRiftConfig;
 	//console.log("Storage BWR settings:", getStorageToObject('BWRift'));
 	//setStorage('BWRift', JSON.stringify(bwRiftConfig));
 	//window.sessionStorage.setItem('BWRift', JSON.stringify(bwRiftConfig));
-	//var bwRiftConfig = getStorageToObject('BWRift', objDefaultBWRift);
+	//var bwRiftConfig = getStorageToObject('BWRift', defaultBWRiftConfig);
 
 	var objUser = JSON.parse(getPageVariable('JSON.stringify(user.quests.QuestRiftBristleWoods)'));
 	var nTimeSand = parseInt(objUser.items.rift_hourglass_sand_stat_item.quantity);
@@ -1606,7 +1607,7 @@ function bwRift() { //interface does not work; settings must be done in code
 	}
 	if (nTimeSand > bwRiftConfig.minTimeSand[nIndexBuffCurse]) { //Prioritize timesand first, then farm potions while searching for acolyte portal
 		console.log("Enough timesand, using alternate priorities");
-		bwRiftConfig.master.trinket[4] = VACUUM_CHARMS;
+		bwRiftConfig.master.trinket[4] = 'Rift Vacuum Charm';
 		bwRiftConfig.master.activate[4] = false;
 	}
 	console.log(/*'Buff & Curse Index:', nIndexBuffCurse, 'Obj:', objUser.status_effects, */"Min sand to enter acolyte chamber:", bwRiftConfig.minTimeSand[nIndexBuffCurse]);
@@ -1687,26 +1688,23 @@ function bwRift() { //interface does not work; settings must be done in code
 								objPortal.arrIndex[arrIndices[i]] = Number.MAX_SAFE_INTEGER - 1;
 						}
 					}
-					var arrTemp = ['TIMEWARP', 'GUARD'];
-					for (i = 0; i < arrTemp.length; i++) {
-						nIndexTemp = objPortal.arrName.indexOf(arrTemp[i]);
+					for (const room of ['TIMEWARP', 'GUARD']) {
+						nIndexTemp = objPortal.arrName.indexOf(room);
 						/*if (nIndexTemp > -1 && nTimeSand >= bwRiftConfig.minTimeSand[nIndexBuffCurse]) {
-							arrIndices = getAllIndices(objPortal.arrName, arrTemp[i]);
+							arrIndices = getAllIndices(objPortal.arrName, room);
 							for (j = 0; j < arrIndices.length; j++)
 								objPortal.arrIndex[arrIndices[j]] = Number.MAX_SAFE_INTEGER-2; //Disables selecting timewarp when enough sand
 						}*/
 					}
-					arrTemp = ['GUARD', 'FROZEN', 'INGRESS'];
-					for (i = 0; i < arrTemp.length; i++) {
-						nIndexTemp = objPortal.arrName.indexOf(arrTemp[i]);
+					for (const room of ['GUARD', 'FROZEN', 'INGRESS']) {
+						nIndexTemp = objPortal.arrName.indexOf(room);
 						if (nIndexTemp > -1 && nIndexBuffCurse == 8 && bwRiftConfig.enterMinigameWCurse === false) {
-							arrIndices = getAllIndices(objPortal.arrName, arrTemp[i]);
-							for (j = 0; j < arrIndices.length; j++)
-								objPortal.arrIndex[arrIndices[j]] = Number.MAX_SAFE_INTEGER - 1;
+							for (const index of getAllIndices(objPortal.arrName, room))
+								objPortal.arrIndex[index] = Number.MAX_SAFE_INTEGER - 1;
 						}
 					}
-					var arrAL = getAllIndices(objPortal.arrName, 'ANCIENT');
-					var arrRL = getAllIndices(objPortal.arrName, 'RUNIC');
+					const arrAL = getAllIndices(objPortal.arrName, 'ANCIENT');
+					const arrRL = getAllIndices(objPortal.arrName, 'RUNIC');
 					if (arrAL.length > 0 && arrRL.length > 0 && nIndexCustom > -1) {
 						var nASCPot = parseInt(objUser.items.ancient_string_cheese_potion.quantity);
 						var nASC = parseInt(objUser.items.ancient_string_cheese.quantity);
@@ -1728,7 +1726,6 @@ function bwRift() { //interface does not work; settings must be done in code
 						objPortal.arrIndex[nIndexTemp] = 1;
 					}
 					var nMinIndex = minIndex(objPortal.arrIndex);
-					var selectPortal = true; //turn off for debug
 					/*if (classPortalContainer[0].children[nMinIndex] == 'frozen'){ //do not enter portal
 						nIndex = nIndexOld;
 						selectPortal = false;
@@ -1742,17 +1739,30 @@ function bwRift() { //interface does not work; settings must be done in code
 						portalHistory[portalHistoryCurrentIndex][2] = objPortal;
 						setStorage('BWR_portal_history', JSON.stringify(portalHistory));
 					}
-					if (selectPortal) { //click portal
+
+					/*
+					TODO: code to scramble portals
+					document.getElementsByClassName("riftBristleWoodsHUD-portalEquipment-action")[0].click();
+					window.setTimeout(function () {
+						document.getElementsByClassName("mousehuntActionButton small confirm")[0].click();
+						//reloadPage();
+					}, 1000);
+					*/
+
+					var selectPortal = true; //turn off for debug
+					if (!selectPortal) {
+						playAlertSound();
+					} else { //click portal
 						//console.log("choosing portal");
 						if (objPortal.arrName[nMinIndex] == 'ACOLYTE') {
 							//console.plog('Chosen Portal:', objPortal.arrName[nMinIndex], 'Index: Unknown');
 							fireEvent(classPortalContainer[0].children[nMinIndex], 'click');
 							window.setTimeout(function () {
 								fireEvent(document.getElementsByClassName('mousehuntActionButton small')[1], 'click');
+								window.setTimeout(function () {
+									reloadPage();
+								}, 1000);
 							}, 1000);
-							window.setTimeout(function () {
-								bwRift();
-							}, 2000);
 							return;
 						}
 						if (objPortal.arrName[nMinIndex] == 'ENTER')
@@ -1765,6 +1775,9 @@ function bwRift() { //interface does not work; settings must be done in code
 							fireEvent(classPortalContainer[0].children[nMinIndex], 'click');
 							window.setTimeout(function () {
 								fireEvent(document.getElementsByClassName('mousehuntActionButton small')[1], 'click');
+								window.setTimeout(function () {
+									reloadPage();
+								}, 1000);
 							}, 1000);
 							nLootRemaining = Number.MAX_SAFE_INTEGER;
 						}
@@ -12877,7 +12890,7 @@ function bodyJS() { //don't know what this does but does not affect function
 		trinket: new Array(4).fill(''),
 		bait: new Array(4).fill('')
 	};
-	var objDefaultBWRift = {
+	var defaultBWRiftConfig = {
 		order: ['NONE', 'GEARWORKS', 'ANCIENT', 'RUNIC', 'TIMEWARP', 'GUARD', 'SECURITY', 'FROZEN', 'FURNACE', 'INGRESS', 'PURSUER', 'ACOLYTE_CHARGING', 'ACOLYTE_DRAINING', 'ACOLYTE_DRAINED', 'LUCKY', 'HIDDEN'],
 		master: {
 			weapon: new Array(32).fill('Timesplit Dissonance Trap'),
@@ -14705,7 +14718,7 @@ function bodyJS() { //don't know what this does but does not affect function
 		var selectBWRiftEnterWCurse = document.getElementById('selectBWRiftEnterWCurse');
 		var storageValue = window.sessionStorage.getItem('BWRift');
 		if (isNullOrUndefined(storageValue))
-			storageValue = JSON.stringify(objDefaultBWRift);
+			storageValue = JSON.stringify(defaultBWRiftConfig);
 		storageValue = JSON.parse(storageValue);
 		var nIndexCursed = selectBWRiftChamber.value.indexOf('_CURSED');
 		var bCursed = (nIndexCursed > -1);
@@ -14841,7 +14854,7 @@ function bodyJS() { //don't know what this does but does not affect function
 		//console.log("run initControlsBWRift with ", window.sessionStorage.getItem('BWRift'));
 		//console.log("bAutoChangeChamber = ", bAutoChangeChamber);
 		if (isNullOrUndefined(storageValue))
-			storageValue = JSON.stringify(objDefaultBWRift);
+			storageValue = JSON.stringify(defaultBWRiftConfig);
 		storageValue = JSON.parse(storageValue);
 		var nIndex = -1;
 		var bCursed = false;
