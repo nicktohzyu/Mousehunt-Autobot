@@ -5414,8 +5414,10 @@ async function FinalizePuzzleImageAnswer(answer) {
 
 	var myFrame;
 	if (answer.length != 5) {
+		if (debug) console.log("Answer too short, getting new puzzle");
 		//Get a new puzzle
 		if (kingsRewardRetry >= kingsRewardRetryMax) {
+			if (debug) console.log("kingsRewardRetry >= kingsRewardRetryMax");
 			kingsRewardRetry = 0;
 			setStorage("KingsRewardRetry", kingsRewardRetry);
 			var strTemp = 'Max ' + kingsRewardRetryMax + 'retries. Pls solve it manually ASAP.';
@@ -5424,68 +5426,56 @@ async function FinalizePuzzleImageAnswer(answer) {
 			displayTimer(strTemp, strTemp, strTemp);
 			console.perror(strTemp);
 			return;
-		} else {
-			++kingsRewardRetry;
-			setStorage("KingsRewardRetry", kingsRewardRetry);
-			var tagName = document.getElementsByTagName("a");
-			for (var i = 0; i < tagName.length; i++) {
-				if (tagName[i].innerText == "Click here to get a new one!") {
-					// TODO IMPORTANT: Find another time to fetch new puzzle
-					fireEvent(tagName[i], 'click');
-					myFrame = document.getElementById('myFrame');
-					if (!isNullOrUndefined(myFrame))
-						document.body.removeChild(myFrame);
-					window.setTimeout(function () {
-						CallKRSolver();
-					}, 6000);
-					return;
-				}
-			}
 		}
-	} else {
-		if (debug) console.log("Submitting captcha answer: " + answer);
-		//Submit answer
-
-		//var puzzleAns = document.getElementById("puzzle_answer");
-		const puzzleAnsField = document.getElementsByClassName("puzzleView__code")[0];
-
-		if (!puzzleAnsField) {
-			if (debug) console.plog("puzzleAns: " + puzzleAnsField);
-			return;
-		}
-		puzzleAnsField.click();
-		puzzleAnsField.focus();
-		puzzleAnsField.value = "";
-		puzzleAnsField.value = answer.toLowerCase();
-		await simulateTyping(puzzleAnsField, answer.toLowerCase());
-
-		//var puzzleSubmit = document.getElementById("puzzle_submit");
-		const puzzleSubmitButton = document.getElementsByClassName("puzzleView__solveButton puzzleView__solveButton--ready")[0];
-
-		if (!puzzleSubmitButton) {
-			if (debug) console.plog("puzzleSubmit: " + puzzleSubmitButton);
-			return;
-		}
-		fireEvent(puzzleSubmitButton, 'click');
-		kingsRewardRetry = 0;
+		if (debug) console.log("Retrying KR");
+		++kingsRewardRetry;
 		setStorage("KingsRewardRetry", kingsRewardRetry);
-		myFrame = document.getElementById('myFrame');
-		if (myFrame)
-			document.body.removeChild(myFrame);
-
+		document.getElementsByClassName("puzzleView__requestNewPuzzleButton mousehuntTooltipParent")[0].click();
 		window.setTimeout(function () {
-			CheckKRAnswerCorrectness();
-		}, 1000);
-
-		// window.setTimeout(function () {
-		// }, 5000);
+			CallKRSolver();
+		}, 6000);
+		return;
 	}
+	if (debug) console.log("Submitting captcha answer: " + answer);
+	//Submit answer
+
+	//var puzzleAns = document.getElementById("puzzle_answer");
+	const puzzleAnsField = document.getElementsByClassName("puzzleView__code")[0];
+
+	if (!puzzleAnsField) {
+		if (debug) console.plog("puzzleAns: " + puzzleAnsField);
+		return;
+	}
+	puzzleAnsField.click();
+	puzzleAnsField.focus();
+	puzzleAnsField.value = "";
+	puzzleAnsField.value = answer.toLowerCase();
+	await simulateTyping(puzzleAnsField, answer.toLowerCase());
+
+	//var puzzleSubmit = document.getElementById("puzzle_submit");
+	const puzzleSubmitButton = document.getElementsByClassName("puzzleView__solveButton puzzleView__solveButton--ready")[0];
+
+	if (!puzzleSubmitButton) {
+		if (debug) console.plog("puzzleSubmit: " + puzzleSubmitButton);
+		return;
+	}
+	fireEvent(puzzleSubmitButton, 'click');
+	kingsRewardRetry = 0;
+	setStorage("KingsRewardRetry", kingsRewardRetry);
+	myFrame = document.getElementById('myFrame');
+	if (myFrame)
+		document.body.removeChild(myFrame);
+
+	window.setTimeout(function () {
+		CheckKRAnswerCorrectness();
+	}, 1000);
+
+	// window.setTimeout(function () {
+	// }, 5000);
+
 }
 
 async function simulateTyping(inputElement, text) {
-	function sleep(ms) {
-		return new Promise(resolve => setTimeout(resolve, ms));
-	}
 	for (key of text) {
 		console.log("dispatching: " + key);
 		const downEvent = new KeyboardEvent('keydown', { key });
@@ -5493,7 +5483,7 @@ async function simulateTyping(inputElement, text) {
 		// inputElement.append(key);
 		const upEvent = new KeyboardEvent('keyup', { key });
 		inputElement.dispatchEvent(upEvent);
-		await sleep(1000);
+		await sleep(100);
 	}
 }
 
