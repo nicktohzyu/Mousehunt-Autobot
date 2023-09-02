@@ -1037,6 +1037,17 @@ function beanstalk() {
 	function armLeapingCheese() {
 		checkThenArm(null, BAIT, "Leaping Lavish Beanster Cheese");
 	}
+	function smartArmLeapingCheese() {
+		if (locationData.castle.is_boss_chase) {
+			armPlainCheese();
+			return;
+		}
+		if (locationData.castle.room_position == 19) {
+			armPlainCheese();
+			return;
+		}
+		armLeapingCheese();
+	}
 	function armPlainCheese() {
 		checkThenArm(null, BAIT, "Gouda");
 	}
@@ -1055,8 +1066,13 @@ function beanstalk() {
 	function isRubyRoom() {
 		return locationData.castle.current_room.type.includes("ruby");
 	}
-	async function enterCastle() {
-		const room = 1; //0 = dungeon, 1 = ballroom
+	function isCommonRoom() {
+		return isLapisRoom() || isRubyRoom();
+	}
+	function isHarpRoom() {
+		return locationData.castle.current_room.type.includes("string");
+	}
+	async function enterCastle(room = 0) { //0 = dungeon, 1 = ballroom
 		if (debug) console.log("Entering castle (planting vine) ");
 		document.getElementsByClassName("bountifulBeanstalkClimbView__plantVineDialogButton")[0].click();
 		await sleep(1000);
@@ -1073,19 +1089,19 @@ function beanstalk() {
 	checkThenArm(null, BASE, BEST_BASE);
 	checkThenArm(null, TRAP, TRAPS_BY_TYPE["Physical"]);
 
-	const useFuelAtVinneus = true;
 	const autoEnterCastle = true;
 	if (!locationData.in_castle) {
 		if (debug) console.log("on beanstalk");
 		if (locationData.beanstalk.is_boss_encounter) {
 			//TODO: more logic on multiplier
 			if (debug) console.log("vinneus encounter");
+			const useFuelAtVinneus = true;
 			setFuel(useFuelAtVinneus);
 		} else {
 			setFuelOff();
 			playAlertSound();
 			if (autoEnterCastle) {
-				enterCastle();
+				enterCastle(0); //0 = dungeon, 1 = ballroom
 			}
 		}
 		checkThenArm(null, TRINKET, "Rift Charm");
@@ -1100,7 +1116,7 @@ function beanstalk() {
 			setFuelOff();
 		} else if (locationData.castle.current_room.loot_multiplier == 8) {
 			if (locationData.castle.is_boss_chase) {
-				if (isLapisRoom()) {
+				if (isCommonRoom()) {
 					// Not worth using CC for lapis bean
 					setFuelOff();
 				} else {
@@ -1111,32 +1127,50 @@ function beanstalk() {
 				// 64x without fuel, 128x with fuel
 			} else {
 				setFuelOff();
+				checkThenArm(null, TRINKET, "Rift Ultimate Power Charm");
 				armGreenBeansterCheese();
 			}
-		} else if (locationData.castle.current_room.loot_multiplier == 4 && locationData.castle.current_room.type != "lapis_bean_extreme_room") {
+		} else if (locationData.castle.current_room.loot_multiplier == 4) {
 			checkThenArm(null, TRINKET, "Rift Charm");
 			armPlainCheese();
 			setFuelOff();
 		} else {
 			if (debug) console.log("In low multiplier dungeon, arming leaping");
 			checkThenArm(null, TRINKET, "Rift Charm");
-			if (locationData.castle.is_boss_chase) {
-				armPlainCheese();
-			} else {
-				armLeapingCheese();
-			}
+			smartArmLeapingCheese();
 			setFuelOff();
 		}
+		// } else if (locationData.castle.current_floor.name == "Ballroom Floor") {
+		// 	//insertion for special case of golden feathering harp
+		// 	if (locationData.castle.current_room.loot_multiplier == 8 && isHarpRoom()) {
+		// 		armRoyalBeansterCheese();
+		// 		setFuelOn();
+		// 		checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+		// 	} else {
+		// 		checkThenArm(null, TRINKET, "Rift Charm");
+		// 		setFuelOff();
+		//	 	armLeapingCheeseIfNotBoss();
+		// 	}
 	} else if (locationData.castle.current_floor.name == "Ballroom Floor") {
 		if (debug) console.log("in castle ballroom");
 		if (locationData.castle.is_boss_encounter) {
 			if (debug) console.log("ballroom boss");
-			checkThenArm(null, TRINKET, "Rift Charm");
-			armPlainCheese();
+			checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+			armLavishBeansterCheese();
 			setFuelOff();
+		} else if (locationData.castle.current_room.loot_multiplier == 8 && isHarpRoom()) {
+			if (locationData.castle.is_boss_chase) {
+				armRoyalBeansterCheese();
+				setFuelOn();
+				checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+			} else {
+				armLavishBeansterCheese();
+				checkThenArm(null, TRINKET, "Rift Charm");
+				setFuelOff();
+			}
 		} else if (locationData.castle.current_room.loot_multiplier == 8) {
 			if (locationData.castle.is_boss_chase) {
-				if (isRubyRoom()) {
+				if (isCommonRoom()) {
 					// Not worth using CC for ruby bean
 					setFuelOff();
 				} else {
@@ -1147,31 +1181,35 @@ function beanstalk() {
 				checkThenArm(null, TRINKET, "Rift Ultimate Power Charm");
 				armLavishBeansterCheese();
 			} else {
-				if (isRubyRoom()) {
-					armGreenBeansterCheese();
+				if (isCommonRoom()) {
+					armLavishBeansterCheese();
 				} else {
 					armLavishBeansterCheese();
 				}
 				checkThenArm(null, TRINKET, "Rift Charm");
 				setFuelOff();
 			}
-		} else if (locationData.castle.current_room.loot_multiplier == 4 && !isRubyRoom()) {
+		} else if (locationData.castle.current_room.loot_multiplier == 4 && !isCommonRoom()) {
 			//does the same thing for chase and non-chase
 			//string or mystery
 			checkThenArm(null, TRINKET, "Rift Charm");
-			armGreenBeansterCheese();
+			armPlainCheese();
 			setFuelOff();
 		} else if (locationData.castle.current_room.loot_multiplier == 4) {
 			//does the same thing for chase and non-chase
 			//ruby
 			checkThenArm(null, TRINKET, "Rift Charm");
-			armPlainCheese();
+			smartArmLeapingCheese();
+			setFuelOff();
+		} else if (locationData.castle.current_room.loot_multiplier == 2 && !isCommonRoom()) {
+			checkThenArm(null, TRINKET, "Rift Charm");
+			smartArmLeapingCheese();
 			setFuelOff();
 		} else {
 			//lower multiplier room
 			if (debug) console.log("In low multiplier ballroom, arming leaping");
 			checkThenArm(null, TRINKET, "Rift Charm");
-			armLeapingCheese();
+			smartArmLeapingCheese();
 			setFuelOff();
 		}
 	} else {
