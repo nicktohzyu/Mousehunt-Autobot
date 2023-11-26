@@ -1101,7 +1101,7 @@ function beanstalk() {
 			setFuelOff();
 			playAlertSound();
 			if (autoEnterCastle) {
-				enterCastle(0); //0 = dungeon, 1 = ballroom
+				enterCastle(1); // 0 = dungeon, 1 = ballroom
 			}
 		}
 		checkThenArm(null, TRINKET, "Rift Charm");
@@ -1116,24 +1116,24 @@ function beanstalk() {
 			setFuelOff();
 		} else if (locationData.castle.current_room.loot_multiplier == 8) {
 			if (locationData.castle.is_boss_chase) {
-				if (isCommonRoom()) {
-					// Not worth using CC for lapis bean
-					setFuelOff();
-				} else {
-					setFuelOn();
-				}
-				checkThenArm(null, TRINKET, "Rift Ultimate Power Charm");
+				setFuelOff();
+				checkThenArm(null, TRINKET, "Rift Extreme Luck Charm");
 				armLavishBeansterCheese();
-				// 64x without fuel, 128x with fuel
 			} else {
 				setFuelOff();
-				checkThenArm(null, TRINKET, "Rift Ultimate Power Charm");
+				checkThenArm(null, TRINKET, "Rift Extreme Luck Charm");
 				armGreenBeansterCheese();
 			}
 		} else if (locationData.castle.current_room.loot_multiplier == 4) {
-			checkThenArm(null, TRINKET, "Rift Charm");
-			armPlainCheese();
-			setFuelOff();
+			if (locationData.castle.is_boss_chase) {
+				setFuelOff();
+				checkThenArm(null, TRINKET, "Rift Charm");
+				armGreenBeansterCheese();
+			} else {
+				setFuelOff();
+				checkThenArm(null, TRINKET, "Rift Charm");
+				armPlainCheese();
+			}
 		} else {
 			if (debug) console.log("In low multiplier dungeon, arming leaping");
 			checkThenArm(null, TRINKET, "Rift Charm");
@@ -1153,41 +1153,26 @@ function beanstalk() {
 		// 	}
 	} else if (locationData.castle.current_floor.name == "Ballroom Floor") {
 		if (debug) console.log("in castle ballroom");
-		if (locationData.castle.is_boss_encounter) {
-			if (debug) console.log("ballroom boss");
-			checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
-			armLavishBeansterCheese();
-			setFuelOff();
-		} else if (locationData.castle.current_room.loot_multiplier == 8 && isHarpRoom()) {
+		// if (locationData.castle.is_boss_encounter) {
+		// 	if (debug) console.log("ballroom boss");
+		// 	checkThenArm(null, TRINKET, "Rift Extreme Luck Charm");
+		// 	armLavishBeansterCheese();
+		// 	setFuelOff();
+		// } else 
+		if (locationData.castle.current_room.loot_multiplier == 8) {
+			// if (locationData.castle.is_boss_chase && isHarpRoom()) {
+			// 	setFuelOn();
+			// 	checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+			// 	armRoyalBeansterCheese();
+			// } else 
 			if (locationData.castle.is_boss_chase) {
-				armRoyalBeansterCheese();
-				setFuelOn();
-				checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
-			} else {
-				armLavishBeansterCheese();
-				checkThenArm(null, TRINKET, "Rift Charm");
 				setFuelOff();
-			}
-		} else if (locationData.castle.current_room.loot_multiplier == 8) {
-			if (locationData.castle.is_boss_chase) {
-				if (isCommonRoom()) {
-					// Not worth using CC for ruby bean
-					setFuelOff();
-				} else {
-					setFuelOn();
-				}
-				// 64x without fuel, 128x with fuel
-				// should I even lavish for ruby? or just green?
-				checkThenArm(null, TRINKET, "Rift Ultimate Power Charm");
+				checkThenArm(null, TRINKET, "Rift Ultimate Luck Charm");
 				armLavishBeansterCheese();
 			} else {
-				if (isCommonRoom()) {
-					armLavishBeansterCheese();
-				} else {
-					armLavishBeansterCheese();
-				}
-				checkThenArm(null, TRINKET, "Rift Charm");
 				setFuelOff();
+				checkThenArm(null, TRINKET, "Rift Extreme Luck Charm");
+				armLavishBeansterCheese();
 			}
 		} else if (locationData.castle.current_room.loot_multiplier == 4 && !isCommonRoom()) {
 			//does the same thing for chase and non-chase
