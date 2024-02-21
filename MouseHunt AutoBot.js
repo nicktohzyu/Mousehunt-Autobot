@@ -10877,7 +10877,10 @@ function cheeseRearmedAction() {
 
 var alertSoundPlaying = false;
 function playAlertSound() {
-	if (debug) console.log("run playAlertSound");
+	if (debug) {
+		console.log("run playAlertSound");
+		console.trace();
+	}
 	if (alertSoundPlaying) {
 		return;
 	}
