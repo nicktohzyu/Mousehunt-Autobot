@@ -6507,7 +6507,7 @@ function clickTrapSelector(strSelect, bForceClick) { //strSelect = weapon/base/c
 	if (isNullOrUndefined(bForceClick))
 		bForceClick = false;
 	if (isNewUI) {
-		var armedItem = document.getElementsByClassName('campPage-trap-armedItem ' + strSelect)[0];
+		var armedItem = document.querySelectorAll('button.trapSelectorView__armedItem[data-item-classification^="' + strSelect + '"]')[0];
 		var arrTemp = armedItem.getAttribute('class').split(" ");
 		if (bForceClick !== true && arrTemp[arrTemp.length - 1] == 'active') { // trap selector opened
 			arming = true;
