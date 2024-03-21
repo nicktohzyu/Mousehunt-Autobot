@@ -1006,6 +1006,21 @@ function halloween2020() {
 	}
 }
 
+async function setEasterFondue(shouldActivate) {
+	if (!user.quests.QuestSpringHunt) {
+		return;
+	}
+	if (user.quests.QuestSpringHunt.is_fuel_enabled == shouldActivate) {
+		return;
+	}
+
+	if (debug) console.log("toggling spring egg hunt fondue to " + shouldActivate);
+
+	document.querySelector('.springEggHuntCampHUD-fuelButton').click();
+	await sleep(2000);
+	reloadPage();
+}
+
 function beanstalk() {
 	if (getCurrentLocation().indexOf("Bountiful Beanstalk") < 0) {
 		return;
@@ -1072,18 +1087,49 @@ function beanstalk() {
 	function isHarpRoom() {
 		return locationData.castle.current_room.type.includes("string");
 	}
+	function isFeatherActivated() {
+		// golden feather for 4x loot boost
+		const hasFeather = locationData.loot_multipliers.math.some(item => item.type === "feather");
+		return hasFeather;
+	}
+
 	async function enterCastle(room = 0) { //0 = dungeon, 1 = ballroom
 		if (debug) console.log("Entering castle (planting vine) ");
 		document.getElementsByClassName("bountifulBeanstalkClimbView__plantVineDialogButton")[0].click();
-		await sleep(1000);
+		await sleep(2000);
 		if (debug) console.log("Short vine");
 		document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].click();
-		await sleep(1000);
+		await sleep(2000);
 		document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].click();
-		await sleep(1000);
+		await sleep(2000);
 		document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__confirmDialogButton bountifulBeanstalkPlantVineDialogView__confirmDialogPlantButton")[0].click();
-		await sleep(1000);
+		await sleep(2000);
 		reloadPage();
+	}
+	async function toggleAutoHarp() {
+		document.querySelector('.headsUpDisplayBountifulBeanstalkView__playHarpDialogButton').click();
+		await sleep(2000);
+		document.querySelector('.bountifulBeanstalkPlayHarpDialogView__tabButton.bountifulBeanstalkPlayHarpDialogView__autoHarpTabButton')
+		await sleep(2000);
+		document.querySelector('.bountifulBeanstalkPlayHarpDialogView__autoHarpPlayButton').click();
+		await sleep(2000);
+		reloadPage();
+	}
+	async function disableAutoHarp() {
+		if (!locationData.castle.is_auto_harp_enabled) {
+			if (debug) console.log("Auto harp already disabled");
+			return;
+		}
+		if (debug) console.log("Disabling auto harp");
+		toggleAutoHarp();
+	}
+	async function enableAutoHarp() {
+		if (locationData.castle.is_auto_harp_enabled) {
+			if (debug) console.log("Auto harp already enabled");
+			return;
+		}
+		if (debug) console.log("Enabling auto harp");
+		toggleAutoHarp();
 	}
 
 	checkThenArm(null, BASE, BEST_BASE);
@@ -1101,7 +1147,7 @@ function beanstalk() {
 			setFuelOff();
 			playAlertSound();
 			if (autoEnterCastle) {
-				enterCastle(1); // 0 = dungeon, 1 = ballroom
+				enterCastle(castleRoom);
 			}
 		}
 		checkThenArm(null, TRINKET, "Rift Charm");
@@ -1140,17 +1186,6 @@ function beanstalk() {
 			smartArmLeapingCheese();
 			setFuelOff();
 		}
-		// } else if (locationData.castle.current_floor.name == "Ballroom Floor") {
-		// 	//insertion for special case of golden feathering harp
-		// 	if (locationData.castle.current_room.loot_multiplier == 8 && isHarpRoom()) {
-		// 		armRoyalBeansterCheese();
-		// 		setFuelOn();
-		// 		checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
-		// 	} else {
-		// 		checkThenArm(null, TRINKET, "Rift Charm");
-		// 		setFuelOff();
-		//	 	armLeapingCheeseIfNotBoss();
-		// 	}
 	} else if (locationData.castle.current_floor.name == "Ballroom Floor") {
 		if (debug) console.log("in castle ballroom");
 		// if (locationData.castle.is_boss_encounter) {
@@ -1158,13 +1193,25 @@ function beanstalk() {
 		// 	checkThenArm(null, TRINKET, "Rift Extreme Luck Charm");
 		// 	armLavishBeansterCheese();
 		// 	setFuelOff();
-		// } else 
-		if (locationData.castle.current_room.loot_multiplier == 8) {
+		// } else
+		if (isFeatherActivated()) {
+			//insertion for special case of golden feathering harp
+			if (locationData.castle.current_room.loot_multiplier == 8 && isHarpRoom()) {
+				armRoyalBeansterCheese();
+				setFuelOn();
+				checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+			} else {
+				// TODO: check for need to harp
+				checkThenArm(null, TRINKET, "Rift Charm");
+				setFuelOff();
+				smartArmLeapingCheese();
+			}
+		} else if (locationData.castle.current_room.loot_multiplier == 8) {
 			// if (locationData.castle.is_boss_chase && isHarpRoom()) {
 			// 	setFuelOn();
 			// 	checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
 			// 	armRoyalBeansterCheese();
-			// } else 
+			// } else
 			if (locationData.castle.is_boss_chase) {
 				setFuelOff();
 				checkThenArm(null, TRINKET, "Rift Ultimate Luck Charm");
@@ -1199,7 +1246,27 @@ function beanstalk() {
 		}
 	} else {
 		// TODO: top tier room
-		playAlertSound();
+		// playAlertSound();
+		if (locationData.castle.current_room.loot_multiplier == 8) {
+			disableAutoHarp()
+			if (locationData.castle.is_boss_chase) {
+				setEasterFondue(true);
+				armRoyalBeansterCheese();
+				setFuelOn();
+				checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+			} else {
+				setEasterFondue(false);
+				armLavishBeansterCheese();
+				setFuelOff();
+				checkThenArm(null, TRINKET, "Rift Extreme Luck Charm");
+			}
+		} else {
+			setEasterFondue(false);
+			enableAutoHarp()
+			checkThenArm(null, TRINKET, "Rift Charm");
+			smartArmLeapingCheese();
+			setFuelOff();
+		}
 	}
 }
 
