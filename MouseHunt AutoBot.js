@@ -6578,7 +6578,7 @@ function clickTrapSelector(strSelect, bForceClick) { //strSelect = weapon/base/c
 		var arrTemp = armedItem.getAttribute('class').split(" ");
 		if (bForceClick !== true && arrTemp[arrTemp.length - 1] == 'active') { // trap selector opened
 			arming = true;
-			//console.log('Trap selector', strSelect, 'opened');
+			console.log('Trap selector', strSelect, 'opened');
 			return true;;
 		}
 		fireEvent(armedItem, 'click');
@@ -10946,7 +10946,8 @@ var alertSoundPlaying = false;
 function playAlertSound() {
 	if (debug) {
 		console.log("run playAlertSound");
-		console.trace();
+		const stackTrace = Error("Logging stack").stack;
+		console.log(stackTrace);
 	}
 	if (alertSoundPlaying) {
 		return;
