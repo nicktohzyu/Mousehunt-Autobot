@@ -5619,16 +5619,47 @@ async function FinalizePuzzleImageAnswer(answer) {
 
 }
 
-async function simulateTyping(inputElement, text) {
-	for (key of text) {
-		console.log("dispatching: " + key);
-		const downEvent = new KeyboardEvent('keydown', { key });
-		inputElement.dispatchEvent(downEvent);
-		// inputElement.append(key);
-		const upEvent = new KeyboardEvent('keyup', { key });
-		inputElement.dispatchEvent(upEvent);
-		await sleep(100);
-	}
+async function simulateTyping(element, value) {
+	element.focus();
+    element.value = ''; // Clear any existing value
+	await sleep(50);
+
+    // Simulate typing each character
+    for (let char of value.toString()) {
+        let keyCode = char.charCodeAt(0);
+        
+        // Create and dispatch keydown event
+        let keyDownEvent = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, keyCode: keyCode });
+        element.dispatchEvent(keyDownEvent);
+		await sleep(50);
+        
+        // Set the value of the input
+        element.value += char;
+        
+        // Create and dispatch keypress event
+        let keyPressEvent = new KeyboardEvent('keypress', { bubbles: true, cancelable: true, keyCode: keyCode });
+        element.dispatchEvent(keyPressEvent);
+		await sleep(50);
+        
+        // Create and dispatch input event
+        let inputEvent = new Event('input', { bubbles: true });
+        element.dispatchEvent(inputEvent);
+		await sleep(50);
+        
+        // Create and dispatch keyup event
+        let keyUpEvent = new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: keyCode });
+        element.dispatchEvent(keyUpEvent);
+		await sleep(50);
+    }
+    
+    // Trigger change event to ensure all listeners are notified
+    let changeEvent = new Event('change', { bubbles: true });
+    element.dispatchEvent(changeEvent);
+	await sleep(50);
+    
+    // Blur the input to trigger any onblur event listeners
+    element.blur();
+	await sleep(50);
 }
 
 function receiveMessage(event) { //throws error in normal operation, but necessary for KRsolver
