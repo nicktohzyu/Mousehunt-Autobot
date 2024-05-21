@@ -60,15 +60,15 @@
 	var hornTimeDelayVariance = 2;
 	var smallDelayMin = 5;
 	var smallDelayVariance = 15;
-	var smallDelayProbability = 0.06;
+	var smallDelayProbability = 0.02;
 	var extraDelayMin = 200;
 	var extraDelayVariance = 400;
-	var extraDelayProbability = 0.02;
+	var extraDelayProbability = 0.005;
 	var checkTimeDelayMin = 0;
 	var checkTimeDelayVariance = 10;
 
-	var botStopHour = 1;
-	var botStartHour = 9;
+	var botStopHour = 0;
+	var botStartHour = 8;
 
 
 	var hornTimeDelayMax = 15; //old code
@@ -92,7 +92,7 @@
 
 
 	// // Play sound when encounter king's reward (true/false)
-	var isKingWarningSound = true;
+	var isKingWarningSound = false;
 
 	// // Which sound to play when encountering king's reward (need to be .mp3)
 	var kingWarningSound = 'https://raw.githubusercontent.com/nicktohzyu/MH/master/sound.mp3';
@@ -237,6 +237,10 @@
 	var bestRiftWeapon = 'Chrome Celestial Dissonance';
 	var bestRiftBase = 'Prestige Base';
 	var bestPowerBase = 'Prestige Base';
+	var SSDB = 'Signature Series Denture Base';
+	var RULPC = 'Rift Ultimate Lucky Power Charm';
+	var RRSC = "Rift Rainbow Spore Charm";
+
 	// // Fiery Warpath Preference
 	var commanderCharm = ['Super Warpath Commander\'s', 'Warpath Commander\'s'];
 	var objPopulation = {
@@ -536,11 +540,11 @@ const TRAP = "trap";
 const BASE = "base";
 const TRAPS_BY_TYPE = {
 	"Arcane": "Circlet of Seeking",
-	"Draconic": "Chrome Storm Wrought Ballista",
+	"Draconic": "Dragon Slayer Cannon",
 	"Forgotten": "Chrome Thought Obliterator",
 	"Hydro": "Chrome School of Sharks",
 	"Law": "S.T.I.N.G.E.R.",
-	"Physical": "Charming PrinceBot",
+	"Physical": "Legendary KingBot",
 	"Shadow": "Chrome Temporal Turbine",
 	"Tactical": "Slumbering Boulder",
 };
@@ -887,7 +891,7 @@ function lny2020event() {
 function winter2022location() {
 	const questObj = user.quests.QuestCinnamonTreeGrove || user.quests.QuestGolemWorkshop || user.quests.QuestIceFortress;
 	const golems = questObj.golems;
-	const NUM_GOLEMS_TO_USE = 1;
+	const NUM_GOLEMS_TO_USE = 2;
 	// TODO: max golem level
 	const ALERT_IF_NO_PARTS = true;
 	const BUILD_GOLEMS = true;
@@ -1473,21 +1477,18 @@ function valourRift() {
 		base: bestRiftBase,
 		trinketOutside: VACUUM_CHARMS,
 		trinketInside: VACUUM_CHARMS,
-		trinketEclipse: ['Rift Power Charm'], //doesn't drop egg?
+		trinketEclipse: ['Rift Charm'], //doesn't drop egg?
 		// trinketInsideUmbra: 'Rift Super Vacuum Charm',
 		baitOutside: 'None',
 		baitInside: 'Gauntlet String Cheese',
 		fireEclipse: true,
-		fireOtherwise: false,
+		fireOtherwise: true,
 		umbra: {
-			base: bestRiftBase,
+			base: SSDB,
 			eclipseBase: bestRiftBase,
-			trinketInsideUmbra: VACUUM_CHARMS,
-			umbraHighMin: 16,
-			umbraHighMax: 50,
-			trinketInsideUmbraHigh: VACUUM_CHARMS, //more powerful charm at higher floors
-			trinketEclipseUmbra: ['Rift Ultimate Lucky Power Charm'], //don't use denture with ultimate
-			fireOtherwiseUmbra: false,
+			trinketInsideUmbra: ["Ember Charm", RRSC, RULPC],
+			trinketEclipseUmbra: ['Ultimate Charm'], //don't use denture with ultimate
+			fireOtherwiseUmbra: true,
 			fireEclipseUmbra: true,
 		}
 	};
@@ -1506,17 +1507,13 @@ function valourRift() {
 		checkThenArm(null, "bait", objValourRift.baitInside);
 		if (user.quests.QuestRiftValour.is_eclipse_mode) {// total eclipse
 			if (user.quests.QuestRiftValour.is_at_eclipse) { //implement eclipse types
-				checkThenArm(null, 'base', objValourRift.umbra.eclipseBase);
 				console.log("total eclipse");
+				checkThenArm(null, 'base', objValourRift.umbra.eclipseBase);
 				checkThenArm(null, 'trinket', objValourRift.umbra.trinketEclipseUmbra);
 				armDisarmFire(objValourRift.umbra.fireEclipseUmbra);
 			} else { //not eclipse
 				checkThenArm(null, 'base', objValourRift.umbra.base);
-				if (user.quests.QuestRiftValour.floor >= objValourRift.umbra.umbraHighMin && user.quests.QuestRiftValour.floor <= objValourRift.umbra.umbraHighMax) {
-					checkThenArm(null, 'trinket', objValourRift.umbra.trinketInsideUmbraHigh);
-				} else {
-					checkThenArm(null, 'trinket', objValourRift.umbra.trinketInsideUmbra);
-				}
+				checkThenArm(null, 'trinket', objValourRift.umbra.trinketInsideUmbra);
 				armDisarmFire(objValourRift.umbra.fireOtherwiseUmbra);
 			}
 		} else {
