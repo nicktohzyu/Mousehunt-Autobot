@@ -1089,7 +1089,7 @@ function beanstalk() {
 	}
 	function isFeatherActivated() {
 		// golden feather for 4x loot boost
-		const hasFeather = locationData.loot_multipliers.math.some(item => item.type === "feather");
+		const hasFeather = locationData.loot_multipliers.math.some(item => (item.type === "feather" && item.is_active));
 		return hasFeather;
 	}
 
@@ -1131,13 +1131,43 @@ function beanstalk() {
 		if (debug) console.log("Enabling auto harp");
 		toggleAutoHarp();
 	}
+	async function wakeGiant() {
+		if (locationData.castle.is_boss_chase) {
+			return;
+		}
+		if(locationData.castle.is_auto_harp_enabled) {
+			disableAutoHarp();
+			return;
+		}
+		locationData.castle.current_room.loot_multiplier;
+		
+		// TODO: we can save by using less harp than this
+		const noiseNeeded = locationData.castle.max_noise_level - locationData.castle.noise_level;
+		console.log("noise needed =", noiseNeeded);
+		if (noiseNeeded <= 0) {
+			return;
+		}
+
+		document.querySelector('.headsUpDisplayBountifulBeanstalkView__playHarpDialogButton').click();
+		await sleep(3000);
+
+		var inputElement = document.querySelector('.bountifulBeanstalkPlayHarpDialogView__option--plus .bountifulBeanstalkPlayHarpDialogView__input');
+		simulateTyping(inputElement, noiseNeeded.toString());
+		await sleep(1000);
+
+		document.querySelector('.bountifulBeanstalkPlayHarpDialogView__button.bountifulBeanstalkPlayHarpDialogView__playButton').click();
+		await sleep(2000);
+		reloadPage();
+	}
 
 	checkThenArm(null, BASE, BEST_BASE);
 	checkThenArm(null, TRAP, TRAPS_BY_TYPE["Physical"]);
 
 	const autoEnterCastle = true;
+	const castleRoom = 1; // 0 = dungeon, 1 = ballroom
 	if (!locationData.in_castle) {
 		if (debug) console.log("on beanstalk");
+		setEasterFondue(false);
 		if (locationData.beanstalk.is_boss_encounter) {
 			//TODO: more logic on multiplier
 			if (debug) console.log("vinneus encounter");
@@ -1151,10 +1181,12 @@ function beanstalk() {
 			}
 		}
 		checkThenArm(null, TRINKET, "Rift Charm");
-		armPlainCheese();
+		// armPlainCheese();
+		disarmTrap("bait");
 	}
 	else if (locationData.castle.current_floor.name == "Dungeon Floor") {
 		if (debug) console.log("in castle dungeon");
+		setEasterFondue(false);
 		if (locationData.castle.is_boss_encounter) {
 			if (debug) console.log("dungeon boss");
 			checkThenArm(null, TRINKET, "Rift Charm");
@@ -1163,23 +1195,23 @@ function beanstalk() {
 		} else if (locationData.castle.current_room.loot_multiplier == 8) {
 			if (locationData.castle.is_boss_chase) {
 				setFuelOff();
-				checkThenArm(null, TRINKET, "Rift Extreme Luck Charm");
+				checkThenArm(null, TRINKET, "Rift Super Luck Charm");
 				armLavishBeansterCheese();
 			} else {
 				setFuelOff();
-				checkThenArm(null, TRINKET, "Rift Extreme Luck Charm");
+				checkThenArm(null, TRINKET, "Rift Super Luck Charm");
 				armGreenBeansterCheese();
 			}
-		} else if (locationData.castle.current_room.loot_multiplier == 4) {
-			if (locationData.castle.is_boss_chase) {
-				setFuelOff();
-				checkThenArm(null, TRINKET, "Rift Charm");
-				armGreenBeansterCheese();
-			} else {
-				setFuelOff();
-				checkThenArm(null, TRINKET, "Rift Charm");
-				armPlainCheese();
-			}
+		// } else if (locationData.castle.current_room.loot_multiplier == 4) {
+		// 	if (locationData.castle.is_boss_chase) {
+		// 		setFuelOff();
+		// 		checkThenArm(null, TRINKET, "Rift Charm");
+		// 		armGreenBeansterCheese();
+		// 	} else {
+		// 		setFuelOff();
+		// 		checkThenArm(null, TRINKET, "Rift Charm");
+		// 		armPlainCheese();
+		// 	}
 		} else {
 			if (debug) console.log("In low multiplier dungeon, arming leaping");
 			checkThenArm(null, TRINKET, "Rift Charm");
@@ -1194,7 +1226,25 @@ function beanstalk() {
 		// 	armLavishBeansterCheese();
 		// 	setFuelOff();
 		// } else
+		if (!locationData.castle.is_boss_chase
+			&& (locationData.castle.current_room.loot_multiplier == 8
+			|| locationData.castle.next_room.loot_multiplier != 8)
+		) {
+			//farming fertilizer
+			checkThenArm(null, TRINKET, "Rift Charm");
+			smartArmLeapingCheese();
+			setFuelOff();
+			wakeGiant();
+			return;
+		} else if (locationData.castle.is_boss_chase) {
+			checkThenArm(null, TRINKET, "Rift Charm");
+			armPlainCheese();
+			setFuelOff();
+			return;
+		}
+
 		if (isFeatherActivated()) {
+            if (debug) console.log("feather activated");
 			//insertion for special case of golden feathering harp
 			if (locationData.castle.current_room.loot_multiplier == 8 && isHarpRoom()) {
 				armRoyalBeansterCheese();
@@ -1207,36 +1257,38 @@ function beanstalk() {
 				smartArmLeapingCheese();
 			}
 		} else if (locationData.castle.current_room.loot_multiplier == 8) {
+            if (debug) console.log("multiplier=8");
 			// if (locationData.castle.is_boss_chase && isHarpRoom()) {
 			// 	setFuelOn();
 			// 	checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
 			// 	armRoyalBeansterCheese();
 			// } else
 			if (locationData.castle.is_boss_chase) {
+                if (debug) console.log("is boss chase");
 				setFuelOff();
 				checkThenArm(null, TRINKET, "Rift Ultimate Luck Charm");
 				armLavishBeansterCheese();
 			} else {
 				setFuelOff();
-				checkThenArm(null, TRINKET, "Rift Extreme Luck Charm");
-				armLavishBeansterCheese();
+				checkThenArm(null, TRINKET, "Rift Super Luck Charm");
+				smartArmLeapingCheese();
 			}
-		} else if (locationData.castle.current_room.loot_multiplier == 4 && !isCommonRoom()) {
-			//does the same thing for chase and non-chase
-			//string or mystery
-			checkThenArm(null, TRINKET, "Rift Charm");
-			armPlainCheese();
-			setFuelOff();
-		} else if (locationData.castle.current_room.loot_multiplier == 4) {
-			//does the same thing for chase and non-chase
-			//ruby
-			checkThenArm(null, TRINKET, "Rift Charm");
-			smartArmLeapingCheese();
-			setFuelOff();
-		} else if (locationData.castle.current_room.loot_multiplier == 2 && !isCommonRoom()) {
-			checkThenArm(null, TRINKET, "Rift Charm");
-			smartArmLeapingCheese();
-			setFuelOff();
+		// } else if (locationData.castle.current_room.loot_multiplier == 4 && !isCommonRoom()) {
+		// 	//does the same thing for chase and non-chase
+		// 	//string or mystery
+		// 	checkThenArm(null, TRINKET, "Rift Charm");
+		// 	armPlainCheese();
+		// 	setFuelOff();
+		// } else if (locationData.castle.current_room.loot_multiplier == 4) {
+		// 	//does the same thing for chase and non-chase
+		// 	//ruby
+		// 	checkThenArm(null, TRINKET, "Rift Charm");
+		// 	smartArmLeapingCheese();
+		// 	setFuelOff();
+		// } else if (locationData.castle.current_room.loot_multiplier == 2 && !isCommonRoom()) {
+		// 	checkThenArm(null, TRINKET, "Rift Charm");
+		// 	smartArmLeapingCheese();
+		// 	setFuelOff();
 		} else {
 			//lower multiplier room
 			if (debug) console.log("In low multiplier ballroom, arming leaping");
@@ -1245,20 +1297,22 @@ function beanstalk() {
 			setFuelOff();
 		}
 	} else {
-		// TODO: top tier room
-		// playAlertSound();
-		if (locationData.castle.current_room.loot_multiplier == 8) {
+		// great hall
+		if (locationData.castle.current_room.loot_multiplier == 8 && isFeatherActivated()) {
 			disableAutoHarp()
+			armRoyalBeansterCheese();
 			if (locationData.castle.is_boss_chase) {
-				setEasterFondue(true);
-				armRoyalBeansterCheese();
 				setFuelOn();
 				checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+				if (locationData.castle.is_boss_encounter) {
+					setEasterFondue(true);
+				} else {
+					setEasterFondue(false);
+				}
 			} else {
 				setEasterFondue(false);
-				armLavishBeansterCheese();
 				setFuelOff();
-				checkThenArm(null, TRINKET, "Rift Extreme Luck Charm");
+				checkThenArm(null, TRINKET, ["Rift Extreme Luck Charm", "Rift Super Snowball Charm", "Rift Extreme Snowball Charm", "Rift Super Luck Charm"]);
 			}
 		} else {
 			setEasterFondue(false);
