@@ -2080,7 +2080,7 @@ function quesoGeyser() { // create object with equipment to use
 	}
 	//console.log("running queso geyser bot");
 	checkThenArm(null, "base", bestPowerBase);
-	checkThenArm(null, "weapon", "Chrome Storm Wrought Ballista");
+	checkThenArm(null, "weapon", TRAPS_BY_TYPE.Draconic);
 
 	//get number of resources & each cheese
 
@@ -2109,8 +2109,8 @@ function quesoGeyser() { // create object with equipment to use
 	}
 	var quesoList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", "Flamin' Queso", "Wildfire Queso"];
 	var eruptionBaitList = ["Bland Queso", "Mild Queso", "Medium Queso", "Hot Queso", ["Wildfire Queso", "Flamin' Queso"]];
-	var corkedCharmList = [genericCharm, genericCharm, "Ancient Charm", "Ancient Charm", "Festive Ultimate Luck Charm", "none"]; //emberstone scaled low minluck
-	var eruptionCharmList = [genericCharm, genericCharm, genericCharm, "Ancient Charm", ["Extreme Party Charm", "Extreme Snowball Charm"], ["Extreme Dragonbane Charm", "Super Dragonbane Charm", "Dragonbane Charm"]]; //dragonbane?
+	var corkedCharmList = [genericCharm, genericCharm, "Ancient Charm", "Ancient Charm", "Festive Ultimate Luck Charm", "none"]; //"emberstone scaled" mouse has low minluck
+	var eruptionCharmList = [genericCharm, genericCharm, genericCharm, "Ancient Charm", ["Ultimate Ancient Charm", "Extreme Snowball Charm"], ["Extreme Dragonbane Charm", "Super Dragonbane Charm", "Dragonbane Charm"]]; //dragonbane?
 	var eruptionTonicList = [false, false, false, false, true, true];
 	var armQuesoButtons = []; //not in use
 	for (i = 0; i < 6; i++) {
@@ -2220,7 +2220,7 @@ function quesoGeyser() { // create object with equipment to use
 
 	}
 	else if (phase == "none") {
-		var buildCork = true;
+		var buildCork = false;
 		var skipEpic = false;
 		var craftEpic = true;
 		/*if(quesoQuantity[2]>0){
