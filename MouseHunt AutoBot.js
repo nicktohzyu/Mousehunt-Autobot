@@ -1206,16 +1206,16 @@ function beanstalk() {
 				checkThenArm(null, TRINKET, "Rift Super Luck Charm");
 				armGreenBeansterCheese();
 			}
-		// } else if (locationData.castle.current_room.loot_multiplier == 4) {
-		// 	if (locationData.castle.is_boss_chase) {
-		// 		setFuelOff();
-		// 		checkThenArm(null, TRINKET, "Rift Charm");
-		// 		armGreenBeansterCheese();
-		// 	} else {
-		// 		setFuelOff();
-		// 		checkThenArm(null, TRINKET, "Rift Charm");
-		// 		armPlainCheese();
-		// 	}
+			// } else if (locationData.castle.current_room.loot_multiplier == 4) {
+			// 	if (locationData.castle.is_boss_chase) {
+			// 		setFuelOff();
+			// 		checkThenArm(null, TRINKET, "Rift Charm");
+			// 		armGreenBeansterCheese();
+			// 	} else {
+			// 		setFuelOff();
+			// 		checkThenArm(null, TRINKET, "Rift Charm");
+			// 		armPlainCheese();
+			// 	}
 		} else {
 			if (debug) console.log("In low multiplier dungeon, arming leaping");
 			checkThenArm(null, TRINKET, "Rift Charm");
@@ -1232,7 +1232,7 @@ function beanstalk() {
 		// } else
 		if (!locationData.castle.is_boss_chase
 			&& (locationData.castle.current_room.loot_multiplier == 8
-			|| locationData.castle.next_room.loot_multiplier != 8)
+				|| locationData.castle.next_room.loot_multiplier != 8)
 		) {
 			//farming fertilizer
 			checkThenArm(null, TRINKET, "Rift Charm");
@@ -1248,7 +1248,7 @@ function beanstalk() {
 		}
 
 		if (isFeatherActivated()) {
-            if (debug) console.log("feather activated");
+			if (debug) console.log("feather activated");
 			//insertion for special case of golden feathering harp
 			if (locationData.castle.current_room.loot_multiplier == 8 && isHarpRoom()) {
 				armRoyalBeansterCheese();
@@ -1261,14 +1261,14 @@ function beanstalk() {
 				smartArmLeapingCheese();
 			}
 		} else if (locationData.castle.current_room.loot_multiplier == 8) {
-            if (debug) console.log("multiplier=8");
+			if (debug) console.log("multiplier=8");
 			// if (locationData.castle.is_boss_chase && isHarpRoom()) {
 			// 	setFuelOn();
 			// 	checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
 			// 	armRoyalBeansterCheese();
 			// } else
 			if (locationData.castle.is_boss_chase) {
-                if (debug) console.log("is boss chase");
+				if (debug) console.log("is boss chase");
 				setFuelOff();
 				checkThenArm(null, TRINKET, "Rift Ultimate Luck Charm");
 				armLavishBeansterCheese();
@@ -1277,22 +1277,22 @@ function beanstalk() {
 				checkThenArm(null, TRINKET, "Rift Super Luck Charm");
 				smartArmLeapingCheese();
 			}
-		// } else if (locationData.castle.current_room.loot_multiplier == 4 && !isCommonRoom()) {
-		// 	//does the same thing for chase and non-chase
-		// 	//string or mystery
-		// 	checkThenArm(null, TRINKET, "Rift Charm");
-		// 	armPlainCheese();
-		// 	setFuelOff();
-		// } else if (locationData.castle.current_room.loot_multiplier == 4) {
-		// 	//does the same thing for chase and non-chase
-		// 	//ruby
-		// 	checkThenArm(null, TRINKET, "Rift Charm");
-		// 	smartArmLeapingCheese();
-		// 	setFuelOff();
-		// } else if (locationData.castle.current_room.loot_multiplier == 2 && !isCommonRoom()) {
-		// 	checkThenArm(null, TRINKET, "Rift Charm");
-		// 	smartArmLeapingCheese();
-		// 	setFuelOff();
+			// } else if (locationData.castle.current_room.loot_multiplier == 4 && !isCommonRoom()) {
+			// 	//does the same thing for chase and non-chase
+			// 	//string or mystery
+			// 	checkThenArm(null, TRINKET, "Rift Charm");
+			// 	armPlainCheese();
+			// 	setFuelOff();
+			// } else if (locationData.castle.current_room.loot_multiplier == 4) {
+			// 	//does the same thing for chase and non-chase
+			// 	//ruby
+			// 	checkThenArm(null, TRINKET, "Rift Charm");
+			// 	smartArmLeapingCheese();
+			// 	setFuelOff();
+			// } else if (locationData.castle.current_room.loot_multiplier == 2 && !isCommonRoom()) {
+			// 	checkThenArm(null, TRINKET, "Rift Charm");
+			// 	smartArmLeapingCheese();
+			// 	setFuelOff();
 		} else {
 			//lower multiplier room
 			if (debug) console.log("In low multiplier ballroom, arming leaping");
