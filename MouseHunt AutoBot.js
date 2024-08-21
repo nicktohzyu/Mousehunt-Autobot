@@ -1110,6 +1110,13 @@ function beanstalk() {
 		const hasFeather = locationData.loot_multipliers.math.some(item => (item.type === "feather" && item.is_active));
 		return hasFeather;
 	}
+	function useAppropriateBase() {
+		if (locationData.castle.is_boss_encounter) {
+			checkThenArm(null, BASE, "Royal Ruby Refractor Base");
+		} else {
+			checkThenArm(null, BASE, BEST_BASE);
+		}
+	}
 
 	const useFeatherKeyForGreatHall = true;
 	function enterCastle(room) { //0 = dungeon, 1 = ballroom, 2 = great hall
@@ -1168,12 +1175,11 @@ function beanstalk() {
 		if (locationData.castle.is_boss_chase) {
 			return;
 		}
-		if(locationData.castle.is_auto_harp_enabled) {
-			disableAutoHarp();
+		if (locationData.castle.is_auto_harp_enabled) {
+			disableAutoHarp(); //expect this function to refresh the page
 			return;
 		}
-		locationData.castle.current_room.loot_multiplier;
-		
+
 		// TODO: we can save by using less harp than this
 		const noiseNeeded = locationData.castle.max_noise_level - locationData.castle.noise_level;
 		console.log("noise needed =", noiseNeeded);
@@ -1198,12 +1204,12 @@ function beanstalk() {
 		])
 	}
 
-	checkThenArm(null, BASE, BEST_BASE);
 	checkThenArm(null, TRAP, TRAPS_BY_TYPE["Physical"]);
 
 	const autoEnterCastle = true;
-	const castleRoom = 1; // 0 = dungeon, 1 = ballroom
+	const castleRoom = 1; // 0 = dungeon, 1 = ballroom, 2 = great hall
 	if (!locationData.in_castle) {
+		useAppropriateBase();
 		if (debug) console.log("on beanstalk");
 		setEasterFondue(false);
 		if (locationData.beanstalk.is_boss_encounter) {
@@ -1213,16 +1219,18 @@ function beanstalk() {
 			setFuel(useFuelAtVinneus);
 		} else {
 			setFuelOff();
-			playAlertSound();
 			if (autoEnterCastle) {
 				enterCastle(castleRoom);
+			} else {
+				playAlertSound();
 			}
 		}
 		checkThenArm(null, TRINKET, "Rift Charm");
-		// armPlainCheese();
-		disarmTrap("bait");
+		armPlainCheese();
+		// disarmTrap("bait");
 	}
 	else if (locationData.castle.current_floor.name == "Dungeon Floor") {
+		useAppropriateBase();
 		if (debug) console.log("in castle dungeon");
 		setEasterFondue(false);
 		if (locationData.castle.is_boss_encounter) {
@@ -1264,22 +1272,31 @@ function beanstalk() {
 		// 	armLavishBeansterCheese();
 		// 	setFuelOff();
 		// } else
+		if (locationData.castle.is_boss_chase) {
+			// if we are just farming fert (assuming player has a ton of crafting materials from easter event)
+			// then we dont care about catch rate here, just reduce risk of missing the fert duplication
+			checkThenArm(null, BASE, "Royal Ruby Refractor Base");
+			checkThenArm(null, TRINKET, "Rift Charm");
+			if (locationData.castle.current_room.loot_multiplier == 8) {
+				armLavishBeansterCheese();
+			} else {
+				armPlainCheese();
+			}
+			setFuelOff();
+			return;
+		}
 		if (!locationData.castle.is_boss_chase
 			&& (locationData.castle.current_room.loot_multiplier == 8
 				|| locationData.castle.next_room.loot_multiplier != 8)
 		) {
 			//farming fertilizer
+			useAppropriateBase();
 			checkThenArm(null, TRINKET, "Rift Charm");
 			smartArmLeapingCheese();
 			setFuelOff();
 			wakeGiant();
 			return;
-		} else if (locationData.castle.is_boss_chase) {
-			checkThenArm(null, TRINKET, "Rift Charm");
-			armPlainCheese();
-			setFuelOff();
-			return;
-		}
+		} else 
 
 		if (isFeatherActivated()) {
 			if (debug) console.log("feather activated");
@@ -1334,27 +1351,32 @@ function beanstalk() {
 			smartArmLeapingCheese();
 			setFuelOff();
 		}
-	} else {
-		// great hall
+	} else { // great hall
+		useAppropriateBase();
 		if (locationData.castle.current_room.loot_multiplier == 8 && isFeatherActivated()) {
-			disableAutoHarp()
-			armRoyalBeansterCheese();
+			disableAutoHarp();
 			if (locationData.castle.is_boss_chase) {
-				setFuelOn();
-				checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+				setFuelOff();
 				if (locationData.castle.is_boss_encounter) {
+					armPlainCheese();
 					setEasterFondue(true);
+					checkThenArm(null, TRINKET, "Rift Charm");
 				} else {
+					armRoyalBeansterCheese();
 					setEasterFondue(false);
+					checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
 				}
 			} else {
+				armRoyalBeansterCheese();
 				setEasterFondue(false);
 				setFuelOff();
-				checkThenArm(null, TRINKET, ["Rift Extreme Luck Charm", "Rift Super Snowball Charm", "Rift Extreme Snowball Charm", "Rift Super Luck Charm"]);
+				checkThenArm(null, TRINKET, ["Ultimate Spooky Charm", "Rift Extreme Luck Charm", "Rift Super Snowball Charm", "Rift Extreme Snowball Charm", "Rift Super Luck Charm"]);
 			}
 		} else {
 			setEasterFondue(false);
-			enableAutoHarp()
+			if (isFeatherActivated()) { // avoid infinite autoharp if no feather
+				enableAutoHarp();
+			}
 			checkThenArm(null, TRINKET, "Rift Charm");
 			smartArmLeapingCheese();
 			setFuelOff();
