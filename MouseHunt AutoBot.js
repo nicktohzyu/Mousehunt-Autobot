@@ -559,8 +559,23 @@ const BEST_BASE = "Prestige Base";
 	};
 })();
 
-function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
+function doAsync(queue) {
+	function next() {
+		if (queue.length === 0) return; // Exit if the queue is empty
+
+		const current = queue.shift(); // Get the first element from the queue
+
+		if (typeof current === 'function') {
+			current(); // Execute the function
+			next(); // Immediately process the next item
+		} else if (typeof current === 'number') {
+			setTimeout(next, current); // Delay the next iteration
+		} else {
+			throw new Error("Queue elements must be functions or numbers");
+		}
+	}
+
+	next();
 }
 
 function sendGiftsToFavourites() {
@@ -1010,7 +1025,7 @@ function halloween2020() {
 	}
 }
 
-async function setEasterFondue(shouldActivate) {
+function setEasterFondue(shouldActivate) {
 	if (!user.quests.QuestSpringHunt) {
 		return;
 	}
@@ -1021,8 +1036,7 @@ async function setEasterFondue(shouldActivate) {
 	if (debug) console.log("toggling spring egg hunt fondue to " + shouldActivate);
 
 	document.querySelector('.springEggHuntCampHUD-fuelButton').click();
-	await sleep(2000);
-	reloadPage();
+	setTimeout(reloadPage, 2000);
 }
 
 function beanstalk() {
@@ -1097,29 +1111,44 @@ function beanstalk() {
 		return hasFeather;
 	}
 
-	async function enterCastle(room = 0) { //0 = dungeon, 1 = ballroom
+	const useFeatherKeyForGreatHall = true;
+	function enterCastle(room) { //0 = dungeon, 1 = ballroom, 2 = great hall
 		if (debug) console.log("Entering castle (planting vine) ");
-		document.getElementsByClassName("bountifulBeanstalkClimbView__plantVineDialogButton")[0].click();
-		await sleep(2000);
-		if (debug) console.log("Short vine");
-		document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].click();
-		await sleep(2000);
-		document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].click();
-		await sleep(2000);
-		document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__confirmDialogButton bountifulBeanstalkPlantVineDialogView__confirmDialogPlantButton")[0].click();
-		await sleep(2000);
-		reloadPage();
+		doAsync([
+			() => { document.getElementsByClassName("bountifulBeanstalkClimbView__plantVineDialogButton")[0].click(); },
+			3000,
+			() => {
+				document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].click();
+				if (room === 2 && useFeatherKeyForGreatHall) {
+					if (debug) console.log("Using feather and key ");
+					document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_key"]').click();
+					document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_feather"]').click();
+					// await document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_key"]').click();
+					// await sleep(1000);
+					// await document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_feather"]').click();
+					// await sleep(1000);
+				}
+			},
+			1000,
+			() => { document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].click(); },
+			1000,
+			() => { document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__confirmDialogButton bountifulBeanstalkPlantVineDialogView__confirmDialogPlantButton")[0].click(); },
+			2000,
+			() => { reloadPage(); },
+		]);
 	}
-	async function toggleAutoHarp() {
-		document.querySelector('.headsUpDisplayBountifulBeanstalkView__playHarpDialogButton').click();
-		await sleep(2000);
-		document.querySelector('.bountifulBeanstalkPlayHarpDialogView__tabButton.bountifulBeanstalkPlayHarpDialogView__autoHarpTabButton')
-		await sleep(2000);
-		document.querySelector('.bountifulBeanstalkPlayHarpDialogView__autoHarpPlayButton').click();
-		await sleep(2000);
-		reloadPage();
+	function toggleAutoHarp() {
+		doAsync([
+			() => document.querySelector('.headsUpDisplayBountifulBeanstalkView__playHarpDialogButton').click(),
+			3000,
+			() => document.querySelector('.bountifulBeanstalkPlayHarpDialogView__tabButton.bountifulBeanstalkPlayHarpDialogView__autoHarpTabButton').click(),
+			1000,
+			() => document.querySelector('.bountifulBeanstalkPlayHarpDialogView__autoHarpPlayButton').click(),
+			2000,
+			() => reloadPage(),
+		])
 	}
-	async function disableAutoHarp() {
+	function disableAutoHarp() {
 		if (!locationData.castle.is_auto_harp_enabled) {
 			if (debug) console.log("Auto harp already disabled");
 			return;
@@ -1127,7 +1156,7 @@ function beanstalk() {
 		if (debug) console.log("Disabling auto harp");
 		toggleAutoHarp();
 	}
-	async function enableAutoHarp() {
+	function enableAutoHarp() {
 		if (locationData.castle.is_auto_harp_enabled) {
 			if (debug) console.log("Auto harp already enabled");
 			return;
@@ -1135,7 +1164,7 @@ function beanstalk() {
 		if (debug) console.log("Enabling auto harp");
 		toggleAutoHarp();
 	}
-	async function wakeGiant() {
+	function wakeGiant() {
 		if (locationData.castle.is_boss_chase) {
 			return;
 		}
@@ -1151,17 +1180,22 @@ function beanstalk() {
 		if (noiseNeeded <= 0) {
 			return;
 		}
+		makeNoise(noiseNeeded);
+	}
 
-		document.querySelector('.headsUpDisplayBountifulBeanstalkView__playHarpDialogButton').click();
-		await sleep(3000);
-
-		var inputElement = document.querySelector('.bountifulBeanstalkPlayHarpDialogView__option--plus .bountifulBeanstalkPlayHarpDialogView__input');
-		simulateTyping(inputElement, noiseNeeded.toString());
-		await sleep(1000);
-
-		document.querySelector('.bountifulBeanstalkPlayHarpDialogView__button.bountifulBeanstalkPlayHarpDialogView__playButton').click();
-		await sleep(2000);
-		reloadPage();
+	function makeNoise(noiseNeeded) {
+		doAsync([
+			() => { document.querySelector('.headsUpDisplayBountifulBeanstalkView__playHarpDialogButton').click(); },
+			2000,
+			() => {
+				var inputElement = document.querySelector('.bountifulBeanstalkPlayHarpDialogView__option--plus .bountifulBeanstalkPlayHarpDialogView__input');
+				simulateTyping(inputElement, noiseNeeded.toString());
+			},
+			1500,
+			() => { document.querySelector('.bountifulBeanstalkPlayHarpDialogView__button.bountifulBeanstalkPlayHarpDialogView__playButton').click(); },
+			2000,
+			() => reloadPage(),
+		])
 	}
 
 	checkThenArm(null, BASE, BEST_BASE);
@@ -5591,72 +5625,65 @@ async function FinalizePuzzleImageAnswer(answer) {
 	puzzleAnsField.focus();
 	puzzleAnsField.value = "";
 	puzzleAnsField.value = answer.toLowerCase();
-	await simulateTyping(puzzleAnsField, answer.toLowerCase());
+	doAsync([
+		() => {	simulateTyping(puzzleAnsField, answer.toLowerCase());},
+		1500,
+		() => {
+			const puzzleSubmitButton = document.getElementsByClassName("puzzleView__solveButton puzzleView__solveButton--ready")[0];
 
-	//var puzzleSubmit = document.getElementById("puzzle_submit");
-	const puzzleSubmitButton = document.getElementsByClassName("puzzleView__solveButton puzzleView__solveButton--ready")[0];
-
-	if (!puzzleSubmitButton) {
-		if (debug) console.plog("puzzleSubmit: " + puzzleSubmitButton);
-		return;
-	}
-	fireEvent(puzzleSubmitButton, 'click');
-	kingsRewardRetry = 0;
-	setStorage("KingsRewardRetry", kingsRewardRetry);
-	myFrame = document.getElementById('myFrame');
-	if (myFrame)
-		document.body.removeChild(myFrame);
-
-	window.setTimeout(function () {
-		CheckKRAnswerCorrectness();
-	}, 1000);
-
-	// window.setTimeout(function () {
-	// }, 5000);
-
+			if (!puzzleSubmitButton && debug) {
+				console.plog("puzzleSubmit: " + puzzleSubmitButton);
+				return;
+			}
+			fireEvent(puzzleSubmitButton, 'click');
+			kingsRewardRetry = 0;
+			setStorage("KingsRewardRetry", kingsRewardRetry);
+			myFrame = document.getElementById('myFrame');
+			if (myFrame)
+				document.body.removeChild(myFrame);
+		},
+		1000,
+		
+		() => {CheckKRAnswerCorrectness();},
+	]);
 }
 
-async function simulateTyping(element, value) {
-	element.focus();
+// WARNING: this creates timeouts and returns before the timeouts are executed! Account for it when scheduling subsequent events
+function simulateTyping(element, value) {
+    element.focus(); // Focus on the element
     element.value = ''; // Clear any existing value
-	await sleep(50);
 
-    // Simulate typing each character
-    for (let char of value.toString()) {
+    function typeChar(char) {
         let keyCode = char.charCodeAt(0);
-        
-        // Create and dispatch keydown event
+
         let keyDownEvent = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, keyCode: keyCode });
         element.dispatchEvent(keyDownEvent);
-		await sleep(50);
-        
-        // Set the value of the input
+
         element.value += char;
-        
-        // Create and dispatch keypress event
+
         let keyPressEvent = new KeyboardEvent('keypress', { bubbles: true, cancelable: true, keyCode: keyCode });
         element.dispatchEvent(keyPressEvent);
-		await sleep(50);
-        
-        // Create and dispatch input event
+
         let inputEvent = new Event('input', { bubbles: true });
         element.dispatchEvent(inputEvent);
-		await sleep(50);
-        
-        // Create and dispatch keyup event
+
         let keyUpEvent = new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: keyCode });
         element.dispatchEvent(keyUpEvent);
-		await sleep(50);
     }
-    
-    // Trigger change event to ensure all listeners are notified
-    let changeEvent = new Event('change', { bubbles: true });
-    element.dispatchEvent(changeEvent);
-	await sleep(50);
-    
-    // Blur the input to trigger any onblur event listeners
-    element.blur();
-	await sleep(50);
+
+    function typeNextChar(index) {
+        if (index < value.length) {
+            typeChar(value[index]);
+            setTimeout(() => typeNextChar(index + 1), 50); // Adjust delay as needed
+        } else {
+            // After all characters are typed, dispatch a change event and optionally blur
+            let changeEvent = new Event('change', { bubbles: true });
+            element.dispatchEvent(changeEvent);
+            element.blur(); // Uncomment if you want to trigger the blur event
+        }
+    }
+
+    typeNextChar(0); // Start typing the first character
 }
 
 function receiveMessage(event) { //throws error in normal operation, but necessary for KRsolver
