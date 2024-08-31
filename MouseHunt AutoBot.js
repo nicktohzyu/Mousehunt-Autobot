@@ -5648,7 +5648,7 @@ async function FinalizePuzzleImageAnswer(answer) {
 	puzzleAnsField.value = "";
 	puzzleAnsField.value = answer.toLowerCase();
 	doAsync([
-		() => {	simulateTyping(puzzleAnsField, answer.toLowerCase());},
+		() => { simulateTyping(puzzleAnsField, answer.toLowerCase()); },
 		1500,
 		() => {
 			const puzzleSubmitButton = document.getElementsByClassName("puzzleView__solveButton puzzleView__solveButton--ready")[0];
@@ -5665,47 +5665,47 @@ async function FinalizePuzzleImageAnswer(answer) {
 				document.body.removeChild(myFrame);
 		},
 		1000,
-		
-		() => {CheckKRAnswerCorrectness();},
+
+		() => { CheckKRAnswerCorrectness(); },
 	]);
 }
 
 // WARNING: this creates timeouts and returns before the timeouts are executed! Account for it when scheduling subsequent events
 function simulateTyping(element, value) {
-    element.focus(); // Focus on the element
-    element.value = ''; // Clear any existing value
+	element.focus(); // Focus on the element
+	element.value = ''; // Clear any existing value
 
-    function typeChar(char) {
-        let keyCode = char.charCodeAt(0);
+	function typeChar(char) {
+		let keyCode = char.charCodeAt(0);
 
-        let keyDownEvent = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, keyCode: keyCode });
-        element.dispatchEvent(keyDownEvent);
+		let keyDownEvent = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, keyCode: keyCode });
+		element.dispatchEvent(keyDownEvent);
 
-        element.value += char;
+		element.value += char;
 
-        let keyPressEvent = new KeyboardEvent('keypress', { bubbles: true, cancelable: true, keyCode: keyCode });
-        element.dispatchEvent(keyPressEvent);
+		let keyPressEvent = new KeyboardEvent('keypress', { bubbles: true, cancelable: true, keyCode: keyCode });
+		element.dispatchEvent(keyPressEvent);
 
-        let inputEvent = new Event('input', { bubbles: true });
-        element.dispatchEvent(inputEvent);
+		let inputEvent = new Event('input', { bubbles: true });
+		element.dispatchEvent(inputEvent);
 
-        let keyUpEvent = new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: keyCode });
-        element.dispatchEvent(keyUpEvent);
-    }
+		let keyUpEvent = new KeyboardEvent('keyup', { bubbles: true, cancelable: true, keyCode: keyCode });
+		element.dispatchEvent(keyUpEvent);
+	}
 
-    function typeNextChar(index) {
-        if (index < value.length) {
-            typeChar(value[index]);
-            setTimeout(() => typeNextChar(index + 1), 50); // Adjust delay as needed
-        } else {
-            // After all characters are typed, dispatch a change event and optionally blur
-            let changeEvent = new Event('change', { bubbles: true });
-            element.dispatchEvent(changeEvent);
-            element.blur(); // Uncomment if you want to trigger the blur event
-        }
-    }
+	function typeNextChar(index) {
+		if (index < value.length) {
+			typeChar(value[index]);
+			setTimeout(() => typeNextChar(index + 1), 50); // Adjust delay as needed
+		} else {
+			// After all characters are typed, dispatch a change event and optionally blur
+			let changeEvent = new Event('change', { bubbles: true });
+			element.dispatchEvent(changeEvent);
+			element.blur(); // Uncomment if you want to trigger the blur event
+		}
+	}
 
-    typeNextChar(0); // Start typing the first character
+	typeNextChar(0); // Start typing the first character
 }
 
 function receiveMessage(event) { //throws error in normal operation, but necessary for KRsolver
