@@ -1166,22 +1166,46 @@ function beanstalk() {
 		if (debug) console.log("Entering castle (planting vine) ");
 		doAsync([
 			() => { document.getElementsByClassName("bountifulBeanstalkClimbView__plantVineDialogButton")[0].click(); },
-			3000,
+			4000,
 			() => {
 				document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].click();
-				if (room === 2 && useFeatherKeyForGreatHall) {
+			},
+			200,
+			() => {
+				if (room === GREAT_HALL && useFeatherKeyForGreatHall) {
 					if (debug) console.log("Using feather and key ");
 					document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_key"]').click();
-					document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_feather"]').click();
-					// await document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_key"]').click();
-					// await sleep(1000);
-					// await document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_feather"]').click();
-					// await sleep(1000);
 				}
+			},
+			200,
+			() => {
+				if (room === GREAT_HALL && useFeatherKeyForGreatHall) {
+					if (debug) console.log("Using feather and key ");
+					document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_feather"]').click();
+				}
+			},
+			200,
+			() => {
+				document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].focus();
+			},
+			200,
+			() => {
+				document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].blur();
 			},
 			1000,
 			() => { document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].click(); },
-			1000,
+			200,
+			() => {
+				document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].focus();
+			},
+			200,
+			() => {
+				document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].blur();
+			},
+			// () => {
+			// 	playAlertSound();
+			// }
+			2000,
 			() => { document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__confirmDialogButton bountifulBeanstalkPlantVineDialogView__confirmDialogPlantButton")[0].click(); },
 			2000,
 			() => { reloadPage(); },
@@ -1265,7 +1289,7 @@ function beanstalk() {
 		} else {
 			setFuelOff();
 			if (autoEnterCastle) {
-				if (locationData.items.fabled_fertilizer_stat_item.quantity_unformatted >= 124) {
+				if (locationData.items.fabled_fertilizer_stat_item.quantity_unformatted >= 2124) { //prep 20 runs for easter + 2 backup ballroom
 					enterCastle(GREAT_HALL);
 				} else {
 					enterCastle(BALLROOM);
@@ -1320,11 +1344,16 @@ function beanstalk() {
 		// 	setFuelOff();
 		// } else
 		if (locationData.castle.is_boss_chase) {
-			// if we are just farming fert (assuming player has a ton of crafting materials from easter event)
-			// then we dont care about catch rate here, just reduce risk of missing the fert duplication
-			checkThenArm(null, BASE, "Royal Ruby Refractor Base");
+			if (locationData.castle.current_room.loot_multiplier == 8) {
+				useAppropriateBase();
+				armLavishBeansterCheese();
+			} else {
+				// if we are only farming fert (assuming player has a ton of crafting materials from easter event)
+				// then we dont care about catch rate here, just reduce risk of missing the fert duplication
+				checkThenArm(null, BASE, "Royal Ruby Refractor Base");
+				armPlainCheese();
+			}
 			checkThenArm(null, TRINKET, "Rift Charm");
-			armPlainCheese();
 			setFuelOff();
 			return;
 		} else {
@@ -1335,19 +1364,23 @@ function beanstalk() {
 			setFuelOff();
 		}
 	} else { // great hall
+		if (debug) console.log("in great hall");
 		useAppropriateBase();
 		if (locationData.castle.current_room.loot_multiplier == 8 && isFeatherActivated()) {
 			disableAutoHarp();
 			if (locationData.castle.is_boss_chase) {
-				setFuelOff();
 				if (locationData.castle.is_boss_encounter) {
-					armPlainCheese();
-					setEasterFondue(true);
-					checkThenArm(null, TRINKET, "Rift Charm");
+					// armPlainCheese();
+					// setEasterFondue(true);
+					// checkThenArm(null, TRINKET, "Rift Charm");
+					armRoyalBeansterCheese();
+					checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+					setFuelOn();
 				} else {
 					armRoyalBeansterCheese();
-					setEasterFondue(false);
+					// setEasterFondue(false);
 					checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+					setFuelOn();
 				}
 			} else {
 				armRoyalBeansterCheese();
