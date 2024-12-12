@@ -731,8 +731,8 @@ function locationBotCheck(caller) {
 		case 'Winter 2015':
 			Winter2015();
 			break;
-		case 'Winter 2022':
-			winter2022location();
+		case 'Great Winter Hunt':
+			GreatWinterHunt();
 			break;
 		case 'GWH2016R':
 			gwh();
@@ -903,18 +903,20 @@ function lny2020event() {
 	}
 }
 
-function winter2022location() {
-	const questObj = user.quests.QuestCinnamonTreeGrove || user.quests.QuestGolemWorkshop || user.quests.QuestIceFortress;
-	const golems = questObj.golems;
-	const NUM_GOLEMS_TO_USE = 2;
+function GreatWinterHunt() {
+	const locationData = user.quests.QuestCinnamonTreeGrove || user.quests.QuestGolemWorkshop || user.quests.QuestIceFortress;
+	const golems = locationData.golems;
+	const NUM_GOLEMS_TO_USE = 1;
 	// TODO: max golem level
 	const ALERT_IF_NO_PARTS = true;
+	const ALERT_IF_NOT_FIRING = true;
+	const FUEL_IF_FIRING = true;
 	const BUILD_GOLEMS = true;
 	const ALERT_IF_CAN_UPGRADE = true;
-	const BUILD_IF_CAN_UPGRADE = true;
+	const CLAIM_IF_CAN_UPGRADE = false;
 	const DEFAULT_CHEESE = "gouda";
 	const DEFAULT_CHARM = "Snowball Charm";
-	console.log("running winter 2022 location bot");
+	console.log("running Great Winter Hunt location bot");
 
 	if (getCurrentLocation().indexOf("Cinnamon Hill") < 0
 		&& getCurrentLocation().indexOf("Golem Workshop") < 0
@@ -923,25 +925,58 @@ function winter2022location() {
 		return;
 	}
 
-	// checkThenArm(null, "base", ["Gift of the Day Base", bestPowerBase]);
+	function toggleFuel() {
+		document.getElementsByClassName("headsUpDisplayWinterHuntRegionView__fuelButton")[0].click();
+	}
+	function setFuelOn() {
+		if (!locationData.is_fuel_enabled) {
+			toggleFuel();
+		}
+	}
+	function setFuelOff() {
+		if (locationData.is_fuel_enabled) {
+			toggleFuel();
+		}
+	}
+	function setFuel(targetOn) {
+		if (targetOn) {
+			setFuelOn();
+		} else {
+			setFuelOff();
+		}
+	}
+
+	// In fortress:
+	// - Alert and disable fuel if no cannonballs
+	// - Enable fuel if have cannonballs
+	if (user.quests.QuestIceFortress) {
+		console.log("In fortress");
+		const firing = !!(user.quests.QuestIceFortress.cannons.snow_cannon.is_active ||
+			user.quests.QuestIceFortress.cannons.cinnamon_cannon.is_active ||
+			user.quests.QuestIceFortress.cannons.charm_cannon.is_active);
+		console.log("Some cannon firing: ", firing);
+		if (ALERT_IF_NOT_FIRING && !firing) {
+			console.log("No cannon firing, alerting user");
+			playAlertSound();
+		}
+		if (firing) {
+			setFuel(FUEL_IF_FIRING);
+		} else {
+			setFuelOff();
+		}
+	} else {
+		console.log("Not in fortress");
+	}
 
 	if (getBaitQuantity() < 1) { //out of PP
 		checkThenArm(null, "bait", DEFAULT_CHEESE);
 		checkThenArm(null, "trinket", DEFAULT_CHARM);
 	}
 
-
-	// if (questObj.comet.can_explode) {
-	// 	console.log("detonate");
-	// 	document.getElementsByClassName("winterHunt2021HUD-dynamiteButton")[0].click();
-	// 	setTimeout(winter2022location, rand(600, 800));
-	// 	return;
-	// }
-
 	function sufficientPartsToBuild() {
-		return questObj.items.golem_part_head_stat_item.quantity >= 1 &&
-			questObj.items.golem_part_torso_stat_item.quantity >= 1 &&
-			questObj.items.golem_part_limb_stat_item.quantity >= 4
+		return locationData.items.golem_part_head_stat_item.quantity >= 1 &&
+			locationData.items.golem_part_torso_stat_item.quantity >= 1 &&
+			locationData.items.golem_part_limb_stat_item.quantity >= 4
 	}
 	if (ALERT_IF_NO_PARTS && !sufficientPartsToBuild()) {
 		playAlertSound();
@@ -969,6 +1004,11 @@ function winter2022location() {
 		}
 		console.log("checking golem " + n);
 		if (golems[n].can_claim) {
+			if (canUpgrade && !CLAIM_IF_CAN_UPGRADE) {
+				console.log("Not claiming golem " + n + "because it can be upgraded");
+				next();
+				return;
+			}
 			console.log("claiming golem " + n);
 			document.getElementsByClassName("headsUpDisplayWinterHuntRegionView__golemClaimRewardButton headsUpDisplayWinterHuntRegionView__golemActionButton")[n].click();
 			setTimeout(reloadPage, rand(2000, 2500));
@@ -980,7 +1020,7 @@ function winter2022location() {
 				next();
 				return;
 			}
-			if (canUpgrade && !BUILD_IF_CAN_UPGRADE) {
+			if (canUpgrade && !CLAIM_IF_CAN_UPGRADE) {
 				next();
 				return;
 			}
@@ -8108,7 +8148,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
 				preferenceHTMLStr += '<option value="Queso Canyon">Queso Canyon</option>';
 				preferenceHTMLStr += '<option value="Valour Rift">Valour Rift</option>';
-				preferenceHTMLStr += '<option value="Winter 2022">Winter 2022</option>';
+				preferenceHTMLStr += '<option value="Great Winter Hunt">Great Winter Hunt</option>';
 				/*preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
 				preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
 				preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
