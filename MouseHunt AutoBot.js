@@ -905,18 +905,56 @@ function lny2020event() {
 
 function GreatWinterHunt() {
 	const locationData = user.quests.QuestCinnamonTreeGrove || user.quests.QuestGolemWorkshop || user.quests.QuestIceFortress;
+	if (!locationData) {
+		console.log("Not in gwh location");
+		return;
+	}
+
 	const golems = locationData.golems;
-	const NUM_GOLEMS_TO_USE = 1;
-	// TODO: max golem level
+	const DEFAULT_CHEESE = "Gouda Cheese";
+	const PP_CHEESE = "Pecan Pecorino";
+	const GPP_CHEESE = "Glazed Pecan Pecorino";
+    const SB_CHEESE = "SUPER|brie+";
+	const DEFAULT_CHARM = "Snowball Charm";
+	console.log("running Great Winter Hunt location bot");
+
+
+	// const NUM_GOLEMS_TO_USE = 1;
+	// const BUILD_GOLEMS = true;
+	// const ALERT_IF_CAN_UPGRADE = true;
+	// const CLAIM_IF_CAN_UPGRADE = false;
+
+	const GOLEMS_CONFIG = {
+		0: {
+			use: true,
+			build: true,
+			alertIfCanUpgrade: true,
+			claimIfCanUpgrade: true,
+			hat: false,
+			scarf: false,
+		},
+		1: {
+			use: true,
+			build: true,
+			alertIfCanUpgrade: true,
+			claimIfCanUpgrade: true,
+			hat: false,
+			scarf: false,
+		},
+		2: {
+			use: false,
+			build: true,
+			alertIfCanUpgrade: false,
+			claimIfCanUpgrade: true,
+			hat: false,
+			scarf: true,
+		},
+	}
+
+	// ice fortress cannons
 	const ALERT_IF_NO_PARTS = true;
 	const ALERT_IF_NOT_FIRING = true;
 	const FUEL_IF_FIRING = true;
-	const BUILD_GOLEMS = true;
-	const ALERT_IF_CAN_UPGRADE = true;
-	const CLAIM_IF_CAN_UPGRADE = false;
-	const DEFAULT_CHEESE = "gouda";
-	const DEFAULT_CHARM = "Snowball Charm";
-	console.log("running Great Winter Hunt location bot");
 
 	if (getCurrentLocation().indexOf("Cinnamon Hill") < 0
 		&& getCurrentLocation().indexOf("Golem Workshop") < 0
@@ -946,6 +984,8 @@ function GreatWinterHunt() {
 		}
 	}
 
+
+
 	// In fortress:
 	// - Alert and disable fuel if no cannonballs
 	// - Enable fuel if have cannonballs
@@ -964,14 +1004,21 @@ function GreatWinterHunt() {
 		} else {
 			setFuelOff();
 		}
+        if (user.quests.QuestIceFortress && user.quests.QuestIceFortress.shield.state == "broken") {
+		checkThenArm(null, "bait", DEFAULT_CHEESE);
+        } else {
+            checkThenArm(null, "bait", DEFAULT_CHEESE);
+        }
+
+        if (getBaitQuantity() < 1) { //out of PP
+            checkThenArm(null, "bait", DEFAULT_CHEESE);
+        }
 	} else {
 		console.log("Not in fortress");
+        setFuelOff();
 	}
 
-	if (getBaitQuantity() < 1) { //out of PP
-		checkThenArm(null, "bait", DEFAULT_CHEESE);
-		checkThenArm(null, "trinket", DEFAULT_CHARM);
-	}
+
 
 	function sufficientPartsToBuild() {
 		return locationData.items.golem_part_head_stat_item.quantity >= 1 &&
@@ -982,29 +1029,27 @@ function GreatWinterHunt() {
 		playAlertSound();
 	}
 
-	function checkCanUpgrade() {
-		for (let i = 0; i < NUM_GOLEMS_TO_USE; i++) {
-			if (golems[i].can_upgrade) {
-				console.log("can upgrade golem " + i);
-				return true;
-			}
+	for (const [i, golem] of golems.entries()) {
+		if (golem.can_upgrade && GOLEMS_CONFIG[i].alertIfCanUpgrade) {
+			playAlertSound();
+			console.log("golem " + i + " can be upgraded");
 		}
-		return false;
-	}
-	const canUpgrade = checkCanUpgrade();
-
-	if (canUpgrade && ALERT_IF_CAN_UPGRADE) {
-		playAlertSound();
 	}
 
 	checkGolem(0);
 	function checkGolem(n) {
-		if (n >= NUM_GOLEMS_TO_USE) {
+		if (n >= 3) {
 			return;
 		}
 		console.log("checking golem " + n);
-		if (golems[n].can_claim) {
-			if (canUpgrade && !CLAIM_IF_CAN_UPGRADE) {
+		const CONFIG = GOLEMS_CONFIG[n];
+		const golem = golems[n];
+		if (!CONFIG.use) {
+			setTimeout(checkGolem, rand(600, 800), n + 1); //check the next golem
+			return;
+		}
+		if (golem.can_claim) {
+			if (golem.can_upgrade && !CONFIG.claimIfCanUpgrade) {
 				console.log("Not claiming golem " + n + "because it can be upgraded");
 				next();
 				return;
@@ -1015,29 +1060,34 @@ function GreatWinterHunt() {
 			return;
 		}
 		if (golems[n].can_build) {
-			if (!BUILD_GOLEMS) { //can build but don't
+			if (!CONFIG.build) { //can build but don't
+				console.log("Can build golem " + n);
 				playAlertSound();
 				next();
 				return;
 			}
-			if (canUpgrade && !CLAIM_IF_CAN_UPGRADE) {
-				next();
-				return;
-			}
 			console.log("building golem " + n);
-			//there appears to be 2 html button elems for each golem
-			document.getElementsByClassName("headsUpDisplayWinterHuntRegionView__golemBuildButton headsUpDisplayWinterHuntRegionView__golemActionButton")[n * 2].click();
-			setTimeout(function () {
-				document.getElementsByClassName("greatWinterHuntDialogView__bigButton greatWinterHuntGolemManagerLaunchTabView__buildButton")[0].click();
-				setTimeout(reloadPage, rand(2000, 2500));
-			}, rand(1000, 1200));
+			doAsync([
+				//there appears to be 2 html button elems for each golem
+				() => { document.getElementsByClassName("headsUpDisplayWinterHuntRegionView__golemBuildButton headsUpDisplayWinterHuntRegionView__golemActionButton")[n * 2].click(); },
+				1000,
+				() => {
+					if (CONFIG.hat) {
+						document.getElementsByClassName("greatWinterHuntGolemManagerLaunchTabView__toggleButton greatWinterHuntGolemManagerLaunchTabView__toggleHatButton")[0].click();
+					}
+					if (CONFIG.scarf) {
+						document.getElementsByClassName("greatWinterHuntGolemManagerLaunchTabView__toggleButton greatWinterHuntGolemManagerLaunchTabView__toggleScarfButton")[0].click();
+					}
+				},
+				1000,
+				() => { document.getElementsByClassName("greatWinterHuntDialogView__bigButton greatWinterHuntGolemManagerLaunchTabView__buildButton")[0].click(); },
+				2000,
+				() => { reloadPage(); },
+			]);
 			return;
 		}
-		next();
 
-		function next() {
-			setTimeout(checkGolem, rand(600, 800), n + 1); //check the next golem
-		}
+		setTimeout(checkGolem, rand(600, 800), n + 1); //check the next golem
 	}
 }
 
