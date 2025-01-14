@@ -93,6 +93,7 @@
 
 	// // Play sound when encounter king's reward (true/false)
 	var isKingWarningSound = false;
+	var kingWarningSoundDelay = 60000;  // delay to give time for auto reward
 
 	// // Which sound to play when encountering king's reward (need to be .mp3)
 	var kingWarningSound = 'https://raw.githubusercontent.com/nicktohzyu/MH/master/sound.mp3';
@@ -679,7 +680,7 @@ function locationBotCheck(caller) {
 	//console.log("selAlgo: ", selAlgo);
 	setTimeout(eventBotCheck, 3000);
 	if (selAlgo != null && selAlgo != "") {
-		console.log("Running \"" + selAlgo + "\" location bot");
+		console.log("location bot set as \"" + selAlgo + "\"");
 	}
 	switch (selAlgo) {
 		case 'Hunt For':
@@ -11185,7 +11186,7 @@ function kingRewardAction() {
 
 	if (isKingWarningSound) {
 		if (debug) console.log("playing KR alert sound");
-		playAlertSound();
+		setTimeout(playAlertSound, kingWarningSoundDelay);
 	}
 	window.setTimeout(function () {
 		// Autopop KR if needed
