@@ -540,13 +540,13 @@ const TRINKET = "trinket";
 const TRAP = "trap";
 const BASE = "base";
 const TRAPS_BY_TYPE = {
-	"Arcane": "Circlet of Seeking",
+	"Arcane": "Chrome Circlet of Seeking",
 	"Draconic": "Dragon Slayer Cannon",
 	"Forgotten": "Chrome Thought Obliterator",
 	"Hydro": "Chrome School of Sharks",
 	"Law": "S.T.I.N.G.E.R.",
 	"Physical": "Legendary KingBot",
-	"Shadow": "Chrome Temporal Turbine",
+	"Shadow": "Dark Magic Mirrors",
 	"Tactical": "Slumbering Boulder",
 };
 const BEST_BASE = "Prestige Base";
@@ -833,6 +833,9 @@ function locationBotCheck(caller) {
 		case 'Bountiful Beanstalk':
 			beanstalk();
 			break;
+		case 'School of Sorcery':
+			schoolOfSorcery();
+			break;
 		case 'None':
 			break;
 		default:
@@ -893,15 +896,57 @@ function birthday2021() { //basic, just equips stuff
 	return;
 }
 
-function lny2020event() {
-	console.log("running lny 2020 event bot");
-	//check candle
-	function armCandle() {
+function _clickLnyWhiteCandle() {
+	document.getElementsByClassName("mousehuntItem-image candle")[0].getElementsByClassName("mousehuntItem-boundingBox")[0].click();
+}
+function _clickLnyRedCandle() {
+	document.getElementsByClassName("mousehuntItem-image redCandle")[0].getElementsByClassName("mousehuntItem-boundingBox")[0].click();
+}
 
+// LNY candle helpers
+function disarmLnyCandle() {
+	console.log("disarming candle");
+	if (!user.quests.QuestLunarNewYearLantern) {
+		console.log("LNY event not active, skipping");
+		return;
 	}
-	function disarmCandle() {
+	if (user.quests.QuestLunarNewYearLantern.lantern_status == "hasLantern disabled") {
+		console.log("Lantern already disabled");
+		return;
+	}
 
+	//click on the activated candle
+	if (user.quests.QuestLunarNewYearLantern.lantern_status == "hasLantern double") {
+		_clickLnyWhiteCandle()
+	} else if (user.quests.QuestLunarNewYearLantern.lantern_status == "hasLantern triple") {
+		_clickLnyRedCandle()
+	} else {
+		throw new Error("Failed in disarming candle");
 	}
+}
+
+function armLnyCandle() {
+	console.log("arming candle");
+	if (!user.quests.QuestLunarNewYearLantern) {
+		console.log("LNY event not active, skipping");
+	}
+	if (user.quests.QuestLunarNewYearLantern.lantern_status == "hasLantern double") {
+		console.log("Normal candle already lit");
+		return;
+	}
+	_clickLnyWhiteCandle()
+}
+
+function armLnyRedCandle() {
+	console.log("arming red candle");
+	if (!user.quests.QuestLunarNewYearLantern) {
+		console.log("LNY event not active, skipping");
+	}
+	if (user.quests.QuestLunarNewYearLantern.lantern_status == "hasLantern triple") {
+		console.log("Red candle already lit");
+		return;
+	}
+	_clickLnyRedCandle()
 }
 
 function GreatWinterHunt() {
@@ -1447,6 +1492,32 @@ function beanstalk() {
 			checkThenArm(null, TRINKET, "Rift Charm");
 			smartArmLeapingCheese();
 			setFuelOff();
+		}
+	}
+}
+
+function schoolOfSorcery() {
+	if (getCurrentLocation().indexOf("School of Sorcery") < 0) {
+		return;
+	}
+	if (debug) {
+		console.log("running school of sorcery bot");
+	}
+	if (!user.quests.QuestSchoolOfSorcery.in_exam) {
+		return; //only coded for final exam
+	}
+
+
+	if (user.quests.QuestSchoolOfSorcery.current_course.is_boss_encounter) {
+		// use stronger trap for master sorceror
+		checkThenArm(null, TRAP, TRAPS_BY_TYPE["Arcane"]);
+		armLnyRedCandle();
+	} else {
+		armLnyCandle();
+		if (user.quests.QuestSchoolOfSorcery.current_course.power_type == "arcane") {
+			checkThenArm(null, TRAP, TRAPS_BY_TYPE["Arcane"]);
+		} else {
+			checkThenArm(null, TRAP, TRAPS_BY_TYPE["Shadow"]);
 		}
 	}
 }
@@ -8227,6 +8298,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<select id="locationBotSelect" style="width:150px" onChange="window.sessionStorage.setItem(\'locationBot\', value); showOrHideTr(value);">';
 				preferenceHTMLStr += '<option value="None">None</option>';
 				preferenceHTMLStr += '<option value="Bountiful Beanstalk">Bountiful Beanstalk</option>';
+				preferenceHTMLStr += '<option value="School of Sorcery">School of Sorcery</option>';
 				preferenceHTMLStr += '<option value="Bristle Woods Rift">Bristle Woods Rift</option>';
 				preferenceHTMLStr += '<option value="Floating Islands">Floating Islands</option>';
 				preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
