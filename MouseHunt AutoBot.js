@@ -473,7 +473,7 @@
 	if (!useCharm) {
 		console.log("Warning: charm use turned off for location bots")
 	}
-	var genericCharm = ""; //for when there's no need to use a charm
+	var genericCharm = "luck charm"; //for when there's no need to use a charm
 	// element in page
 	var titleElement;
 	var nextHornTimeElement;
@@ -540,16 +540,18 @@ const TRINKET = "trinket";
 const TRAP = "trap";
 const BASE = "base";
 const TRAPS_BY_TYPE = {
-	"Arcane": "Chrome Circlet of Seeking",
+	"Arcane": "Chrome Circlet of Pursuing",
 	"Draconic": "Dragon Slayer Cannon",
 	"Forgotten": "Chrome Thought Obliterator",
 	"Hydro": "Chrome School of Sharks",
 	"Law": "S.T.I.N.G.E.R.",
 	"Physical": "Legendary KingBot",
-	"Shadow": "Dark Magic Mirrors",
+	"Shadow": "Infinite Dark Magic Mirrors",
 	"Tactical": "Slumbering Boulder",
 };
 const BEST_BASE = "Prestige Base";
+const BEST_RIFT_BASE = "Prestige Base";
+const SB_CHEESE = "SUPER|brie+";
 
 //remove commas before parseInt
 (function () {
@@ -836,6 +838,12 @@ function locationBotCheck(caller) {
 		case 'School of Sorcery':
 			schoolOfSorcery();
 			break;
+		case 'DD Reinforce Cavern':
+			ddReinforceCavern();
+			break;
+		case 'SUPER|brie+ Factory':
+			birthdaySBFactory();
+			break;
 		case 'None':
 			break;
 		default:
@@ -863,9 +871,6 @@ function eventBotCheck(caller) {
 		case 'Lunar New Year 2019':
 			lny2020event();
 			break;
-		case 'Birthday 2021':
-			birthday2021();
-			break;
 		case 'None':
 			break;
 		default:
@@ -874,7 +879,7 @@ function eventBotCheck(caller) {
 	}
 }
 
-function birthday2021() { //basic, just equips stuff
+function birthdaySBFactory() { // just equips stuff and claims the box
 	console.log("In Birthday2020(), getting location");
 	if (getCurrentLocation().indexOf("SUPER|brie+ Factory") < 0) {
 		return;
@@ -882,13 +887,17 @@ function birthday2021() { //basic, just equips stuff
 	// console.log("getting bait quantity");
 	if (getBaitQuantity() == 0 || user.quests.QuestSuperBrieFactory.factory_atts.boss_warning) {
 		checkThenArm(null, 'bait', 'Gouda Cheese');
+		checkThenArm(null, 'trinket', genericCharm);
+	} else if (user.quests.QuestSuperBrieFactory.factory_atts.current_room == "pumping_room" || user.quests.QuestSuperBrieFactory.factory_atts.current_room == "mixing_room") {
+		checkThenArm(null, 'bait', 'Coggy Colby Cheese');
+		checkThenArm(null, 'trinket', genericCharm);
+	} else if (user.bait_name == 'Coggy Colby Cheese') {
+		checkThenArm(null, 'trinket', genericCharm);
+	} else {
+		checkThenArm(null, 'bait', 'Gouda Cheese');
+		checkThenArm(null, 'trinket', "Factory Repair Charm");
 	}
 
-	// console.log("getting charm quantity");
-	if (getCharmQuantity() == 0 || CurrentArmedBait() != 'Coggy Colby Cheese') {
-		checkThenArm(null, 'trinket', 'Enerchi Charm');
-		checkThenArm(null, 'base', 'Attuned Enerchi Induction Base');
-	}
 	if (user.quests.QuestSuperBrieFactory.factory_atts.can_claim) {
 		console.log("can claim");
 		document.getElementsByClassName("superBrieFactoryHUD-claimButton")[0].click();
@@ -905,11 +914,11 @@ function _clickLnyRedCandle() {
 
 // LNY candle helpers
 function disarmLnyCandle() {
-	console.log("disarming candle");
 	if (!user.quests.QuestLunarNewYearLantern) {
 		console.log("LNY event not active, skipping");
 		return;
 	}
+	console.log("disarming candle");
 	if (user.quests.QuestLunarNewYearLantern.lantern_status == "hasLantern disabled") {
 		console.log("Lantern already disabled");
 		return;
@@ -926,10 +935,11 @@ function disarmLnyCandle() {
 }
 
 function armLnyCandle() {
-	console.log("arming candle");
 	if (!user.quests.QuestLunarNewYearLantern) {
 		console.log("LNY event not active, skipping");
+		return
 	}
+	console.log("arming candle");
 	if (user.quests.QuestLunarNewYearLantern.lantern_status == "hasLantern double") {
 		console.log("Normal candle already lit");
 		return;
@@ -938,10 +948,11 @@ function armLnyCandle() {
 }
 
 function armLnyRedCandle() {
-	console.log("arming red candle");
 	if (!user.quests.QuestLunarNewYearLantern) {
 		console.log("LNY event not active, skipping");
+		return;
 	}
+	console.log("arming red candle");
 	if (user.quests.QuestLunarNewYearLantern.lantern_status == "hasLantern triple") {
 		console.log("Red candle already lit");
 		return;
@@ -960,7 +971,6 @@ function GreatWinterHunt() {
 	const DEFAULT_CHEESE = "Gouda Cheese";
 	const PP_CHEESE = "Pecan Pecorino";
 	const GPP_CHEESE = "Glazed Pecan Pecorino";
-    const SB_CHEESE = "SUPER|brie+";
 	const DEFAULT_CHARM = "Snowball Charm";
 	console.log("running Great Winter Hunt location bot");
 
@@ -1050,18 +1060,18 @@ function GreatWinterHunt() {
 		} else {
 			setFuelOff();
 		}
-        if (user.quests.QuestIceFortress && user.quests.QuestIceFortress.shield.state == "broken") {
-		checkThenArm(null, "bait", DEFAULT_CHEESE);
-        } else {
-            checkThenArm(null, "bait", DEFAULT_CHEESE);
-        }
+		if (user.quests.QuestIceFortress && user.quests.QuestIceFortress.shield.state == "broken") {
+			checkThenArm(null, "bait", DEFAULT_CHEESE);
+		} else {
+			checkThenArm(null, "bait", DEFAULT_CHEESE);
+		}
 
-        if (getBaitQuantity() < 1) { //out of PP
-            checkThenArm(null, "bait", DEFAULT_CHEESE);
-        }
+		if (getBaitQuantity() < 1) { //out of PP
+			checkThenArm(null, "bait", DEFAULT_CHEESE);
+		}
 	} else {
 		console.log("Not in fortress");
-        setFuelOff();
+		setFuelOff();
 	}
 
 
@@ -1166,6 +1176,7 @@ function setEasterFondue(shouldActivate) {
 		return;
 	}
 	if (user.quests.QuestSpringHunt.is_fuel_enabled == shouldActivate) {
+		console.log("fondue already at desired status=" + shouldActivate);
 		return;
 	}
 
@@ -1173,6 +1184,35 @@ function setEasterFondue(shouldActivate) {
 
 	document.querySelector('.springEggHuntCampHUD-fuelButton').click();
 	setTimeout(reloadPage, 2000);
+}
+
+function ddReinforceCavern() {
+	if (getCurrentLocation().indexOf("Draconic Depths") < 0) {
+		return;
+	}
+	if (debug) {
+		console.log("running DD bot");
+	}
+	if (user.quests.QuestDraconicDepths.cavern.hunts_remaining >= 25) {
+		if (debug) {
+			console.log("Cavern already fully reinforced");
+		}
+		return;
+	}
+	doAsync([
+		() => { document.querySelector('.draconicDepthsCavernView__reinforceCavernButton.draconicDepthsCavernView__reinforceCavernButton--').click(); },
+		2000,
+		() => {
+			document.querySelector('.draconicDepthsReinforceCavernDialogView__maxButton').click();
+		},
+		1500,
+		() => {
+			document.querySelector('.draconicDepthsView__orangeButton.draconicDepthsView__orangeButton--big.draconicDepthsReinforceCavernDialogView__reinforceButton--.draconicDepthsReinforceCavernDialogView__reinforceButton')
+			.click();
+		},
+		2000,
+		// () => reloadPage(),
+	])
 }
 
 function beanstalk() {
@@ -1248,7 +1288,7 @@ function beanstalk() {
 	}
 	function useAppropriateBase() {
 		if (locationData.castle.is_boss_encounter) {
-			checkThenArm(null, BASE, "Royal Ruby Refractor Base");
+			checkThenArm(null, BASE, ["Dragon's Breath Opal Refractor Base", "Sorcerer's Sapphire Refractor Base", "Royal Ruby Refractor Base"]);
 		} else {
 			checkThenArm(null, BASE, BEST_BASE);
 		}
@@ -1376,7 +1416,8 @@ function beanstalk() {
 		if (debug) console.log("on beanstalk");
 		setEasterFondue(false);
 		checkThenArm(null, TRINKET, "Rift Charm");
-		armPlainCheese();
+		// armPlainCheese();
+		checkThenArm(null, BAIT, SB_CHEESE);
 		if (locationData.beanstalk.is_boss_encounter) {
 			//TODO: more logic on multiplier
 			if (debug) console.log("vinneus encounter");
@@ -1385,7 +1426,7 @@ function beanstalk() {
 		} else {
 			setFuelOff();
 			if (autoEnterCastle) {
-				if (locationData.items.fabled_fertilizer_stat_item.quantity_unformatted >= 2124) { //prep 20 runs for easter + 2 backup ballroom
+				if (locationData.items.fabled_fertilizer_stat_item.quantity_unformatted >= 2024) { //prep 20 runs for easter + 2 backup ballroom
 					enterCastle(GREAT_HALL);
 				} else {
 					enterCastle(BALLROOM);
@@ -1433,53 +1474,24 @@ function beanstalk() {
 		}
 	} else if (locationData.castle.current_floor.name == "Ballroom Floor") {
 		if (debug) console.log("in castle ballroom");
-		// if (locationData.castle.is_boss_encounter) {
-		// 	if (debug) console.log("ballroom boss");
-		// 	checkThenArm(null, TRINKET, "Rift Extreme Luck Charm");
-		// 	armLavishBeansterCheese();
-		// 	setFuelOff();
-		// } else
-		if (locationData.castle.is_boss_chase) {
-			if (locationData.castle.current_room.loot_multiplier == 8) {
-				useAppropriateBase();
-				armLavishBeansterCheese();
-			} else {
-				// if we are only farming fert (assuming player has a ton of crafting materials from easter event)
-				// then we dont care about catch rate here, just reduce risk of missing the fert duplication
-				checkThenArm(null, BASE, "Royal Ruby Refractor Base");
-				armPlainCheese();
-			}
-			checkThenArm(null, TRINKET, "Rift Charm");
-			setFuelOff();
-			return;
-		} else {
-			if (debug) console.log("In low multiplier ballroom, arming leaping");
-			checkThenArm(null, TRINKET, "Rift Charm");
-			wakeGiant();
-			smartArmLeapingCheese();
-			setFuelOff();
-		}
+		checkThenArm(null, BASE, ["Dragon's Breath Opal Refractor Base", "Sorcerer's Sapphire Refractor Base", "Royal Ruby Refractor Base"]);
+		// useAppropriateBase();
+		checkThenArm(null, TRINKET, "Rift Charm");
+		setFuelOff();
+		smartArmLeapingCheese();
+		wakeGiant();
 	} else { // great hall
 		if (debug) console.log("in great hall");
 		useAppropriateBase();
 		if (locationData.castle.current_room.loot_multiplier == 8 && isFeatherActivated()) {
 			disableAutoHarp();
 			if (locationData.castle.is_boss_chase) {
-				if (locationData.castle.is_boss_encounter) {
-					// armPlainCheese();
-					// setEasterFondue(true);
-					// checkThenArm(null, TRINKET, "Rift Charm");
-					armRoyalBeansterCheese();
-					checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
-					setFuelOn();
-				} else {
-					armRoyalBeansterCheese();
-					// setEasterFondue(false);
-					checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
-					setFuelOn();
-				}
-			} else {
 				armRoyalBeansterCheese();
+				checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
+				setFuelOn();
+				setEasterFondue(locationData.castle.is_boss_encounter);
+			} else {
+				smartArmLeapingCheese();
 				setEasterFondue(false);
 				setFuelOff();
 				checkThenArm(null, TRINKET, ["Ultimate Spooky Charm", "Rift Extreme Luck Charm", "Rift Super Snowball Charm", "Rift Extreme Snowball Charm", "Rift Super Luck Charm"]);
@@ -1507,18 +1519,22 @@ function schoolOfSorcery() {
 		return; //only coded for final exam
 	}
 
+	// checkThenArm(null, BAIT, "Gouda Cheese");
+	// checkThenArm(null, BASE, "Dragon's Breath Opal Refractor");
 
-	if (user.quests.QuestSchoolOfSorcery.current_course.is_boss_encounter) {
-		// use stronger trap for master sorceror
+	// if (user.quests.QuestSchoolOfSorcery.current_course.is_boss_encounter) {
+	// use stronger trap for master sorceror
+	// checkThenArm(null, TRAP, TRAPS_BY_TYPE["Arcane"]);
+	// armLnyRedCandle();
+	// setEasterFondue(true);
+	// } else {
+	// armLnyCandle();
+	// setEasterFondue(false);
+	// }
+	if (user.quests.QuestSchoolOfSorcery.current_course.power_type == "arcane") {
 		checkThenArm(null, TRAP, TRAPS_BY_TYPE["Arcane"]);
-		armLnyRedCandle();
 	} else {
-		armLnyCandle();
-		if (user.quests.QuestSchoolOfSorcery.current_course.power_type == "arcane") {
-			checkThenArm(null, TRAP, TRAPS_BY_TYPE["Arcane"]);
-		} else {
-			checkThenArm(null, TRAP, TRAPS_BY_TYPE["Shadow"]);
-		}
+		checkThenArm(null, TRAP, TRAPS_BY_TYPE["Shadow"]);
 	}
 }
 
@@ -8283,7 +8299,6 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="None">None</option>';
 				preferenceHTMLStr += '<option value="Halloween 2020">Halloween 2020</option>';
 				preferenceHTMLStr += '<option value="Lunar New Year 2019">Lunar New Year 2019</option>';
-				preferenceHTMLStr += '<option value="Birthday 2021">Birthday 2021</option>';
 				preferenceHTMLStr += '</select>';
 				preferenceHTMLStr += '</td>';
 				preferenceHTMLStr += '</tr>';
@@ -8297,6 +8312,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<td style="height:24px">';
 				preferenceHTMLStr += '<select id="locationBotSelect" style="width:150px" onChange="window.sessionStorage.setItem(\'locationBot\', value); showOrHideTr(value);">';
 				preferenceHTMLStr += '<option value="None">None</option>';
+				preferenceHTMLStr += '<option value="DD Reinforce Cavern">DD Reinforce Cavern</option>';
 				preferenceHTMLStr += '<option value="Bountiful Beanstalk">Bountiful Beanstalk</option>';
 				preferenceHTMLStr += '<option value="School of Sorcery">School of Sorcery</option>';
 				preferenceHTMLStr += '<option value="Bristle Woods Rift">Bristle Woods Rift</option>';
@@ -8305,6 +8321,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Queso Canyon">Queso Canyon</option>';
 				preferenceHTMLStr += '<option value="Valour Rift">Valour Rift</option>';
 				preferenceHTMLStr += '<option value="Great Winter Hunt">Great Winter Hunt</option>';
+				preferenceHTMLStr += '<option value="SUPER|brie+ Factory">SUPER|brie+ Factory</option>';
 				/*preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
 				preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
 				preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
