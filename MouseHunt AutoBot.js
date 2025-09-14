@@ -720,7 +720,7 @@ function locationBotCheck(caller) {
 			BRCustom();
 			break;
 		case 'Iceberg':
-			iceberg();
+			icebergV2();
 			break;
 		case 'WWRift':
 			wwrift();
@@ -3473,13 +3473,20 @@ function icebergV2() {
 		}
 	}
 	else if (loc.indexOf('Slushy Shoreline') > -1)
+		playAlertSound();
 		nIndex = arrOrder.indexOf('SLUSHY');
 	if (nIndex < 0)
 		return;
-	checkThenArm('best', 'weapon', objBestTrap.weapon.hydro);
-	checkThenArm(null, 'base', objIceberg.base[nIndex]);
-	checkThenArm(null, 'trinket', objIceberg.trinket[nIndex]);
-	checkThenArm(null, 'bait', objIceberg.bait[nIndex]);
+
+	checkThenArm('best', 'weapon', 'Steam Laser Mk. III');
+	checkThenArm(null, 'base', 'Iceberg Boiler Base');
+	// checkThenArm(null, 'trinket', objIceberg.trinket[nIndex]);
+	if (nIndex == 0) {
+		// general
+		disarmTrap('bait');
+	} else {
+		checkThenArm(null, 'bait', 'gouda');
+	}
 }
 
 function BurroughRift(bCheckLoc, minMist, maxMist, nToggle) {
@@ -8322,6 +8329,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Valour Rift">Valour Rift</option>';
 				preferenceHTMLStr += '<option value="Great Winter Hunt">Great Winter Hunt</option>';
 				preferenceHTMLStr += '<option value="SUPER|brie+ Factory">SUPER|brie+ Factory</option>';
+				preferenceHTMLStr += '<option value="Iceberg">Iceberg</option>';
 				/*preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
 				preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
 				preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
@@ -8336,7 +8344,6 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<option value="Fungal Cavern">Fungal Cavern</option>';
 				preferenceHTMLStr += '<option value="GES">Gnawnian Express Station</option>';
 				preferenceHTMLStr += '<option value="GWH2016R">GWH 2016</option>';
-				preferenceHTMLStr += '<option value="Iceberg">Iceberg</option>';
 				preferenceHTMLStr += '<option value="Labyrinth">Labyrinth</option>';
 				preferenceHTMLStr += '<option value="SG">Seasonal Garden</option>';
 				preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
