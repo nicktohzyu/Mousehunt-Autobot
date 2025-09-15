@@ -3471,21 +3471,21 @@ function icebergV2() {
 				}
 			}
 		}
-	}
-	else if (loc.indexOf('Slushy Shoreline') > -1)
+	} else if (loc.indexOf('Slushy Shoreline') > -1) {
 		playAlertSound();
 		nIndex = arrOrder.indexOf('SLUSHY');
-	if (nIndex < 0)
-		return;
+	}
 
-	checkThenArm('best', 'weapon', 'Steam Laser Mk. III');
+	console.assert(nIndex >= 0);
+	checkThenArm('best', 'weapon', 'Steam AugerBot 3000');
 	checkThenArm(null, 'base', 'Iceberg Boiler Base');
 	// checkThenArm(null, 'trinket', objIceberg.trinket[nIndex]);
 	if (nIndex == 0) {
 		// general
+		playAlertSound();
 		disarmTrap('bait');
 	} else {
-		checkThenArm(null, 'bait', 'gouda');
+		checkThenArm(null, 'bait', 'Gouda');
 	}
 }
 
