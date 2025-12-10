@@ -1208,7 +1208,7 @@ function ddReinforceCavern() {
 		1500,
 		() => {
 			document.querySelector('.draconicDepthsView__orangeButton.draconicDepthsView__orangeButton--big.draconicDepthsReinforceCavernDialogView__reinforceButton--.draconicDepthsReinforceCavernDialogView__reinforceButton')
-			.click();
+				.click();
 		},
 		2000,
 		// () => reloadPage(),
@@ -1298,6 +1298,7 @@ function beanstalk() {
 	const BALLROOM = 1;
 	const GREAT_HALL = 2;
 	const useFeatherKeyForGreatHall = true;
+	const MIN_FERT_TO_ENTER_CASTLE = 3024; //prep 30 runs for easter + 2 backup ballroom
 	function enterCastle(room) { //0 = dungeon, 1 = ballroom, 2 = great hall
 		if (debug) console.log("Entering castle (planting vine) ");
 		doAsync([
@@ -1426,7 +1427,7 @@ function beanstalk() {
 		} else {
 			setFuelOff();
 			if (autoEnterCastle) {
-				if (locationData.items.fabled_fertilizer_stat_item.quantity_unformatted >= 2024) { //prep 20 runs for easter + 2 backup ballroom
+				if (locationData.items.fabled_fertilizer_stat_item.quantity_unformatted >= MIN_FERT_TO_ENTER_CASTLE) { 
 					enterCastle(GREAT_HALL);
 				} else {
 					enterCastle(BALLROOM);
