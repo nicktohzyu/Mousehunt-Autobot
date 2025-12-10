@@ -990,20 +990,20 @@ function GreatWinterHunt() {
 			scarf: false,
 		},
 		1: {
-			use: true,
-			build: true,
-			alertIfCanUpgrade: true,
-			claimIfCanUpgrade: true,
+			use: false,
+			build: false,
+			alertIfCanUpgrade: false,
+			claimIfCanUpgrade: false,
 			hat: false,
 			scarf: false,
 		},
 		2: {
 			use: false,
-			build: true,
+			build: false,
 			alertIfCanUpgrade: false,
-			claimIfCanUpgrade: true,
+			claimIfCanUpgrade: false,
 			hat: false,
-			scarf: true,
+			scarf: false,
 		},
 	}
 
