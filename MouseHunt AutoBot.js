@@ -68,7 +68,7 @@
 	var checkTimeDelayVariance = 10;
 
 	var botStopHour = 0;
-	var botStartHour = 8;
+	var botStartHour = 9;
 
 
 	var hornTimeDelayMax = 15; //old code
@@ -971,6 +971,7 @@ function GreatWinterHunt() {
 	const DEFAULT_CHEESE = "Gouda Cheese";
 	const PP_CHEESE = "Pecan Pecorino";
 	const GPP_CHEESE = "Glazed Pecan Pecorino";
+	const SB_CHEESE = "SUPER|brie+";
 	const DEFAULT_CHARM = "Snowball Charm";
 	console.log("running Great Winter Hunt location bot");
 
@@ -983,25 +984,25 @@ function GreatWinterHunt() {
 	const GOLEMS_CONFIG = {
 		0: {
 			use: true,
-			build: true,
+			build: false,
 			alertIfCanUpgrade: true,
 			claimIfCanUpgrade: true,
 			hat: false,
 			scarf: false,
 		},
 		1: {
-			use: false,
+			use: true,
 			build: false,
-			alertIfCanUpgrade: false,
-			claimIfCanUpgrade: false,
+			alertIfCanUpgrade: true,
+			claimIfCanUpgrade: true,
 			hat: false,
 			scarf: false,
 		},
 		2: {
-			use: false,
+			use: true,
 			build: false,
 			alertIfCanUpgrade: false,
-			claimIfCanUpgrade: false,
+			claimIfCanUpgrade: true,
 			hat: false,
 			scarf: false,
 		},
@@ -1061,13 +1062,9 @@ function GreatWinterHunt() {
 			setFuelOff();
 		}
 		if (user.quests.QuestIceFortress && user.quests.QuestIceFortress.shield.state == "broken") {
-			checkThenArm(null, "bait", DEFAULT_CHEESE);
+			checkThenArm(null, "bait", SB_CHEESE);
 		} else {
-			checkThenArm(null, "bait", DEFAULT_CHEESE);
-		}
-
-		if (getBaitQuantity() < 1) { //out of PP
-			checkThenArm(null, "bait", DEFAULT_CHEESE);
+			checkThenArm(null, "bait", SB_CHEESE);
 		}
 	} else {
 		console.log("Not in fortress");
