@@ -487,52 +487,7 @@
 	var header = 'envHeaderImg';
 	var hornReady = 'hornready';
 	var isNewUI = false;
-
-	// NOB vars
-	var NOBtickerTimout;
-	var NOBtickerInterval;
-	var NOBtraps = []; // Stores ALL traps, bases, cheese etc available to user
-	var NOBhuntsLeft = 0; // Temp for huntFor();
-	var NOBpage = false;
-	var mapRequestFailed = false;
-	var clockTicking = false;
-	var clockNeedOn = false;
-	var NOBadFree = false;
-	var LOCATION_TIMERS = [
-		['Seasonal Garden', {
-			first: 1283616000,
-			length: 288000,
-			breakdown: [1, 1, 1, 1],
-			name: ['Summer', 'Fall', 'Winter', 'Spring'],
-			color: ['Red', 'Orange', 'Blue', 'Green'],
-			effective: ['tactical', 'shadow', 'hydro', 'physical']
-		}],
-		['Balack\'s Cove', {
-			first: 1294680060,
-			length: 1200,
-			breakdown: [48, 3, 2, 3],
-			name: ['Low', 'Medium (in)', 'High', 'Medium (out)'],
-			color: ['Green', 'Orange', 'Red', 'Orange']
-		}],
-		['Forbidden Grove', {
-			first: 1285704000,
-			length: 14400,
-			breakdown: [4, 1],
-			name: ['Open', 'Closed'],
-			color: ['Green', 'Red']
-		}],
-		['Toxic Spill', {
-			first: 1503597600,
-			length: 3600,
-			breakdown: [15, 16, 18, 18, 24, 24, 24, 12, 12, 24, 24, 24, 18, 18, 16, 15],
-			name: ['Hero', 'Knight', 'Lord', 'Baron', 'Count', 'Duke', 'Grand Duke', 'Archduke', 'Archduke', 'Grand Duke', 'Duke', 'Count', 'Baron', 'Lord', 'Knight', 'Hero'],
-			color: ['Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green'],
-			effective: ['Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Rising', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling']
-		}],
-		['Relic Hunter', {
-			url: 'http://horntracker.com/backend/relichunter.php?functionCall=relichunt'
-		}]
-	];
+	var huntsLeft = 0; // Temp for huntFor();
 }
 
 const BAIT = "bait";
@@ -2658,7 +2613,7 @@ function easter2019TravelClick(locationNumber){
 */
 
 function huntFor() {
-	if (NOBhuntsLeft <= 0) {
+	if (huntsLeft <= 0) {
 		disarmTrap('bait');
 	}
 }
@@ -8038,6 +7993,7 @@ function embedTimer(targetPage) {
 					window.localStorage.setItem(\'AutoSolveKRDelayMax\', 	document.getElementById(\'AutoSolveKRDelayMaxInput\').value);\
 					window.localStorage.setItem(\'PauseLocation\', 			document.getElementById(\'PauseLocationInput\').value);\
 					window.localStorage.setItem(\'autoPopupKR\',            document.getElementById(\'autoPopKR\').value);\
+					if (document.getElementById(\'huntsLeftInput\')) { window.localStorage.setItem(\'huntsLeft\', document.getElementById(\'huntsLeftInput\').value); }\
 					setSessionToLocal();\
 				} catch(e) {console.log(e);}\
 				';
@@ -8257,7 +8213,7 @@ function embedTimer(targetPage) {
 				preferenceHTMLStr += '<select name="locationBotSelect" onChange="window.localStorage.setItem(\'locationBot\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'locationBot\');">';
 				preferenceHTMLStr += '<option value=""> </option>';
 				preferenceHTMLStr += '<option value="None" selected>None</option>';
-				preferenceHTMLStr += '<option value="Hunt For">Hunt for ' + NOBhuntsLeft + ' hunts</option>';
+				preferenceHTMLStr += '<option value="Hunt For">Hunt for ' + huntsLeft + ' hunts</option>';
 				preferenceHTMLStr += '<option value="" disabled>--==Normal Bots==--</option>';
 				preferenceHTMLStr += '<option value="FG/AR">FG => AR</option>';
 				preferenceHTMLStr += '<option value="Zugzwang\'s Tower">Zugzwang\'s Tower</option>';
@@ -9799,113 +9755,12 @@ function embedTimer(targetPage) {
 					preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
 					preferenceHTMLStr += '</td>';
 					preferenceHTMLStr += '<td style="height:24px">';
-					preferenceHTMLStr += '<input type="number" id="nobHuntsLeftInput" name="nobHuntsLeftInput" value="' + NOBhuntsLeft + '" />';
+					preferenceHTMLStr += '<input type="number" id="huntsLeftInput" name="huntsLeftInput" value="' + huntsLeft + '" />';
 					preferenceHTMLStr += '</td>';
 					preferenceHTMLStr += '</tr>';
 				}
 
-				preferenceHTMLStr += '<tr>';
-				preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-				preferenceHTMLStr += '<a title="FOR DEVS ONLY" onclick="if(confirm(\'Are you sure you want to inject code?\'))$(\'#addonCode\').toggle();"><b>Click here if you would like to inject code.</b></a>';
-				preferenceHTMLStr += '</td>';
-				preferenceHTMLStr += '<td>';
-				preferenceHTMLStr += '<textarea id="addonCode" name="addonCode" style="display:none;">';
-				preferenceHTMLStr += addonCode;
-				preferenceHTMLStr += '</textarea>';
-				preferenceHTMLStr += '</td>';
-				preferenceHTMLStr += '</tr>';
-
 				preferenceHTMLStr += '</table>';
-
-				/*
-				preferenceHTMLStr += '<tr>';
-				preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
-				preferenceHTMLStr += '(Changes only take place after user save the preference) ';
-				preferenceHTMLStr += '<input type="button" id="PreferenceSaveInput" value="Save" onclick="	\
-				if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { window.localStorage.setItem(\'AggressiveMode\', \'true\'); } else { window.localStorage.setItem(\'AggressiveMode\', \'false\'); }	\
-				window.localStorage.setItem(\'HornTimeDelayMin\', document.getElementById(\'HornTimeDelayMinInput\').value); window.localStorage.setItem(\'HornTimeDelayMax\', document.getElementById(\'HornTimeDelayMaxInput\').value);	\
-				if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { window.localStorage.setItem(\'TrapCheck\', \'true\'); } else { window.localStorage.setItem(\'TrapCheck\', \'false\'); }	\
-				window.localStorage.setItem(\'TrapCheckTimeOffset\', document.getElementById(\'TrapCheckTimeOffsetInput\').value);	\
-				window.localStorage.setItem(\'TrapCheckTimeDelayMin\', document.getElementById(\'TrapCheckTimeDelayMinInput\').value); window.localStorage.setItem(\'TrapCheckTimeDelayMax\', document.getElementById(\'TrapCheckTimeDelayMaxInput\').value);	\
-				if (document.getElementById(\'PlayKingRewardSoundInputTrue\').checked == true) { window.localStorage.setItem(\'PlayKingRewardSound\', \'true\'); } else { window.localStorage.setItem(\'PlayKingRewardSound\', \'false\'); }	\
-				if (document.getElementById(\'AutoSolveKRInputTrue\').checked == true) { window.localStorage.setItem(\'AutoSolveKR\', \'true\'); } else { window.localStorage.setItem(\'AutoSolveKR\', \'false\'); }	\
-								window.localStorage.setItem(\'AutoSolveKRDelayMin\', document.getElementById(\'AutoSolveKRDelayMinInput\').value); window.localStorage.setItem(\'AutoSolveKRDelayMax\', document.getElementById(\'AutoSolveKRDelayMaxInput\').value);	\
-				window.localStorage.setItem(\'KingRewardSoundInput\', document.getElementById(\'KingRewardSoundInput\').value);	\
-				window.localStorage.setItem(\'KingRewardEmail\', document.getElementById(\'KingRewardEmail\').value);	\
-				if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { window.localStorage.setItem(\'KingRewardResume\', \'true\'); } else { window.localStorage.setItem(\'KingRewardResume\', \'false\'); }	\
-				window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
-				if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
-				if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autoPopupKR\', \'true\'); } else { window.localStorage.setItem(\'autoPopupKR\', \'false\'); }	\
-								if (document.getElementById(\'nobHuntsLeftInput\')) { window.localStorage.setItem(\'NOB-huntsLeft\', document.getElementById(\'nobHuntsLeftInput\').value); } \
-				window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\').value);\
-				';
-				if (fbPlatform) {
-					if (secureConnection)
-						preferenceHTMLStr += 'window.location.href=\'https://www.mousehuntgame.com/canvas/\';"/>';
-					else
-						preferenceHTMLStr += 'window.location.href=\'http://www.mousehuntgame.com/canvas/\';"/>';
-				} else if (hiFivePlatform) {
-					if (secureConnection)
-						preferenceHTMLStr += 'window.location.href=\'https://mousehunt.hi5.hitgrab.com/\';"/>';
-					else
-						preferenceHTMLStr += 'window.location.href=\'http://mousehunt.hi5.hitgrab.com/\';"/>';
-				} else if (mhPlatform) {
-					if (secureConnection)
-						preferenceHTMLStr += 'window.location.href=\'https://www.mousehuntgame.com/\';"/>';
-					else
-						preferenceHTMLStr += 'window.location.href=\'http://www.mousehuntgame.com/\';"/>';
-				}
-				preferenceHTMLStr += '&nbsp;&nbsp;&nbsp;</td>';
-				preferenceHTMLStr += '</tr>';
-				preferenceHTMLStr += '</table>';
-				*/
-
-				var NOBspecialMessageDiv = document.createElement('div');
-				NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
-				NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;');
-
-				//var nobWhatsNewDiv = document.createElement('div');
-				//nobWhatsNewDiv.setAttribute('id', 'nobWhatsNew');
-				//nobWhatsNewDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; left: 0; z-index: 999; text-align: left; width: 200px; height: 100px; padding: 10px 0 10px 10px;');
-
-				var nobWhatsNewDiv = document.createElement('div');
-				nobWhatsNewDiv.innerHTML = "<style>" +
-					"@-webkit-keyframes colorRotate {" +
-					"from {color: rgb(255, 0, 0);}" +
-					"16.6% {color: rgb(255, 0, 255);}" +
-					"33.3% {color: rgb(0, 0, 255);}" +
-					"50% {color: rgb(0, 255, 255);}" +
-					"66.6% {color: rgb(0, 255, 0);}" +
-					"83.3% {color: rgb(255, 255, 0);}" +
-					"to {color: rgb(255, 0, 0);}" +
-
-					"@-moz-keyframes colorRotate {" +
-					"from {color: rgb(255, 0, 0);}" +
-					"16.6% {color: rgb(255, 0, 255);}" +
-					"33.3% {color: rgb(0, 0, 255);}" +
-					"50% {color: rgb(0, 255, 255);}" +
-					"66.6% {color: rgb(0, 255, 0);}" +
-					"83.3% {color: rgb(255, 255, 0);}" +
-					"to {color: rgb(255, 0, 0);}" +
-
-					"@-o-keyframes colorRotate {" +
-					"from {color: rgb(255, 0, 0);}" +
-					"16.6% {color: rgb(255, 0, 255);}" +
-					"33.3% {color: rgb(0, 0, 255);}" +
-					"50% {color: rgb(0, 255, 255);}" +
-					"66.6% {color: rgb(0, 255, 0);}" +
-					"83.3% {color: rgb(255, 255, 0);}" +
-					"to {color: rgb(255, 0, 0);}" +
-
-					"@keyframes colorRotate {" +
-					"from {color: rgb(255, 0, 0);}" +
-					"16.6% {color: rgb(255, 0, 255);}" +
-					"33.3% {color: rgb(0, 0, 255);}" +
-					"50% {color: rgb(0, 255, 255);}" +
-					"66.6% {color: rgb(0, 255, 0);}" +
-					"83.3% {color: rgb(255, 255, 0);}" +
-					"to {color: rgb(255, 0, 0);}" +
-					"</style>";
 
 				var preferenceDiv = document.createElement('div');
 				preferenceDiv.setAttribute('id', 'preferenceDiv');
@@ -9915,8 +9770,6 @@ function embedTimer(targetPage) {
 					preferenceDiv.setAttribute('style', 'display: none');
 				preferenceDiv.innerHTML = preferenceHTMLStr;
 				timerDivElement.appendChild(preferenceDiv);
-				timerDivElement.appendChild(NOBspecialMessageDiv);
-				timerDivElement.appendChild(nobWhatsNewDiv);
 				preferenceHTMLStr = null;
 				showPreference = null;
 
@@ -9924,8 +9777,6 @@ function embedTimer(targetPage) {
 				preferenceDiv.appendChild(hr3Element);
 				hr3Element = null;
 				preferenceDiv = null;
-				NOBspecialMessageDiv = null;
-				nobWhatsNewDiv = null;
 
 				// embed all msg to the page
 				headerElement.parentNode.insertBefore(timerDivElement, headerElement);
@@ -10116,29 +9967,11 @@ function loadPreferenceSettingFromStorage() {
 
 	addonCodeTemp = undefined;
 
-	// nobTrapCounter to only refetch all traps when counter hits 0
-	var nobTrapsTemp = nobGet('traps');
-	var nobTrapsTempCounter = getStorage('nobTrapsCounter');
-	if (nobTrapsTempCounter == undefined || nobTrapsTempCounter === null) {
-		nobTrapsTempCounter = 1000;
+	var huntsLeftTemp = parseInt(localStorage.getItem('huntsLeft'));
+	if (!isNaN(huntsLeftTemp) && huntsLeftTemp > huntsLeft) {
+		huntsLeft = huntsLeftTemp;
 	}
-	if (nobTrapsTempCounter > 0 && nobTrapsTempCounter < 501) {
-		if (!(nobTrapsTemp == undefined || nobTrapsTemp === null)) {
-			NOBtraps = JSON.parse(nobTrapsTemp);
-		}
-
-		setStorage('nobTrapsCounter', nobTrapsTempCounter - 1);
-	} else {
-		NOBtraps = [];
-		setStorage('nobTrapsCounter', 500);
-	}
-	nobTrapsTemp = undefined;
-	nobTrapsTempCounter = undefined;
-
-	var nobHuntsLeft = parseInt(nobGet('huntsLeft'));
-	if (nobHuntsLeft > NOBhuntsLeft)
-		NOBhuntsLeft = nobHuntsLeft;
-	nobHuntsLeft = undefined;
+	huntsLeftTemp = undefined;
 
 	var dischargeTemp = getStorage("discharge");
 	if (dischargeTemp == undefined || dischargeTemp == null) {
@@ -10973,9 +10806,9 @@ function soundHorn() {
 		fireEvent(hornElement, 'mousedown');
 		fireEvent(hornElement, 'mouseup');
 
-		// NOB hunt until
-		NOBhuntsLeft--;
-		nobStore(NOBhuntsLeft, 'huntsLeft');
+		// hunt until
+		huntsLeft--;
+		localStorage.setItem('huntsLeft', huntsLeft);
 
 		// double check if the horn was already sounded
 		window.setTimeout(function () {
@@ -10987,9 +10820,9 @@ function soundHorn() {
 		// update timer
 		displayTimer("Synchronizing Data...", "Someone had just sound the horn. Synchronizing data...", "Someone had just sound the horn. Synchronizing data...");
 
-		// NOB hunt until
-		NOBhuntsLeft--;
-		nobStore(NOBhuntsLeft, 'huntsLeft');
+		// hunt until
+		huntsLeft--;
+		localStorage.setItem('huntsLeft', huntsLeft);
 
 		// load the new data
 		window.setTimeout(function () {
