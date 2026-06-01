@@ -31,7 +31,7 @@
 	fix hunt location save,
 	tournament mode where bot disarms cheese for trap check,
 	travelTo(location), (use treasuremaps/shops/travel for single click to avoid using the travel page)
-	refresh page at morning,	remove NOB server stuff (use "console.log(new Error().stack);" to find call chain) (disabled for now with NOBpage=false but need to remove code) trace nobInit() call
+
 	figure out what "apply and reload" does
 	edit checkthenarm to do bait last
 	prickly plains bot: Equip trap and charms based on cheese used; implement drop down menu
@@ -418,9 +418,6 @@
 			}
 		}
 	};
-
-	// // Addon code (default: empty string)
-	var addonCode = "";
 
 	// == Advance User Preference Setting (End) ==
 }
@@ -3832,7 +3829,7 @@ function DisarmLGSpecialCharm(locationName) {
 		checkThenArm(null, 'trinket', 'Amplifier');
 		checkThenArm('best', 'base', ['Seasonal', 'Fissure', 'Golden Tournament']);
 
-		var season = nobCalculateOfflineTimers('seasonal');
+		var season = calculateSeasonalGardenSeason();
 		console.debug('It is ' + season + ' in Seasonal Gardens right now.');
 		switch (season) {
 			case 'Spring':
@@ -6125,8 +6122,6 @@ function exeScript() {
 
 					// start script action
 					action();
-
-					nobInit();
 				} else {
 					// fail to retrieve data, display error msg and reload the page
 					document.title = "Fail to retrieve data from page. Reloading in " + timeFormat(errorReloadTime);
@@ -6137,8 +6132,6 @@ function exeScript() {
 			} else {
 				// not in hunters camp, just show the title of autobot version
 				embedTimer(false);
-
-				nobInit();
 			}
 		} else if (mhPlatform) {
 			if (window.location.href == "http://www.mousehuntgame.com/" ||
@@ -6168,8 +6161,6 @@ function exeScript() {
 
 					// start script action
 					action();
-
-					nobInit();
 				} else {
 					// fail to retrieve data, display error msg and reload the page
 					document.title = "Fail to retrieve data from page. Reloading in " + timeFormat(errorReloadTime);
@@ -6212,8 +6203,6 @@ function exeScript() {
 
 					// start script action
 					action();
-
-					nobInit();
 				} else {
 					// fail to retrieve data, display error msg and reload the page
 					document.title = "Fail to retrieve data from page. Reloading in " + timeFormat(errorReloadTime);
@@ -6224,8 +6213,6 @@ function exeScript() {
 			} else {
 				// not in hunters camp, just show the title of autobot version
 				embedTimer(false);
-
-				nobInit();
 			}
 		}
 	} catch (e) {
@@ -6359,34 +6346,6 @@ function getJournalDetail() {
 			setStorage("TrapList" + capitalizeFirstLetter(prop), objTrapList[prop].join(","));
 	}
 	setStorage('LastRecordedJournal', classJournal[0].parentNode.textContent);
-}
-
-function buildTrapList(afterBuilding, failedBuilding) {
-	if (debug) console.log("running buildTrapList()");
-	var returning;
-	//clickTrapSelector(category);
-	try {
-		var userHash = getPageVariable("user.unique_hash");
-
-		nobAjaxPost('/managers/ajax/users/gettrapcomponents.php', {
-			uh: userHash
-		}, function (data) {
-			NOBtraps = data.components;
-			if (debug) console.log(NOBtraps);
-			nobStore(NOBtraps, 'traps');
-			returning = true;
-			afterBuilding();
-		}, function (error) {
-			console.log("BuildTrapList ajax error: " + error);
-			returning = false;
-			failedBuilding();
-		});
-	} catch (e) {
-		console.log("BuildTrapList try error: " + e);
-	} finally {
-		//clickTrapSelector(category);
-		return returning;
-	}
 }
 
 function getTrapList(category) {
@@ -7233,7 +7192,7 @@ function action() {
 			var isHornSounding = false;
 
 			// check if the horn image is visible
-			nobTestBetaUI();
+			testBetaUI();
 			/*var headerElement = document.getElementById(header).firstChild;
 			if (headerElement) {
 				var headerStatus = headerElement.getAttribute('class');
@@ -7268,7 +7227,6 @@ function action() {
 				locationBotCheck('action()');
 				//specialFeature('action()');
 				mapHunting();
-				runAddonCode();
 			}, 1000);
 		}
 	} catch (e) {
@@ -7526,10 +7484,6 @@ function embedTimer(targetPage) {
 					timerDivElement.appendChild(updateElement);
 					updateElement = null;
 
-					var NOBmessage = document.createElement('div');
-					NOBmessage.setAttribute('id', 'NOBmessage');
-					timerDivElement.appendChild(NOBmessage);
-					NOBmessage = null;
 
 					nextHornTimeElement = document.createElement('div');
 					nextHornTimeElement.setAttribute('id', 'nextHornTimeElement');
@@ -7617,45 +7571,7 @@ function embedTimer(targetPage) {
 
 					//timerDivElement.appendChild(/*document.createElement('br')*/document.createTextNode(' &#126; '));
 
-					/*var loadLinkToUpdateDiv = document.createElement('div');
-					loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
-					loadLinkToUpdateDiv.setAttribute('style', 'float: left;');
-					var tempSpan2 = document.createElement('span');
-					var loadLinkToUpdate = document.createElement('a');
-					text = document.createTextNode('Submit to GDoc');
-					loadLinkToUpdate.href = '#';
-					loadLinkToUpdate.setAttribute('id', 'gDocLink');
-					loadLinkToUpdate.appendChild(text);
-					loadLinkToUpdate.addEventListener('click', nobScript, false);
-					text = null;
-					tempSpan2.appendChild(loadLinkToUpdate);
-					loadLinkToUpdateDiv.appendChild(tempSpan2);
-					timerDivElement.appendChild(loadLinkToUpdateDiv);
 
-					var tempDiv = document.createElement('span');
-					tempDiv.innerHTML = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
-					tempSpan2 = document.createElement('span');
-					tempSpan2.innerHTML = ' &#126; <a id="nobRaffle" href="#" title="Sends back the raffle ticket in inventory.">Return raffle tickets</a>';
-					var tempSpan3 = document.createElement('span');
-					tempSpan3.innerHTML = ' &#126; <a id="nobPresent" href="#" title="Sends back the presents in inventory.">Return presents</a>';
-
-
-					//var tempSpan = document.createElement('span');
-					//tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Submit a bug report/feedback</a>';
-					loadLinkToUpdateDiv.appendChild(tempDiv);
-					loadLinkToUpdateDiv.appendChild(tempSpan2);
-					//loadLinkToUpdateDiv.appendChild(tempSpan3);
-					loadLinkToUpdateDiv.appendChild(tempSpan4);
-					//loadLinkToUpdateDiv.appendChild(tempSpan);
-
-					text = null;
-					tempDiv = null;
-					tempSpan = null;
-					tempSpan2 = null;
-					tempSpan3 = null;
-					tempSpan4 = null;
-					loadLinkToUpdateDiv = null;
-					loadLinkToUpdate = null;*/
 					var returnRaffleButton = document.createElement('span');
 					returnRaffleButton.innerHTML = '<a> Return Raffle Tickets </a> &#126; ';
 					returnRaffleButton.title = "Returns raffle tickets";
@@ -7680,14 +7596,13 @@ function embedTimer(targetPage) {
 					timersElementToggle = null;
 					loadTimersElement = null;
 				} else {
-					if (isNewUI || nobTestBetaUI()) {
+					if (isNewUI || testBetaUI()) {
 						// try check if ajax was called
 						if (doubleCheckLocation()) {
 							document.getElementById('titleElement').parentNode.remove();
 							embedTimer(true);
 							embedScript();
 							action();
-							nobInit();
 							return;
 						} else {
 							// Add ajax listener for when user is back onto camp page
@@ -9959,14 +9874,6 @@ function loadPreferenceSettingFromStorage() {
 	}
 	autopopkrTemp = undefined;
 
-	var addonCodeTemp = getStorage("addonCode");
-	if (addonCodeTemp == undefined || addonCodeTemp === null || addonCodeTemp == "" || addonCodeTemp == "null") {
-		setStorage('addonCode', "");
-	}
-	addonCode = addonCodeTemp;
-
-	addonCodeTemp = undefined;
-
 	var huntsLeftTemp = parseInt(localStorage.getItem('huntsLeft'));
 	if (!isNaN(huntsLeftTemp) && huntsLeftTemp > huntsLeft) {
 		huntsLeft = huntsLeftTemp;
@@ -10650,79 +10557,7 @@ function doubleCheckLocation() { //return true if location is camp page (this is
 
 // ################################################################################################
 //   Timer Function - End
-// ################################################################################################
 
-// ################################################################################################
-//   Ad Function - Start
-// ################################################################################################
-
-function addGoogleAd() {
-	return;
-	// search for existing ad element and remove it
-	try {
-		if (debug) console.log('Trying to get rid of ad iFrame');
-		var adFrame = document.getElementsByClassName('googleAd')[0];
-		var allowAds = getStorage('allowAds');
-		if (allowAds != null && allowAds != undefined && allowAds != "" && allowAds != "false" && allowAds != false) {
-			allowAds = true;
-		} else {
-			allowAds = false;
-			setStorage('allowAds', 'false');
-		}
-
-		if (!NOBadFree) {
-			NOBadFree = nobGet('adFree');
-			NOBadFree = (NOBadFree == true || NOBadFree == "true");
-		}
-
-		if (debug) console.log('addGoogleAd' + NOBadFree + allowAds);
-		if (adFrame) {
-			adFrame.removeChild(adFrame.firstChild);
-			if (!NOBadFree && allowAds) {
-				/*var newAd = document.createElement('script');
-				 newAd.type = 'text/javascript';
-				 newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
-				 adFrame.appendChild(document.createElement('center'));
-				 adFrame.firstChild.appendChild(newAd);*/
-
-				var newAd = document.createElement('div');
-				newAd.style.height = "560px";
-				adFrame.appendChild(document.createElement('center'));
-				adFrame.firstChild.appendChild(newAd);
-				var newAdScript = document.createElement('script');
-				newAdScript.src = "//pagead2.google" + "syndication.com/" + "pagead/js/adsbygoogle" + ".js";
-				newAd.innerHTML = "<ins class=\"adsbygoogle\" " +
-					"style=\"display:block\" " +
-					"data-" + "ad" + "-client=\"ca-pub-" + "3255634416502948\" " +
-					"data-" + "ad-" + "slot=\"2618509310\" data-" + "ad" + "-format=\"auto\"></ins>";
-				newAd.appendChild(newAdScript);
-				(adsbygoogle = window.adsbygoogle || []).push({});
-
-				var removeAdButton = document.createElement('a');
-				removeAdButton.id = 'removeAdLink';
-				removeAdButton.href = 'https://www.mousehuntgame.com/index.php';
-				removeAdButton.innerHTML = 'Click here to remove ads :*(';
-				adFrame.firstChild.appendChild(removeAdButton);
-
-				removeAdButton = null;
-				newAd = null;
-			} else if (!NOBadFree) {
-				adFrame.innerHTML = "<a id=\"addAdLink\" href=\"#\" style=\"-webkit-animation: colorRotate 6s linear 0s infinite; -moz-animation: colorRotate 6s linear 0s infinite; -o-animation: colorRotate 6s linear 0s infinite; animation: colorRotate 6s linear 0s infinite; font-weight: bolder; text-align: center;\">Click here to show ads to support the development of this bot :)</a>";
-			} else {
-				console.debug("Thanks for donating ^.^");
-				adFrame.innerHTML = "";
-			}
-		}
-		adFrame = null;
-		allowAds = null;
-	} catch (e) {
-		console.log('Remove ad error: ' + e);
-	}
-}
-
-// ################################################################################################
-//   Ad Function - End
-// ################################################################################################
 
 // ################################################################################################
 //   Horn Function - Start
@@ -10965,7 +10800,7 @@ function embedScript() {
 	scriptNode = null;
 	headerElement = null;
 
-	nobTestBetaUI();
+	testBetaUI();
 
 	// change the function call of horn
 	// doesn't work after 2022-12 ui change
@@ -10981,7 +10816,7 @@ function embedScript() {
 	// modStr = null;
 }
 
-function nobTestBetaUI() { // Return true if beta UI
+function testBetaUI() { // Return true if beta UI
 	campButton = 'mousehuntHud-campButton';
 	var testNewUI = document.getElementsByClassName(campButton);
 	if (testNewUI != undefined && testNewUI[0] != null) {
@@ -12063,1024 +11898,34 @@ function timeFormatLong(time) {
 }
 
 // ################################################################################################
-//   General Function - End
+//   Utility Functions - Start
 // ################################################################################################
 
-// ################################################################################################
-//   NOB Additional thing - Start
-// ################################################################################################
-
-function nobInit() {
-	if (debug) console.log('RUN %cnobInit()', 'color: #00ff00');
-	try {
-		if (!isKingReward) {
-			if (window.location.href == 'http://www.mousehuntgame.com/' ||
-				window.location.href == 'http://www.mousehuntgame.com/#' ||
-				window.location.href == 'http://www.mousehuntgame.com/?switch_to=standard' ||
-				window.location.href == 'https://www.mousehuntgame.com/' ||
-				window.location.href == 'https://www.mousehuntgame.com/#' ||
-				window.location.href == 'https://www.mousehuntgame.com/?switch_to=standard' ||
-				window.location.href.indexOf('mousehuntgame.com/turn.php') != -1 ||
-				window.location.href.indexOf('mousehuntgame.com/index.php') != -1 ||
-				window.location.href == 'http://www.mousehuntgame.com/canvas/' ||
-				window.location.href == 'http://www.mousehuntgame.com/canvas/#' ||
-				window.location.href == 'https://www.mousehuntgame.com/canvas/' ||
-				window.location.href == 'https://www.mousehuntgame.com/canvas/#' ||
-				window.location.href.indexOf('mousehuntgame.com/canvas/index.php') != -1 ||
-				window.location.href.indexOf('mousehuntgame.com/canvas/turn.php') != -1 ||
-				window.location.href.indexOf('mousehuntgame.com/canvas/?') != -1) {
-				//NOBpage = true;
-			}
-			//addGoogleAd();
-
-			if (NOBpage) {
-				nobHTMLFetch();
-				createClockArea();
-				clockTick();
-				fetchGDocStuff();
-				setTimeout(function () {
-					nobInjectFFfunctions();
-				}, 1000);
-				setTimeout(function () {
-					//pingServer();
-				}, 30000);
-				// Hide message after 2H :)
-				hideNOBMessage(7200000);
-			}
-		}
-	} catch (e) {
-		console.log("nobInit() ERROR - " + e);
-	}
-}
-
-function nobAjaxGet(url, callback, throwError) {
-	if (!isKingReward) {
-		jQuery.ajax({
-			url: url,
-			type: "GET",
-			timeout: 5000,
-			statusCode: {
-				200: function () {
-					console.log("Success get - " + url);
-					//Success Message
-				}
-			},
-			success: callback,
-			error: throwError
-		});
-	}
-}
-
-function nobAjaxPost(url, data, callback, throwError, dataType) {
-	if (!isKingReward) {
-		if (dataType == null || dataType == undefined) dataType = 'json';
-
-		jQuery.ajax({
-			type: "POST",
-			url: url,
-			data: data,
-			contentType: 'text/plain',
-			dataType: dataType,
-			xhrFields: {
-				withCredentials: false
-			},
-			timeout: 10000,
-			statusCode: {
-				200: function () {
-					console.log("Success post - " + url);
-					//Success Message
-				}
-			},
-			success: callback,
-			error: throwError
-		});
-	}
-}
-
-function updateTimer(timeleft, inhours) {
-	//if (debug) console.log('updateTimer(' + timeleft + ')');
-	var ReturnValue = "";
-
-	var FirstPart, SecondPart, Size;
-
-	if (timeleft > 0) {
-		if (inhours != null && inhours == true && timeleft > 3600) {
-			FirstPart = Math.floor(timeleft / (60 * 60));
-			SecondPart = Math.floor(timeleft / 60) % 60;
-			Size = 'hrs';
-		} else {
-			FirstPart = Math.floor(timeleft / 60);
-			SecondPart = timeleft % 60;
-			Size = 'mins';
-		}
-
-		if (SecondPart < 10) {
-			SecondPart = '0' + SecondPart;
-		}
-
-		ReturnValue = FirstPart + ':' + SecondPart + ' ' + Size;
-	} else {
-		ReturnValue = 'Soon...';
-	}
-
-	return ReturnValue;
-}
-
-function nobGDoc(items, type) {
-	var dataSend = JSON.parse(items);
-	dataSend.type = type;
-	var dataSendString = JSON.stringify(dataSend);
-	var sheet = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
-
-	nobAjaxPost(sheet, dataSendString, function (data) {
-		if (debug) console.log(data);
-	}, function (a, b, c) {
-		console.log("nobGDoc error (" + b + "): " + c);
-	});
-}
-
-function nobHTMLFetch() {
-	var value = document.documentElement.innerHTML;
-	if (value != null) {
-		if (typeof value == "string") {
-
-			var StartPos = value.indexOf('user = ');
-			var EndPos = value.indexOf('};', StartPos);
-
-			if (StartPos != -1) {
-				var FullObjectText = value.substring(StartPos + 7, EndPos + 1);
-				nobStore(JSON.parse(FullObjectText), "data");
-			}
-		} else if (typeof value == "object") {
-			nobStore(value, "data");
-		}
-	}
-	value = undefined;
-}
-
-function nobStore(data, type) {
-	data = JSON.stringify(data);
-	var name = "NOB-" + type;
-	localStorage.setItem(name, data);
-}
-
-function nobGet(type) {
-	return localStorage.getItem('NOB-' + type);
-}
-
-function nobMapRequest(handleData) {
-	var url = "https://www.mousehuntgame.com/managers/ajax/users/relichunter.php";
-	var dataSend = {
-		'action': 'info',
-		'uh': getPageVariable('user.unique_hash'),
-		'viewas': null
-	};
-	jQuery.ajax({
-		url: url,
-		data: dataSend,
-		type: "POST",
-		dataType: "json",
-		timeout: 5000,
-		success: function (data) {
-			// console.log(data);
-			handleData(data);
-		},
-		error: function (error) {
-			console.log("Map Request Failed");
-			handleData(error);
-		}
-	});
-
-	url = null;
-	dataSend = null;
-}
-
-function nobLoading(location, name) {
-	var element = document.getElementById(location);
-	element.innerHTML = "<style type=\"text/css\">" +
-		/* Universal styling */
-		"    [class^=\"shaft-load\"] {" +
-		"    margin: 5px auto;" +
-		"    width: 60px;" +
-		"    height: 15px;" +
-		"}" +
-		"[class^=\"shaft-load\"] > div {" +
-		"    float: left;" +
-		"    background: #B96CFF;" +
-		"    height: 100%;" +
-		"    width: 5px;" +
-		"    margin-right: 1px;" +
-		"    display: inline-block;" +
-		"}" +
-		"[class^=\"shaft-load\"] .shaft1 {" +
-		"    -webkit-animation-delay: 0.05s;" +
-		"    -moz-animation-delay: 0.05s;" +
-		"    -o-animation-delay: 0.05s;" +
-		"    animation-delay: 0.05s;" +
-		"}" +
-		"[class^=\"shaft-load\"] .shaft2 {" +
-		"    -webkit-animation-delay: 0.1s;" +
-		"    -moz-animation-delay: 0.1s;" +
-		"    -o-animation-delay: 0.1s;" +
-		"    animation-delay: 0.1s;" +
-		"}" +
-		"[class^=\"shaft-load\"] .shaft3 {" +
-		"    -webkit-animation-delay: 0.15s;" +
-		"    -moz-animation-delay: 0.15s;" +
-		"    -o-animation-delay: 0.15s;" +
-		"    animation-delay: 0.15s;" +
-		"}" +
-		"[class^=\"shaft-load\"] .shaft4 {" +
-		"    -webkit-animation-delay: 0.2s;" +
-		"    -moz-animation-delay: 0.2s;" +
-		"    -o-animation-delay: 0.2s;" +
-		"    animation-delay: 0.2s;" +
-		"}" +
-		"[class^=\"shaft-load\"] .shaft5 {" +
-		"    -webkit-animation-delay: 0.25s;" +
-		"    -moz-animation-delay: 0.25s;" +
-		"    -o-animation-delay: 0.25s;" +
-		"    animation-delay: 0.25s;" +
-		"}" +
-		"[class^=\"shaft-load\"] .shaft6 {" +
-		"    -webkit-animation-delay: 0.3s;" +
-		"    -moz-animation-delay: 0.3s;" +
-		"    -o-animation-delay: 0.3s;" +
-		"    animation-delay: 0.3s;" +
-		"}" +
-		"[class^=\"shaft-load\"] .shaft7 {" +
-		"    -webkit-animation-delay: 0.35s;" +
-		"    -moz-animation-delay: 0.35s;" +
-		"    -o-animation-delay: 0.35s;" +
-		"    animation-delay: 0.35s;" +
-		"}" +
-		"[class^=\"shaft-load\"] .shaft8 {" +
-		"    -webkit-animation-delay: 0.4s;" +
-		"    -moz-animation-delay: 0.4s;" +
-		"    -o-animation-delay: 0.4s;" +
-		"    animation-delay: 0.4s;" +
-		"}" +
-		"[class^=\"shaft-load\"] .shaft9 {" +
-		"    -webkit-animation-delay: 0.45s;" +
-		"    -moz-animation-delay: 0.45s;" +
-		"    -o-animation-delay: 0.45s;" +
-		"    animation-delay: 0.45s;" +
-		"}" +
-		"[class^=\"shaft-load\"] .shaft10 {" +
-		"    -webkit-animation-delay: 0.5s;" +
-		"    -moz-animation-delay: 0.5s;" +
-		"    -o-animation-delay: 0.5s;" +
-		"    animation-delay: 0.5s;" +
-		"}" +
-
-		/* Shaft 1 */
-		".shaft-load > div {" +
-		"    -webkit-animation: loading 1.5s infinite ease-in-out;" +
-		"    -moz-animation: loading 1.5s infinite ease-in-out;" +
-		"    -o-animation: loading 1.5s infinite ease-in-out;" +
-		"    animation: loading 1.5s infinite ease-in-out;" +
-		"    -webkit-transform: scaleY(0.05) translateX(-10px);" +
-		"    -moz-transform: scaleY(0.05) translateX(-10px);" +
-		"    -ms-transform: scaleY(0.05) translateX(-10px);" +
-		"    -o-transform: scaleY(0.05) translateX(-10px);" +
-		"    transform: scaleY(0.05) translateX(-10px);" +
-		"}" +
-
-		"@-webkit-keyframes loading {" +
-		"    50% {" +
-		"    -webkit-transform: scaleY(1.2) translateX(10px);" +
-		"    -moz-transform: scaleY(1.2) translateX(10px);" +
-		"    -ms-transform: scaleY(1.2) translateX(10px);" +
-		"    -o-transform: scaleY(1.2) translateX(10px);" +
-		"    transform: scaleY(1.2) translateX(10px);" +
-		"    background: #56D7C6;" +
-		"}" +
-		"}" +
-		"@-moz-keyframes loading {" +
-		"50% {" +
-		"-webkit-transform: scaleY(1.2) translateX(10px);" +
-		"-moz-transform: scaleY(1.2) translateX(10px);" +
-		"-ms-transform: scaleY(1.2) translateX(10px);" +
-		"-o-transform: scaleY(1.2) translateX(10px);" +
-		"transform: scaleY(1.2) translateX(10px);" +
-		"background: #56D7C6;" +
-		"}" +
-		"}" +
-		"@-o-keyframes loading {" +
-		"50% {" +
-		"-webkit-transform: scaleY(1.2) translateX(10px);" +
-		"-moz-transform: scaleY(1.2) translateX(10px);" +
-		"-ms-transform: scaleY(1.2) translateX(10px);" +
-		"-o-transform: scaleY(1.2) translateX(10px);" +
-		"transform: scaleY(1.2) translateX(10px);" +
-		"background: #56D7C6;" +
-		"}" +
-		"}" +
-		"@keyframes loading {" +
-		"50% {" +
-		"-webkit-transform: scaleY(1.2) translateX(10px);" +
-		"-moz-transform: scaleY(1.2) translateX(10px);" +
-		"-ms-transform: scaleY(1.2) translateX(10px);" +
-		"-o-transform: scaleY(1.2) translateX(10px);" +
-		"transform: scaleY(1.2) translateX(10px);" +
-		"background: #56D7C6;" +
-		"}" +
-		"}" +
-		"</style>" +
-		"<div class=\"shaft-load\">" +
-		"<div class=\"shaft1\"></div>" +
-		"<div class=\"shaft2\"></div>" +
-		"<div class=\"shaft3\"></div>" +
-		"<div class=\"shaft4\"></div>" +
-		"<div class=\"shaft5\"></div>" +
-		"<div class=\"shaft6\"></div>" +
-		"<div class=\"shaft7\"></div>" +
-		"<div class=\"shaft8\"></div>" +
-		"<div class=\"shaft9\"></div>" +
-		"<div class=\"shaft10\"></div>" +
-		"</div>";
-
-	element = null;
-}
-
-function nobStopLoading(location) {
-	var element = document.getElementById(location);
-	//element.innerHTML = null;
-	element = null;
-}
-
-// VARS DONE ******************************* COMMENCE CODE
-function nobScript(qqEvent) {
-	if (NOBpage) {
-		if (debug) console.log("RUN nobScript()");
-		var mapThere;
-		try {
-			var NOBdata = nobGet('data');
-			mapThere = document.getElementsByClassName('treasureMap')[0];
-			if (mapThere.textContent.indexOf("remaining") == -1) {
-				mapThere = false;
-				if (debug) console.log("No map, using HTML data now");
-			} else {
-				mapThere = true;
-			}
-
-			if (NOBdata != null || NOBdata != undefined) {
-				if (!mapRequestFailed && mapThere) {
-					nobMapRequest(function (output) {
-						if (debug) console.log("RUN nobMapRequest()");
-						if (debug) console.log(output);
-						if (output.status == 200 || output.status == undefined) {
-							nobStore(output, "data");
-							nobGDoc(JSON.stringify(output), "map");
-						} else {
-							console.log("Map request failed: " + output);
-							mapRequestFailed = true;
-							nobHTMLFetch();
-							output = nobGet('data');
-							nobGDoc(output, "user");
-						}
-					});
-				} else {
-					console.log("Map fetch failed, using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
-					nobHTMLFetch();
-					var output = nobGet('data');
-					nobGDoc(output, "user");
-				}
-			} else {
-				console.log("Data is not found, doing HTML fetch now.");
-				nobHTMLFetch();
-			}
-		} catch (e) {
-			if (debug) console.log('nobScript error: ' + e);
-		} finally {
-			mapThere = null;
-		}
-	}
-}
-
-function nobTravel(location) {
-	if (NOBpage) {
-		var url = "https://www.mousehuntgame.com/managers/ajax/users/changeenvironment.php";
-		var data = {
-			"origin": self.getCurrentUserEnvironmentType(),
-			"destination": location,
-			'uh': getPageVariable('user.unique_hash')
-		};
-		nobAjaxPost(url, data, function (r) {
-			console.log(r);
-		}, function (a, b, c) {
-			console.log(b, c);
-		});
-	}
-}
-
-// Update + message fetch
-function fetchGDocStuff() {
-	if (NOBpage) {
-		var currVer = scriptVersion;
-		var checkVer;
-
-		document.getElementById('NOBmessage').innerHTML = "Loading";
-		nobLoading('NOBmessage');
-
-		var theData = JSON.parse(nobGet('data')); //user's data... from where?
-		if (theData.user) {
-			theData = theData.user;
-		}
-		var userID = theData.sn_user_id;
-		Parse.initialize("mh-autobot", "unused");
-		Parse.serverURL = 'https://mh-autobot.herokuapp.com/parse';
-		Parse.Cloud.run('nobMessage', { 'user': userID }, {
-			success: function (data) {
-				nobStopLoading();
-				data = JSON.parse(data);
-				console.log(data);
-				// Ad Free (returns bool)
-				NOBadFree = data.adFree;
-				nobStore(NOBadFree, 'adFree');
-
-				// MESSAGE PLACING
-				message = data.message;
-				var NOBmessage = document.getElementById('NOBmessage');
-				NOBmessage.innerHTML = message;
-
-				// UPDATE CHECK
-				checkVer = data.version;
-				if (debug) console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
-				if (versionCompare(currVer, checkVer) < 0) {
-					var updateElement = document.getElementById('updateElement');
-					updateElement.innerHTML = "<a href=\"https://greasyfork.org/scripts/32971-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
-				}
-
-				// SPECIAL MESSAGE
-				if (data.specialMessage != "" || data.specialMessage != undefined) {
-					var NOBspecialMessage = document.getElementById('nobSpecialMessage');
-					NOBspecialMessage.innerHTML = '<span style="background: chartreuse; font-size: 1.5em;">' + data.specialMessage + '</span>';
-				}
-			}, error: function (error) {
-				setTimeout(function () {
-					fetchGDocStuff();
-				}, 300000);
-				console.log(JSON.parse(error) + ' error - Parse is now not working qq... Retrying in 5 minutes');
-			}
-		}, function (error) {
-			if (debug) console.log("fetchGDocStuff Parse ERROR: " + error);
-		});
-	}
-}
-
-function pingServer() {
-	if (NOBpage) {
-		//if (debug) console.log("Running pingServer()");
-		var theData = JSON.parse(nobGet('data'));
-		if (theData.user) {
-			theData = theData.user;
-		}
-		var theUsername = theData.username;
-		var thePassword = theData.sn_user_id;
-
-		Parse.initialize("mh-autobot", "unused");
-		Parse.serverURL = 'https://mh-autobot.herokuapp.com/parse';
-		Parse.User.logIn(theUsername, thePassword).then(function (user) {
-			//console.log("Success parse login");
-			return Parse.Promise.as("Login success");
-		}, function (user, error) {
-			if (debug) console.log("Parse login failed, attempting to create new user now.");
-
-			var createUser = new Parse.User();
-			createUser.set("username", theUsername);
-			createUser.set("password", thePassword);
-			createUser.set("email", thePassword + "@mh.com");
-
-			var usrACL = new Parse.ACL();
-			usrACL.setPublicReadAccess(false);
-			usrACL.setPublicWriteAccess(false);
-			usrACL.setRoleReadAccess("Administrator", true);
-			usrACL.setRoleWriteAccess("Administrator", true);
-			createUser.setACL(usrACL);
-
-			createUser.signUp(null, {
-				success: function (newUser) {
-					if (debug) console.log(newUser);
-					pingServer();
-					return Parse.Promise.error("Creating new user, trying to login now.");
-				},
-				error: function (newUser, signupError) {
-					// Show the error message somewhere and let the user try again.
-					if (debug) console.log("Parse Error: " + signupError.code + " " + signupError.message);
-					return Parse.Promise.error("Error in signup, giving up serverPing now.");
-				}
-			});
-			return Parse.Promise.error("Failed login, attempted signup, rerunning code");
-		}).then(function (success) {
-			var UserData = Parse.Object.extend("UserData");
-
-			var findOld = new Parse.Query(UserData);
-			findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
-			return findOld.find();
-		}).then(function (returnObj) {
-			var results = returnObj;
-			var promises = [];
-			for (var i = 0; i < results.length; i++) {
-				promises.push(results[i].destroy());
-			}
-			//console.log("Done parse delete");
-			return Parse.Promise.when(promises);
-		}).then(function (UserData) {
-			UserData = Parse.Object.extend("UserData");
-			var userData = new UserData();
-
-			userData.set("user_id", theData.sn_user_id);
-			userData.set("name", theData.username);
-			userData.set("script_ver", scriptVersion);
-			userData.set("browser", browserDetection());
-			userData.set("betaUI", isNewUI);
-			userData.set("data", JSON.stringify(theData));
-			userData.set("addonCode", addonCode);
-			var dataACL = new Parse.ACL(Parse.User.current());
-			dataACL.setRoleReadAccess("Administrator", true);
-			dataACL.setRoleWriteAccess("Administrator", true);
-			userData.setACL(dataACL);
-
-			return userData.save();
-		}).then(function (results) {
-			if (debug) console.log("Success Parse");
-		}).then(function (message) {
-			if (message != undefined || message != null)
-				console.log("Parse message: " + message);
-			if (Parse.User.current() != null) {
-				Parse.User.logOut();
-				//console.log("Parse logout");
-			}
-		}, function (error) {
-			if (error != undefined || error != null) {
-				if (debug) console.log("Parse error: " + error);
-			}
-		});
-	}
-}
-
-function hideNOBMessage(time) {
-	window.setTimeout(function () {
-		var element = document.getElementById('NOBmessage');
-		element.style.display = 'none';
-	}, time);
-}
-
-function showNOBMessage() {
-	document.getElementById('NOBmessage').style.display = 'block'
-}
-
-function nobInjectFFfunctions() {
-	var browser = browserDetection();
-	var raffleDiv = document.getElementById('nobRaffle');
-	var presentDiv = document.getElementById('nobPresent');
-	var addAdDiv = document.getElementById('addAdLink');
-	var removeAdDiv = document.getElementById('removeAdLink');
-
-	if (browser == 'firefox') {
-		unsafeWindow.nobRaffle = exportFunction(nobRaffle, unsafeWindow);
-		unsafeWindow.nobPresent = exportFunction(nobPresent, unsafeWindow);
-		unsafeWindow.addGoogleAd = exportFunction(addGoogleAd, unsafeWindow);
-
-		raffleDiv.addEventListener('click', function () {
-			unsafeWindow.nobRaffle();
-			return false;
-		});
-		presentDiv.addEventListener('click', function () {
-			unsafeWindow.nobPresent();
-			return false;
-		});
-		if (addAdDiv) {
-			addAdDiv.addEventListener('click', function () {
-				localStorage.setItem('allowAds', 'true');
-				unsafeWindow.addGoogleAd();
-			});
-		}
-		if (removeAdDiv) {
-			removeAdDiv.addEventListener('click', function () {
-				localStorage.setItem('allowAds', 'false');
-				unsafeWindow.addGoogleAd();
-			});
-		}
-	} else {
-		// chrome and all other
-		raffleDiv.addEventListener('click', function () {
-			nobRaffle();
-			return false;
-		});
-		presentDiv.addEventListener('click', function () {
-			nobPresent();
-			return false;
-		});
-		if (addAdDiv) {
-			addAdDiv.addEventListener('click', function () {
-				localStorage.setItem('allowAds', 'true');
-				addGoogleAd();
-			});
-		}
-		if (removeAdDiv) {
-			removeAdDiv.addEventListener('click', function () {
-				localStorage.setItem('allowAds', 'false');
-				addGoogleAd();
-			});
-		}
-	}
-	raffleDiv = undefined;
-	presentDiv = undefined;
-	addAdDiv = undefined;
-	removeAdDiv = undefined;
-}
-
-function nobRaffle() {
-	var i;
-	var intState = 0;
-	var nobRafGiveUp = 10;
-	var nobRafInt = window.setInterval(function () {
-		try {
-			if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
-				$('#hgbar_messages').click();
-				intState = 1;
-				return;
-			} else if ($('a.active.tab')[0].dataset.tab != 'daily_draw') {
-				var tabs = $('a.tab');
-				var theTab = "";
-				for (i = 0; i < tabs.length; i++) {
-					if (tabs[i].dataset.tab == 'daily_draw') {
-						tabs[i].click();
-						return;
-					}
-				}
-
-				// If there are no raffles
-				intState = 0;
-				$("a.messengerUINotificationClose")[0].click();
-				console.log("No raffles found.");
-				window.clearInterval(nobRafInt);
-
-				nobRafInt = null;
-				intState = null;
-				i = null;
-				return;
-			} else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'daily_draw') {
-				var ballot = $(".notificationMessageList input.sendBallot");
-				for (i = ballot.length - 1; i >= 0; i--) {
-					ballot[i].click();
-				}
-				intState = 2;
-				return;
-			} else if ($('a.active.tab')[0].dataset.tab == 'daily_draw') {
-				intState = 3;
-			} else {
-				intState = -1;
-			}
-		} catch (e) {
-			console.log("Raffle interval error: " + e + ", retrying in 2 seconds. Giving up in " + (nobRafGiveUp * 2) + " seconds.");
-			if (nobRafGiveUp < 1) {
-				intState = -1;
-			} else {
-				nobRafGiveUp--;
-			}
-		} finally {
-			if (intState == 3) {
-				$("a.messengerUINotificationClose")[0].click();
-				window.clearInterval(nobRafInt);
-
-				nobRafInt = null;
-				intState = null;
-				i = null;
-				return;
-			} else if (intState == -1) {
-				console.log("Present error, user pls resolve yourself");
-				window.clearInterval(nobRafInt);
-
-				nobRafInt = null;
-				intState = null;
-				i = null;
-				return;
-			}
-		}
-	}, 2000);
-};
-
-function nobPresent() {
-	var intState = 0;
-	var i;
-	var nobPresGiveUp = 10;
-	var nobPresInt = window.setInterval(function () {
-		try {
-			if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
-				$('#hgbar_messages').click();
-				intState = 1;
-				return;
-			} else if ($('a.active.tab')[0].dataset.tab != 'gifts') {
-				var tabs = $('a.tab');
-				for (i = 0; i < tabs.length; i++) {
-					if (tabs[i].dataset.tab == 'gifts') {
-						tabs[i].click();
-						return;
-					}
-				}
-
-				// If there are no gifts
-				intState = 0;
-				$("a.messengerUINotificationClose")[0].click();
-				console.log("No gifts found.");
-				window.clearInterval(nobPresInt);
-
-				nobPresInt = null;
-				intState = null;
-				i = null;
-				return;
-			} else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'gifts') {
-				var presents = $('input.acceptAndSend');
-				for (i = presents.length - 1; i >= 0; i--) {
-					presents[i].click();
-				}
-				intState = 2;
-				return;
-			} else if ($('a.active.tab')[0].dataset.tab == 'gifts') {
-				intState = 3;
-			} else {
-				intState = -1;
-			}
-		} catch (e) {
-			console.log("Present interval error: " + e + ", retrying in 2 seconds. Giving up in " + (nobPresGiveUp * 2) + " seconds.");
-			if (nobPresGiveUp < 1) {
-				intState = -1;
-			} else {
-				nobPresGiveUp--;
-			}
-		} finally {
-			if (intState == 3) {
-				$("a.messengerUINotificationClose")[0].click();
-				window.clearInterval(nobPresInt);
-
-				nobPresInt = null;
-				intState = null;
-				i = null;
-				return;
-			} else if (intState == -1) {
-				console.log("Present error, user pls resolve yourself");
-				window.clearInterval(nobPresInt);
-
-				nobPresInt = null;
-				intState = null;
-				i = null;
-				return;
-			}
-		}
-	}, 2000);
-};
-
-// CALCULATE TIMER *******************************
 function currentTimeStamp() {
 	return parseInt(new Date().getTime().toString().substring(0, 10), 10);
 }
 
-function createClockArea() {
-	try {
-		var parent = document.getElementById('loadTimersElement');
-		var child = [];
-		var text;
+function calculateSeasonalGardenSeason() {
+	var first = 1283616000;
+	var length = 288000;
+	var breakdown = [1, 1, 1, 1];
+	var name = ['Summer', 'Fall', 'Winter', 'Spring'];
+	var currentTime = currentTimeStamp();
+	var totalBreakdown = 4;
 
-		for (i = 0; i < LOCATION_TIMERS.length; i++) {
-			child[i] = document.createElement('div');
-			child[i].setAttribute("id", "NOB" + LOCATION_TIMERS[i][0]);
-			text = '<span id="text_' + LOCATION_TIMERS[i][0] + '">';
-			child[i].innerHTML = text;
+	var currentValue = Math.floor((currentTime - first) / length) % totalBreakdown;
+	var currentName = -1;
+	var currentBreakdown = 0;
+
+	for (var i = 0; i < breakdown.length && currentName == -1; i++) {
+		currentBreakdown += breakdown[i];
+		if (currentValue < currentBreakdown) {
+			currentName = i;
 		}
-
-		for (i = 0; i < LOCATION_TIMERS.length; i++)
-			parent.insertBefore(child[i], parent.firstChild);
-
-		parent.insertBefore(document.createElement('br'), parent.firstChild);
-	} catch (e) {
-		console.log("createClockArea() ERROR: " + e);
 	}
+	return name[currentName];
 }
 
-function clockTick() {
-	if (debug) console.log('RUN %cclockTick()', 'color: #9cffbd');
-	var temp = document.getElementById('NOBrelic');
-	if (clockNeedOn && !clockTicking && temp) {
-		// Clock needs to be on, but is not ticking
-		updateTime();
-	} else if (clockTicking && clockNeedOn && temp) {
-		// Clock needs to be on and is already ticking
-	} else {
-		// Clock does not need to be on
-		nobCalculateTime();
-	}
-	NOBtickerInterval = window.setTimeout(function () {
-		clockTick();
-	}, 15 * 60 * 1000);
-}
-
-function updateTime() {
-	if (debug) console.log("RUN updateTime()");
-	try {
-		var timeLeft = JSON.parse(nobGet('relic'));
-		if (timeLeft > 0) {
-			timeLeft--;
-			var element = document.getElementById('NOBrelic');
-			element.innerHTML = updateTimer(timeLeft, true);
-			nobStore(timeLeft, 'relic');
-			nobCalculateOfflineTimers();
-			clockTicking = true;
-
-			NOBtickerTimout = window.setTimeout(function () {
-				updateTime();
-			}, 1000);
-		} else {
-			clockTicking = false;
-			clockNeedOn = false;
-		}
-	} catch (e) {
-		if (debug) console.log("UpdateTime error: " + e);
-		clearTimeout(NOBtickerTimout);
-		clearTimeout(NOBtickerInterval);
-	}
-}
-
-function nobCalculateTime(runOnly) {
-	if (debug) console.log("Running nobCalculateTime(" + runOnly + ")");
-	var child;
-	if (runOnly != 'relic' && runOnly != 'toxic' && runOnly != 'none')
-		runOnly = 'all';
-
-	try {
-		Parse.initialize("mh-autobot", "unused");
-		Parse.serverURL = 'https://mh-autobot.herokuapp.com/parse';
-		if ((runOnly == 'relic' || runOnly == 'all') && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
-			/*Parse.Cloud.run('nobRelic', {}, {
-				success: function (data) {
-					data = JSON.parse(data);
-
-					if (data.result == "error") {
-						child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-						child.innerHTML = "<font color='red'>" + data.error + "</font>";
-					} else {
-						child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-						child.innerHTML = "Relic hunter now in: <font color='green'>" + data.location + "</font> \~ Next move time: <span id='NOBrelic'>" + updateTimer(data.next_move, true);
-						if (data.next_move > 0) {
-							clockTicking = true;
-							nobStore(data.next_move, 'relic');
-							updateTime();
-							clockNeedOn = true;
-						} else {
-							clockTicking = false;
-							clockNeedOn = false;
-						}
-					}
-				}, error: function (error) {
-					error = JSON.parse(error);
-
-					var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-					child.innerHTML = "<font color='red'>" + error + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
-				}
-			});*/
-			if (debug) console.log("relic hunter will be back :)");
-		}
-
-		/*if ((runOnly == 'toxic' || runOnly == 'all') && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
-			Parse.Cloud.run('nobToxic', {}, {
-				success: function (data) {
-					data = JSON.parse(data);
-
-						if (data.result == "error") {
-							child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
-							child.innerHTML = "<font color='red'>" + data.error + "</font>";
-						} else {
-							child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
-							if (data.level == 'Closed') {
-								data.level = {
-									color: 'red',
-									state: data.level
-								};
-							} else {
-								data.level = {
-									color: 'green',
-									state: data.level
-								};
-							}
-							if (data.percent < 0) {
-								data.percent = '';
-							} else {
-								data.percent = ' &#126; ' + (100 - data.percent) + '% left';
-							}
-							child.innerHTML = 'Toxic spill is now - <font color="' + data.level.color + '">' + data.level.state + '</font>' + data.percent;
-						}
-					}, error: function (error) {
-						error = JSON.parse(error);
-
-						child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
-						child.innerHTML = "<font color='red'>" + error + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
-					}
-				});
-			}*/
-
-		if (runOnly == 'all')
-			nobCalculateOfflineTimers();
-	} catch (e) {
-		if (debug) console.log("updateTime ERR - " + e);
-	}
-}
-
-function nobCalculateOfflineTimers(runOnly) {
-	//if (debug) console.log('nobCalculateOfflineTimers(' + runOnly + ')');
-	if (runOnly != 'seasonal' && runOnly != 'balack' && runOnly != 'fg')
-		runOnly = 'all';
-
-	var CurrentTime = currentTimeStamp();
-	var CurrentName = -1;
-	var CurrentBreakdown = 0;
-	var TotalBreakdown = 0;
-	var iCount2;
-
-	if (runOnly == 'seasonal') {
-		for (iCount2 = 0; iCount2 < LOCATION_TIMERS[0][1].breakdown.length; iCount2++)
-			TotalBreakdown += LOCATION_TIMERS[0][1].breakdown[iCount2];
-
-		var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[0][1].first) / LOCATION_TIMERS[0][1].length) % TotalBreakdown;
-
-		for (iCount2 = 0; iCount2 < LOCATION_TIMERS[0][1].breakdown.length && CurrentName == -1; iCount2++) {
-			CurrentBreakdown += LOCATION_TIMERS[0][1].breakdown[iCount2];
-
-			if (CurrentValue < CurrentBreakdown) {
-				CurrentName = iCount2;
-			}
-		}
-
-		var SeasonLength = (LOCATION_TIMERS[0][1].length * LOCATION_TIMERS[0][1].breakdown[CurrentName]);
-		var CurrentTimer = (CurrentTime - LOCATION_TIMERS[0][1].first);
-		var SeasonRemaining = 0;
-
-		while (CurrentTimer > 0) {
-			for (iCount2 = 0; iCount2 < LOCATION_TIMERS[0][1].breakdown.length && CurrentTimer > 0; iCount2++) {
-				SeasonRemaining = CurrentTimer;
-				CurrentTimer -= (LOCATION_TIMERS[0][1].length * LOCATION_TIMERS[0][1].breakdown[iCount2]);
-			}
-		}
-
-		SeasonRemaining = SeasonLength - SeasonRemaining;
-
-		return LOCATION_TIMERS[0][1].name[CurrentName];
-	} else if (runOnly == 'all') {
-		for (i = 0; i < 4; i++) {
-			// Reset var
-			CurrentTime = currentTimeStamp();
-			CurrentName = -1;
-			CurrentBreakdown = 0;
-			TotalBreakdown = 0;
-
-			for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length; iCount2++)
-				TotalBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
-
-			var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[i][1].first) / LOCATION_TIMERS[i][1].length) % TotalBreakdown;
-
-			for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentName == -1; iCount2++) {
-				CurrentBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
-
-				if (CurrentValue < CurrentBreakdown) {
-					CurrentName = iCount2;
-				}
-			}
-
-			var SeasonLength = (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[CurrentName]);
-			var CurrentTimer = (CurrentTime - LOCATION_TIMERS[i][1].first);
-			var SeasonRemaining = 0;
-
-			while (CurrentTimer > 0) {
-				for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++) {
-					SeasonRemaining = CurrentTimer;
-					CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2]);
-				}
-			}
-
-			SeasonRemaining = SeasonLength - SeasonRemaining;
-
-			var seasonalDiv = document.getElementById('NOB' + LOCATION_TIMERS[i][0]);
-			var content = "";
-			content += LOCATION_TIMERS[i][0] + ': <font color="' + LOCATION_TIMERS[i][1].color[CurrentName] + '">' + LOCATION_TIMERS[i][1].name[CurrentName] + '</font>';
-			if (LOCATION_TIMERS[i][1].effective != null) {
-				content += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
-			}
-
-			content += ' &#126; For ' + updateTimer(SeasonRemaining, true);
-			seasonalDiv.innerHTML = content;
-		}
-		return;
-	}
-}
-
-// Attempt to inject addonCode made by user
-function runAddonCode() {
-	if (!isKingReward && addonCode != "") {
-		console.log("%cRUNNING ADDON CODE, SCRIPT IS NOW NOT SAFE DEPENDING ON WHAT YOU DID.", "color: yellow; background: red; font-size: 50pt;");
-		eval(addonCode);
-	}
-}
 
 
 // Inject CnN Functions
