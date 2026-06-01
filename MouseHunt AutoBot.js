@@ -533,6 +533,8 @@ function doAsync(queue) {
 	next();
 }
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 function sendGiftsToFavourites() {
 	console.log("sending gifts to friends");
 	var listOfFavourites = null;
@@ -1042,7 +1044,7 @@ function GreatWinterHunt() {
 	}
 
 	checkGolem(0);
-	function checkGolem(n) {
+	async function checkGolem(n) {
 		if (n >= 3) {
 			return;
 		}
@@ -1072,23 +1074,19 @@ function GreatWinterHunt() {
 				return;
 			}
 			console.log("building golem " + n);
-			doAsync([
-				//there appears to be 2 html button elems for each golem
-				() => { document.getElementsByClassName("headsUpDisplayWinterHuntRegionView__golemBuildButton headsUpDisplayWinterHuntRegionView__golemActionButton")[n * 2].click(); },
-				1000,
-				() => {
-					if (CONFIG.hat) {
-						document.getElementsByClassName("greatWinterHuntGolemManagerLaunchTabView__toggleButton greatWinterHuntGolemManagerLaunchTabView__toggleHatButton")[0].click();
-					}
-					if (CONFIG.scarf) {
-						document.getElementsByClassName("greatWinterHuntGolemManagerLaunchTabView__toggleButton greatWinterHuntGolemManagerLaunchTabView__toggleScarfButton")[0].click();
-					}
-				},
-				1000,
-				() => { document.getElementsByClassName("greatWinterHuntDialogView__bigButton greatWinterHuntGolemManagerLaunchTabView__buildButton")[0].click(); },
-				2000,
-				() => { reloadPage(); },
-			]);
+			//there appears to be 2 html button elems for each golem
+			document.getElementsByClassName("headsUpDisplayWinterHuntRegionView__golemBuildButton headsUpDisplayWinterHuntRegionView__golemActionButton")[n * 2].click();
+			await sleep(1000);
+			if (CONFIG.hat) {
+				document.getElementsByClassName("greatWinterHuntGolemManagerLaunchTabView__toggleButton greatWinterHuntGolemManagerLaunchTabView__toggleHatButton")[0].click();
+			}
+			if (CONFIG.scarf) {
+				document.getElementsByClassName("greatWinterHuntGolemManagerLaunchTabView__toggleButton greatWinterHuntGolemManagerLaunchTabView__toggleScarfButton")[0].click();
+			}
+			await sleep(1000);
+			document.getElementsByClassName("greatWinterHuntDialogView__bigButton greatWinterHuntGolemManagerLaunchTabView__buildButton")[0].click();
+			await sleep(2000);
+			reloadPage();
 			return;
 		}
 
