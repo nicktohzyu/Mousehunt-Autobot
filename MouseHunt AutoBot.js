@@ -5817,68 +5817,322 @@ function simulateTyping(element, value) {
 	typeNextChar(0); // Start typing the first character
 }
 
-function receiveMessage(event) { //throws error in normal operation, but necessary for KRsolver
-	if (debug) console.log("in receiveMessage, Event origin: " + event.origin);
-
-	if (!debugKR && !isAutoSolve)
-		return;
-	if (event.origin.indexOf("mhcdn") > -1 || event.origin.indexOf("mousehuntgame") > -1 || event.origin.indexOf("dropbox") > -1) {
-		if (typeof event.data.indexOf != 'function') {
-			return;
-		}
-		if (event.data.indexOf("~") > -1) {
-			var result = event.data.substring(0, event.data.indexOf("~"));
-			if (saveKRImage) {
-				var processedImg = event.data.substring(event.data.indexOf("~") + 1, event.data.length);
-				var strKR = "KR" + separator;
-				strKR += Date.now() + separator;
-				strKR += result + separator;
-				strKR += "RETRY" + kingsRewardRetry;
-				try {
-					setStorage(strKR, processedImg);
-				} catch (e) {
-					console.perror('receiveMessage', e.message);
-				}
-			}
-			FinalizePuzzleImageAnswer(result);
-		} else if (event.data.indexOf("#") > -1) {
-			var value = event.data.substring(1, event.data.length);
-			setStorage("krCallBack", value);
-		} else if (event.data.indexOf('Log_') > -1)
-			console.plog(event.data.split('_')[1]);
-		else if (event.data.indexOf('MHAKRS_') > -1) {
-			var temp = event.data.split('_');
-			console.plog(temp[0], temp[1]);
-			setStorage(temp[0], temp[1]);
-		}
+// for kings reward solving
+function FilterResult(result) {
+	var regexp = /^[a-zA-Z0-9]+$/;
+	var newResult = "";
+	for (var i = 0; i < result.length; ++i) {
+		if (result.charAt(i).search(regexp) != -1)
+			newResult = newResult.concat(result.charAt(i));
 	}
-
+	return newResult.toLowerCase();
 }
 
-function CallKRSolver() {
-	if (debug) console.log("RUN CallKRSolver()");
-
-	var frame = document.createElement('iframe');
-	frame.setAttribute("id", "myFrame");
-	var img;
-	if (debugKR) {
-		//frame.src = "https://dl.dropboxusercontent.com/s/4u5msso39hfpo87/Capture.PNG";
-		//frame.src = "https://dl.dropboxusercontent.com/s/og73bcdsn2qod63/download%20%2810%29Ori.png";
-		frame.src = "https://dl.dropboxusercontent.com/s/ppg0l35h25phrx3/download%20(16).png";
-	} else {
-		//if (isNewUI) {
-		if (debug) console.log("Trying to fetch Captcha Image")
-		img = document.getElementsByClassName('puzzleView__image')[0];
-		if (debug) console.log("Captcha Image fetched:")
-		if (debug) console.log(img);
-
-		frame.src = img.querySelector('img').src;
-		/*} else {
-			img = document.getElementById('puzzleImage');
-			frame.src = img.src;
-		}*/
+function CheckResult(resultList) {
+	var hit = [0, 0, 0, 0];
+	var max = -1;
+	var maxIndex = 0;
+	var sum = 0;
+	var strDebug = "";
+	for (var i = 0; i < resultList.length; ++i) {
+		for (var j = 0; j < resultList.length; ++j) {
+			if (i != j) {
+				if (resultList[i] == resultList[j])
+					++hit[i];
+			}
+		}
+		if (hit[i] > max) {
+			max = hit[i];
+			maxIndex = i;
+		}
+		sum += hit[i];
+		strDebug += resultList[i] + ": " + hit[i] + " ";
 	}
-	document.body.appendChild(frame);
+	if (debug) console.log("[KR Solver] Internal check: " + strDebug);
+	if ((sum / 4) == hit[maxIndex])
+		return resultList[resultList.length - 1];
+	else
+		return resultList[maxIndex];
+}
+
+function getBaseImage(imgData) {
+	var canvas = document.createElement("canvas");
+	var img = new Image();
+	img.width = imgData.width;
+	img.height = imgData.height;
+	canvas.width = img.width;
+	canvas.height = img.height;
+	var ctx = canvas.getContext("2d");
+	ctx.putImageData(imgData, 0, 0);
+	return canvas.toDataURL("image/png");
+}
+
+function CombineAllImageData(ori, threshold, dilate, erode, erodeFinal, dilateFinal) {
+	var canvasAll = document.createElement('canvas');
+	canvasAll.width = ori.width * 2;
+	canvasAll.height = ori.height * 3;
+	var contextAll = canvasAll.getContext('2d');
+	var imgOri = new Image();
+	imgOri.src = getBaseImage(ori);
+	var imgThres = new Image();
+	imgThres.src = getBaseImage(threshold);
+	var imgDilate = new Image();
+	imgDilate.src = getBaseImage(dilate);
+	var imgErode = new Image();
+	imgErode.src = getBaseImage(erode);
+	var imgErodeFinal = new Image();
+	imgErodeFinal.src = getBaseImage(erodeFinal);
+	var imgDilateFinal = new Image();
+	imgDilateFinal.src = getBaseImage(dilateFinal);
+	contextAll.drawImage(imgOri, 0, 0);
+	contextAll.drawImage(imgThres, ori.width, 0);
+	contextAll.drawImage(imgDilate, 0, ori.height);
+	contextAll.drawImage(imgErode, ori.width, ori.height);
+	contextAll.drawImage(imgErodeFinal, 0, ori.height * 2);
+	contextAll.drawImage(imgDilateFinal, ori.width, ori.height * 2);
+	return canvasAll.toDataURL('image/png');
+}
+
+function runOcrFiltersOnImage(img) {
+	console.log("[KR Solver] Running morphological OCR filters...");
+	var canvas = document.createElement('canvas');
+	canvas.width = img.width;
+	canvas.height = img.height;
+	var context = canvas.getContext('2d');
+	context.drawImage(img, 0, 0);
+	var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+	var thresholdImgData = context.createImageData(canvas.width, canvas.height);
+	for (var i = 0; i < imgData.data.length; i += 4) {
+		if (imgData.data[i + 3] == 0)
+			thresholdImgData.data[i] = 255;
+		else
+			thresholdImgData.data[i] = imgData.data[i];
+
+		thresholdImgData.data[i] = (imgData.data[i] >= 190) ? 255 : 0;
+		thresholdImgData.data[i + 1] = thresholdImgData.data[i];
+		thresholdImgData.data[i + 2] = thresholdImgData.data[i];
+		thresholdImgData.data[i + 3] = 255;
+	}
+
+	var dilateImgData = context.createImageData(canvas.width, canvas.height);
+	var erodeImgData = context.createImageData(canvas.width, canvas.height);
+	var isFirstRow, isLastRow;
+	var abovePixel, belowPixel;
+	for (var i = 0; i < thresholdImgData.data.length; i += 4) {
+		if (thresholdImgData.data[i + 3] == 0) {
+			dilateImgData.data[i] = 255;
+			dilateImgData.data[i + 1] = 255;
+			dilateImgData.data[i + 2] = 255;
+		}
+		else {
+			dilateImgData.data[i] = thresholdImgData.data[i];
+			dilateImgData.data[i + 1] = thresholdImgData.data[i + 1];
+			dilateImgData.data[i + 2] = thresholdImgData.data[i + 2];
+		}
+		dilateImgData.data[i + 3] = 255;
+		if (thresholdImgData.data[i] != 255) {
+			abovePixel = i - canvas.width * 4;
+			belowPixel = i + canvas.width * 4;
+			isFirstRow = (abovePixel < 0);
+			isLastRow = (belowPixel > thresholdImgData.data.length);
+			if (isFirstRow)
+				dilateImgData.data[i] |= thresholdImgData.data[belowPixel];
+			else if (isLastRow)
+				dilateImgData.data[i] |= thresholdImgData.data[abovePixel];
+			else
+				dilateImgData.data[i] |= thresholdImgData.data[abovePixel] | thresholdImgData.data[belowPixel];
+
+			dilateImgData.data[i + 1] = dilateImgData.data[i];
+			dilateImgData.data[i + 2] = dilateImgData.data[i];
+		}
+	}
+
+	for (var i = 0; i < dilateImgData.data.length; i += 4) {
+		if (dilateImgData.data[i + 3] == 0) {
+			erodeImgData.data[i] = 255;
+			erodeImgData.data[i + 1] = 255;
+			erodeImgData.data[i + 2] = 255;
+		}
+		else {
+			erodeImgData.data[i] = dilateImgData.data[i];
+			erodeImgData.data[i + 1] = dilateImgData.data[i + 1];
+			erodeImgData.data[i + 2] = dilateImgData.data[i + 2];
+		}
+		erodeImgData.data[i + 3] = 255;
+		if (dilateImgData.data[i] != 0) {
+			abovePixel = i - canvas.width * 4;
+			belowPixel = i + canvas.width * 4;
+			isFirstRow = (abovePixel < 0);
+			isLastRow = (belowPixel > dilateImgData.data.length);
+			if (isFirstRow)
+				erodeImgData.data[i] &= dilateImgData.data[belowPixel];
+			else if (isLastRow)
+				erodeImgData.data[i] &= dilateImgData.data[abovePixel];
+			else
+				erodeImgData.data[i] &= dilateImgData.data[abovePixel] & dilateImgData.data[belowPixel];
+
+			erodeImgData.data[i + 1] = erodeImgData.data[i];
+			erodeImgData.data[i + 2] = erodeImgData.data[i];
+		}
+	}
+
+	var dilateFinalImgData = context.createImageData(canvas.width, canvas.height);
+	var erodeFinalImgData = context.createImageData(canvas.width, canvas.height);
+	var isFirstCol, isLastCol;
+	var leftPixel, rightPixel;
+	for (var i = 0; i < erodeImgData.data.length; i += 4) {
+		if (erodeImgData.data[i + 3] == 0) {
+			erodeFinalImgData.data[i] = 255;
+			erodeFinalImgData.data[i + 1] = 255;
+			erodeFinalImgData.data[i + 2] = 255;
+		}
+		else {
+			erodeFinalImgData.data[i] = erodeImgData.data[i];
+			erodeFinalImgData.data[i + 1] = erodeImgData.data[i + 1];
+			erodeFinalImgData.data[i + 2] = erodeImgData.data[i + 2];
+		}
+		erodeFinalImgData.data[i + 3] = 255;
+		if (erodeImgData.data[i] != 0) {
+			leftPixel = i - 4;
+			rightPixel = i + 4;
+			isFirstCol = (leftPixel < 0);
+			isLastCol = (rightPixel > erodeImgData.data.length);
+			if (isFirstCol)
+				erodeFinalImgData.data[i] &= erodeImgData.data[rightPixel];
+			else if (isLastCol)
+				erodeFinalImgData.data[i] &= erodeImgData.data[leftPixel];
+			else
+				erodeFinalImgData.data[i] &= erodeImgData.data[leftPixel] & erodeImgData.data[rightPixel];
+
+			erodeFinalImgData.data[i + 1] = erodeFinalImgData.data[i];
+			erodeFinalImgData.data[i + 2] = erodeFinalImgData.data[i];
+		}
+	}
+
+	for (var i = 0; i < erodeFinalImgData.data.length; i += 4) {
+		if (erodeFinalImgData.data[i + 3] == 0) {
+			dilateFinalImgData.data[i] = 255;
+			dilateFinalImgData.data[i + 1] = 255;
+			dilateFinalImgData.data[i + 2] = 255;
+		}
+		else {
+			dilateFinalImgData.data[i] = erodeFinalImgData.data[i];
+			dilateFinalImgData.data[i + 1] = erodeFinalImgData.data[i + 1];
+			dilateFinalImgData.data[i + 2] = erodeFinalImgData.data[i + 2];
+		}
+		dilateFinalImgData.data[i + 3] = 255;
+		if (erodeFinalImgData.data[i] != 255) {
+			leftPixel = i - 4;
+			rightPixel = i + 4;
+			isFirstCol = (leftPixel < 0);
+			isLastCol = (rightPixel > erodeFinalImgData.data.length);
+			if (isFirstCol)
+				dilateFinalImgData.data[i] |= erodeFinalImgData.data[leftPixel];
+			else if (isLastCol)
+				dilateFinalImgData.data[i] |= erodeFinalImgData.data[rightPixel];
+			else
+				dilateFinalImgData.data[i] |= erodeFinalImgData.data[rightPixel] | erodeFinalImgData.data[leftPixel];
+
+			dilateFinalImgData.data[i + 1] = dilateFinalImgData.data[i];
+			dilateFinalImgData.data[i + 2] = dilateFinalImgData.data[i];
+		}
+	}
+
+	// Run OCRAD
+	var resultClosing1 = OCRAD(dilateImgData);
+	var resultClosing2 = OCRAD(erodeImgData);
+	var resultOpening1 = OCRAD(erodeFinalImgData);
+	var resultOpening2 = OCRAD(dilateFinalImgData);
+
+	resultClosing1 = FilterResult(resultClosing1);
+	resultClosing2 = FilterResult(resultClosing2);
+	resultOpening1 = FilterResult(resultOpening1);
+	resultOpening2 = FilterResult(resultOpening2);
+
+	var resultFinalList = [resultClosing1, resultClosing2, resultOpening1, resultOpening2];
+	var resultFinal = CheckResult(resultFinalList);
+	
+	console.log("[KR Solver] OCR Raw Options parsed:", resultFinalList);
+	console.log("[KR Solver] OCR Selected Output Choice:", resultFinal);
+
+	var combinedDataUrl = "";
+	if (saveKRImage) {
+		try {
+			combinedDataUrl = CombineAllImageData(imgData, thresholdImgData, dilateImgData, erodeImgData, erodeFinalImgData, dilateFinalImgData);
+		} catch (err) {
+			console.error("[KR Solver] Failed to compile Combined KR Image layout:", err);
+		}
+	}
+
+	return {
+		answer: resultFinal,
+		combinedImg: combinedDataUrl
+	};
+}
+
+async function solveCaptchaDirectly(imgSrc) {
+	console.log("[KR Solver] Fetching captcha image:", imgSrc);
+	try {
+		const response = await fetch(imgSrc);
+		const blob = await response.blob();
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+			img.onload = async () => {
+				try {
+					if (typeof img.decode === 'function') {
+						console.log("[KR Solver] Executing background decode sequence...");
+						await img.decode();
+					}
+					console.log("[KR Solver] Image loaded & decoded successfully.");
+					const ocrResult = runOcrFiltersOnImage(img);
+					resolve(ocrResult);
+				} catch (e) {
+					console.error("[KR Solver] Decode failed:", e);
+					reject(e);
+				}
+			};
+			img.onerror = (err) => {
+				console.error("[KR Solver] Image element loading failed:", err);
+				reject(err);
+			};
+			img.src = URL.createObjectURL(blob);
+		});
+	} catch (err) {
+		console.error("[KR Solver] Captcha image request fetch failed:", err);
+		throw err;
+	}
+}
+
+async function CallKRSolver() {
+	console.log("[KR Solver] Direct OCR solving initiated...");
+	try {
+		var imgElementContainer = document.getElementsByClassName('puzzleView__image')[0];
+		if (!imgElementContainer) {
+			console.error("[KR Solver] CAPTCHA image container (.puzzleView__image) not found in DOM");
+			return;
+		}
+		var imgSource = imgElementContainer.querySelector('img').src;
+		console.log("[KR Solver] Target Image source URL:", imgSource);
+
+		var ocrResult = await solveCaptchaDirectly(imgSource);
+		console.log("[KR Solver] Solver returned Direct Answer:", ocrResult.answer);
+
+		if (saveKRImage && ocrResult.combinedImg) {
+			var strKR = "KR" + separator;
+			strKR += Date.now() + separator;
+			strKR += ocrResult.answer + separator;
+			strKR += "RETRY" + kingsRewardRetry;
+			try {
+				setStorage(strKR, ocrResult.combinedImg);
+			} catch (e) {
+				console.perror('CallKRSolver Direct SaveImage', e.message);
+			}
+		}
+
+		FinalizePuzzleImageAnswer(ocrResult.answer);
+	} catch (err) {
+		console.error("[KR Solver] CallKRSolver exception occurred:", err);
+	}
 }
 
 function CheckKRAnswerCorrectness() {
@@ -5977,11 +6231,7 @@ function setKREntriesColor() {
 	}
 }
 
-window.addEventListener("message", receiveMessage, false);
-if (debugKR) {
-	console.log("calling KR solver");
-	CallKRSolver();
-}
+
 // CNN KR SOLVER END
 
 // start executing script
