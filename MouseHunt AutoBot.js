@@ -1733,7 +1733,7 @@ function bwRift() { //interface does not work; settings must be done in code
 			base: new Array(32).fill(bestRiftBase),
 			trinket: new Array(32).fill('Rift Vacuum Charm'),
 			bait: new Array(32).fill('Brie String'),
-			activate: new Array(32).fill(false),
+			activate: new Array(32).fill(VACUUM_CHARMS),
 		},
 		specialActivate: {
 			forceActivate: new Array(32).fill(false),
@@ -1834,7 +1834,7 @@ function bwRift() { //interface does not work; settings must be done in code
 		// defaultBWRiftConfig.master.activate[chambers.LUCKY] = true;
 		// defaultBWRiftConfig.master.activate[chambers.HIDDEN] = true;
 
-		defaultBWRiftConfig.master.trinket[chambers.TIMEWARP] = 'Rift Wealth Charm';
+		defaultBWRiftConfig.master.trinket[chambers.TIMEWARP] = 'Rift Charm';
 		defaultBWRiftConfig.master.trinket[chambers.ACOLYTE_CHARGING] = VACUUM_CHARMS;
 		// defaultBWRiftConfig.master.trinket[12] = 'Rift Wealth Charm';
 		// defaultBWRiftConfig.master.trinket[13] = 'Rift Wealth Charm';
