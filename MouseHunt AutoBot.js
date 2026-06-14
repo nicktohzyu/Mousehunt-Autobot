@@ -535,6 +535,26 @@ function doAsync(queue) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+function bgSleep(ms) {
+	return new Promise((resolve) => {
+		try {
+			var blob = new Blob([
+				"setTimeout(function() { postMessage('done'); }, " + ms + ");"
+			], { type: 'application/javascript' });
+			var worker = new Worker(URL.createObjectURL(blob));
+			worker.onmessage = function() {
+				worker.terminate();
+				resolve();
+			};
+			worker.onerror = function() {
+				setTimeout(resolve, ms);
+			};
+		} catch (e) {
+			setTimeout(resolve, ms);
+		}
+	});
+}
+
 function sendGiftsToFavourites() {
 	console.log("sending gifts to friends");
 	var listOfFavourites = null;
@@ -5713,7 +5733,6 @@ function CurrentArmedBait() {
 	//return user.bait_name;
 }
 
-// CNN KR SOLVER START
 async function FinalizePuzzleImageAnswer(answer) {
 	if (debug) console.log("RUN FinalizePuzzleImageAnswer()");
 	if (debug) console.log(answer);
@@ -5737,15 +5756,13 @@ async function FinalizePuzzleImageAnswer(answer) {
 		++kingsRewardRetry;
 		setStorage("KingsRewardRetry", kingsRewardRetry);
 		document.getElementsByClassName("puzzleView__requestNewPuzzleButton mousehuntTooltipParent")[0].click();
-		window.setTimeout(function () {
-			CallKRSolver();
-		}, 6000);
+		await bgSleep(3000);
+		CallKRSolver();
 		return;
 	}
 	if (debug) console.log("Submitting captcha answer: " + answer);
 	//Submit answer
 
-	//var puzzleAns = document.getElementById("puzzle_answer");
 	const puzzleAnsField = document.getElementsByClassName("puzzleView__code")[0];
 
 	if (!puzzleAnsField) {
@@ -5756,31 +5773,28 @@ async function FinalizePuzzleImageAnswer(answer) {
 	puzzleAnsField.focus();
 	puzzleAnsField.value = "";
 	puzzleAnsField.value = answer.toLowerCase();
-	doAsync([
-		() => { simulateTyping(puzzleAnsField, answer.toLowerCase()); },
-		1500,
-		() => {
-			const puzzleSubmitButton = document.getElementsByClassName("puzzleView__solveButton puzzleView__solveButton--ready")[0];
 
-			if (!puzzleSubmitButton && debug) {
-				console.plog("puzzleSubmit: " + puzzleSubmitButton);
-				return;
-			}
-			fireEvent(puzzleSubmitButton, 'click');
-			kingsRewardRetry = 0;
-			setStorage("KingsRewardRetry", kingsRewardRetry);
-			myFrame = document.getElementById('myFrame');
-			if (myFrame)
-				document.body.removeChild(myFrame);
-		},
-		1000,
+	await simulateTyping(puzzleAnsField, answer.toLowerCase());
+	await bgSleep(1000);
 
-		() => { CheckKRAnswerCorrectness(); },
-	]);
+	const puzzleSubmitButton = document.getElementsByClassName("puzzleView__solveButton puzzleView__solveButton--ready")[0];
+
+	if (!puzzleSubmitButton && debug) {
+		console.plog("puzzleSubmit: " + puzzleSubmitButton);
+		return;
+	}
+	fireEvent(puzzleSubmitButton, 'click');
+	kingsRewardRetry = 0;
+	setStorage("KingsRewardRetry", kingsRewardRetry);
+	myFrame = document.getElementById('myFrame');
+	if (myFrame)
+		document.body.removeChild(myFrame);
+
+	await bgSleep(1000);
+	CheckKRAnswerCorrectness();
 }
 
-// WARNING: this creates timeouts and returns before the timeouts are executed! Account for it when scheduling subsequent events
-function simulateTyping(element, value) {
+async function simulateTyping(element, value) {
 	element.focus(); // Focus on the element
 	element.value = ''; // Clear any existing value
 
@@ -5802,19 +5816,15 @@ function simulateTyping(element, value) {
 		element.dispatchEvent(keyUpEvent);
 	}
 
-	function typeNextChar(index) {
-		if (index < value.length) {
-			typeChar(value[index]);
-			setTimeout(() => typeNextChar(index + 1), 50); // Adjust delay as needed
-		} else {
-			// After all characters are typed, dispatch a change event and optionally blur
-			let changeEvent = new Event('change', { bubbles: true });
-			element.dispatchEvent(changeEvent);
-			element.blur(); // Uncomment if you want to trigger the blur event
-		}
+	for (let i = 0; i < value.length; i++) {
+		typeChar(value[i]);
+		await bgSleep(50);
 	}
 
-	typeNextChar(0); // Start typing the first character
+	// After all characters are typed, dispatch a change event and optionally blur
+	let changeEvent = new Event('change', { bubbles: true });
+	element.dispatchEvent(changeEvent);
+	element.blur();
 }
 
 // for kings reward solving
@@ -6135,7 +6145,7 @@ async function CallKRSolver() {
 	}
 }
 
-function CheckKRAnswerCorrectness() {
+async function CheckKRAnswerCorrectness() {
 	console.log("RUN CheckKRAnswerCorrectness");
 	var resumeButton = document.getElementsByClassName("puzzleView__resumeButton")[0];
 	if (resumeButton) {
@@ -6167,9 +6177,8 @@ function CheckKRAnswerCorrectness() {
 		}
 	}
 
-	window.setTimeout(function () {
-		CheckKRAnswerCorrectness();
-	}, 1000);
+	await bgSleep(1000);
+	CheckKRAnswerCorrectness();
 }
 
 
