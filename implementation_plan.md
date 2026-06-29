@@ -31,9 +31,9 @@ Refactor `bwRift` in [MouseHunt AutoBot.js](MouseHunt%20AutoBot.js) to modernize
 
 ## Phased Approach
 
-### Phase 1: Async Timer Migration
+### Phase 1: Async Timer Migration ✅
 
-**Scope:** `bwRift()` function signature, lines 2046–2077 (portal click), lines 2169–2177 (pocketwatch).
+**Scope:** `bwRift()` function signature, portal click sequence, pocketwatch toggle.
 
 | What | Before | After |
 |---|---|---|
@@ -43,9 +43,26 @@ Refactor `bwRift` in [MouseHunt AutoBot.js](MouseHunt%20AutoBot.js) to modernize
 
 The caller at line 792 (`bwRift();`) leaves the returned promise unhandled — acceptable for now.
 
-**Untouched:** Portal selection logic, trap resolution, config structure, UI code.
+**Debug logging:** Added `if (debug) console.log('[BWRift] ...')` throughout the function at key decision points:
+- Function entry
+- Chamber detection and state (name, index, loot remaining, time sand)
+- Curse/buff index determination
+- Priority list selection (normal, enough-sand, cursed)
+- Acolyte portal exclusion (insufficient RSC or time sand)
+- AL/RL combo resolution (ancient-first vs runic-first)
+- GUARD/FROZEN/INGRESS exclusion under curse
+- Trap setup resolution (chamber, index)
+- Trap arming (full objTemp dump)
+- Pocketwatch decision (active, activate, force, toggle)
+- Pocketwatch execution (waiting, clicked, retries exhausted)
+- Portal click sequences (chosen portal, confirm, reload)
 
-**Test:** Enter BWRift with a portal open. Verify click → confirm → reload sequence completes. Repeat with tab in background.
+**Untouched:** Portal selection logic (structure), trap resolution logic, config structure, UI code.
+
+**Test:** Set `debug = true` (already true by default at line 428). Enter BWRift with a portal open. Check browser console for `[BWRift]` prefixed logs. Verify:
+1. Click → confirm → reload sequence completes in active tab
+2. Same sequence completes when tab is in background
+3. Pocketwatch toggle fires and retries correctly
 
 ---
 
