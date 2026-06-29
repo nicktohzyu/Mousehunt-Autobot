@@ -59,6 +59,8 @@ The caller at line 792 (`bwRift();`) leaves the returned promise unhandled — a
 
 **Untouched:** Portal selection logic (structure), trap resolution logic, config structure, UI code.
 
+**Plus:** Fixed missing `return` after `reloadPage()` in non-acolyte portal entry path — was falling through to trap arming/pocketwatch logic on a dying page (Matches acolyte path which already had `return`).
+
 **Test:** Set `debug = true` (already true by default at line 428). Enter BWRift with a portal open. Check browser console for `[BWRift]` prefixed logs. Verify:
 1. Click → confirm → reload sequence completes in active tab
 2. Same sequence completes when tab is in background
@@ -79,6 +81,15 @@ Changes:
    - `chooseBestPortal(portals)` — returns index of lowest-priority, non-excluded portal.
 3. Remove dead code: `storePortalHistory` block, frozen portal check (line 2020), scramble TODO (line 2034), commented-out `console.plog` calls.
 4. Replace `Number.MAX_SAFE_INTEGER` sentinel with a boolean `excluded` field.
+
+**Plus (from MIMO review):**
+5. **M1** — Fix frozen portal check: use `children[i].classList.contains('frozen')` instead of `== 'frozen'` string comparison (always false).
+6. **M3** — Add `.catch()` at call site: `bwRift().catch(e => console.error('[BWRift] Error:', e))` at line 792.
+7. **Fragile selector** — Use `querySelector('.mousehuntActionButton.small.confirm')` or text-content match instead of `[1]` index.
+8. **NEW-2** — Add proper `var bwRiftConfig;` declaration at file scope, remove the commented-out declaration at line 1843.
+9. **Consistent declarations** — Convert all `var` in `bwRift()` to `const`/`let`.
+10. **Magic number 5** — Extract to `const POCKETWATCH_RETRY_MAX = 5` at top of function.
+11. **Commented-out console calls** — Remove all dead `console.plog` and `//console.log` debug lines.
 
 **Test:** Same as Phase 1. Compare `console.log("Choose portal: ", ...)` output before/after to verify identical decision-making.
 
@@ -101,8 +112,6 @@ Changes:
 
 ### Phase 4: Config Structure Redesign (deferred)
 
-**Depends on:** User providing the exact structure of `QuestRiftBristleWoods` page variables.
-
 Replace 32-element arrays with nested structure keyed by chamber name:
 
 ```js
@@ -115,6 +124,11 @@ This phase rewrites:
 - All config reads in `bwRift()` (trap resolution lines 2083–2140, pocketwatch lines 2145–2178)
 - `saveBWRift` and `initControlsBWRift` (if still in use)
 - Per-chamber overrides (lines 1808–1836)
+
+**Plus (from MIMO review):**
+- Re-query `classLootBooster`/`classButton` inside pocketwatch retry loop (stale DOM refs after re-render).
+- Add `URL.revokeObjectURL(blobUrl)` in `bgSleep()` to prevent slow blob-URL leak.
+- **NEW-4** — Add null check on `guard_chamber.status` before `.split('_')` to prevent crash.
 
 ---
 

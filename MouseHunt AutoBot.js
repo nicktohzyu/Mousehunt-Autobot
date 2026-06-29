@@ -1713,10 +1713,11 @@ function travelToLocation() { //early draft. should only run on https://www.mous
 	}
 }
 
-function bwRift() { //interface does not work; settings must be done in code
+async function bwRift() { //interface does not work; settings must be done in code
 	if (getCurrentLocation().indexOf("Bristle Woods Rift") < 0) {
 		return;
 	}
+	if (debug) console.log('[BWRift] --- bwRift() start ---');
 	const VACUUM_CHARMS = ['Rift Super Vacuum Charm', 'Rift Vacuum Charm'];
 	var defaultBWRiftConfig = {
 		order: ['NONE', 'GEARWORKS', 'ANCIENT', 'RUNIC', 'TIMEWARP', 'GUARD', 'SECURITY', 'FROZEN', 'FURNACE', 'INGRESS', 'PURSUER', 'ACOLYTE_CHARGING', 'ACOLYTE_DRAINING', 'ACOLYTE_DRAINED', 'LUCKY', 'HIDDEN'],
@@ -1843,7 +1844,7 @@ function bwRift() { //interface does not work; settings must be done in code
 
 	var objUser = JSON.parse(getPageVariable('JSON.stringify(user.quests.QuestRiftBristleWoods)'));
 	var nTimeSand = parseInt(objUser.items.rift_hourglass_sand_stat_item.quantity);
-	console.log("RUN BWRift() using:", bwRiftConfig);
+	if (debug) console.log('[BWRift] Chamber:', objUser.chamber_name, 'Status:', objUser.chamber_status, 'Loot remaining:', objUser.progress_remaining, 'Time sand:', nTimeSand);
 
 	var nIndex = -1;
 	var nLootRemaining = objUser.progress_remaining;
@@ -1878,6 +1879,7 @@ function bwRift() { //interface does not work; settings must be done in code
 	//console.log('Status:', objUser.chamber_status, 'Name:', objUser.chamber_name, 'Shortname:', strChamberName, 'Index:', nIndex, 'Remaining Loot:', nLootRemaining, 'Time Sand:', nTimeSand);
 	if (nIndex < 0)
 		return;
+	if (debug) console.log('[BWRift] Detected chamber:', strChamberName, '-> index:', nIndex);
 	var nIndexBuffCurse = 0;
 	if (!(objUser.status_effects.un.indexOf('default') > -1 || objUser.status_effects.un.indexOf('remove') > -1) ||
 		!(objUser.status_effects.fr.indexOf('default') > -1 || objUser.status_effects.fr.indexOf('remove') > -1) ||
@@ -1891,10 +1893,12 @@ function bwRift() { //interface does not work; settings must be done in code
 		if (objUser.status_effects.ex.indexOf('default') < 0) //fourth portal?
 			nIndexBuffCurse |= 0x01;
 	}
+	if (debug) console.log('[BWRift] Buff/curse index:', nIndexBuffCurse);
 	if (objUser.obelisk_percent == 100) {
 		//console.log("second run at acolyte");
 		bwRiftConfig.minTimeSand[9] = bwRiftConfig.minTimeSand[nIndexBuffCurse] / 2 - 20 + objUser.acolyte_sand * 1.3;
 		nIndexBuffCurse = 9;
+		if (debug) console.log('[BWRift] Second acolyte run detected, adjusted minTimeSand:', bwRiftConfig.minTimeSand[9]);
 	}
 	if (nTimeSand > bwRiftConfig.minTimeSand[nIndexBuffCurse]) { //Prioritize timesand first, then farm potions while searching for acolyte portal
 		console.log("Enough timesand, using alternate priorities");
@@ -1904,7 +1908,7 @@ function bwRift() { //interface does not work; settings must be done in code
 	console.log(/*'Buff & Curse Index:', nIndexBuffCurse, 'Obj:', objUser.status_effects, */"Min sand to enter acolyte chamber:", bwRiftConfig.minTimeSand[nIndexBuffCurse]);
 	if (nIndex === 0 || objUser.chamber_status == 'open') {
 		// Choosing portal
-		//console.log("choosing portal", nIndex, objUser.chamber_status);
+		if (debug) console.log('[BWRift] Portal selection active (nIndex:', nIndex, 'status:', objUser.chamber_status, ')');
 		var storePortalHistory = false;
 		if (storePortalHistory) {
 			var portalHistory = getStorageToObject('BWR_portal_history', []);
@@ -1923,10 +1927,13 @@ function bwRift() { //interface does not work; settings must be done in code
 			let arrPriorities;
 			if (nIndexBuffCurse == 8) {
 				arrPriorities = bwRiftConfig.prioritiesCursed;
+				if (debug) console.log('[BWRift] Using cursed priority list');
 			} else if (nTimeSand > bwRiftConfig.minTimeSand[nIndexBuffCurse]) {
 				arrPriorities = bwRiftConfig.prioritiesEnoughSand;
+				if (debug) console.log('[BWRift] Using enough-sand priority list');
 			} else {
 				arrPriorities = bwRiftConfig.priorities;
+				if (debug) console.log('[BWRift] Using default priority list');
 			}
 			var nIndexCustom = -1;
 			for (i = 0; i < arrPriorities.length; i++) {
@@ -1967,13 +1974,14 @@ function bwRift() { //interface does not work; settings must be done in code
 					if (nIndexTemp > -1) {
 						if (!Number.isInteger(nTotalRSC))
 							nTotalRSC = Number.MAX_SAFE_INTEGER;
-						//console.plog('RSC Pot:', nRSCPot, 'RSC:', nRSC, 'Total RSC:', nTotalRSC);
 						var nMinRSC = -1;
 						if (bwRiftConfig.minRSCType == 'NUMBER')
 							nMinRSC = bwRiftConfig.minRSC;
 						else if (bwRiftConfig.minRSCType == 'GEQ')
 							nMinRSC = bwRiftConfig.minTimeSand[nIndexBuffCurse];
+						if (debug) console.log('[BWRift] Acolyte portal found. RSC:', nTotalRSC, 'MinRSC:', nMinRSC, 'Time sand:', nTimeSand, 'MinTimeSand:', bwRiftConfig.minTimeSand[nIndexBuffCurse]);
 						if (nTotalRSC < nMinRSC || nTimeSand < bwRiftConfig.minTimeSand[nIndexBuffCurse]) {
+							if (debug) console.log('[BWRift] Excluding acolyte portal (insufficient RSC or time sand)');
 							arrIndices = getAllIndices(objPortal.arrName, 'ACOLYTE');
 							for (i = 0; i < arrIndices.length; i++)
 								objPortal.arrIndex[arrIndices[i]] = Number.MAX_SAFE_INTEGER - 1;
@@ -1990,6 +1998,7 @@ function bwRift() { //interface does not work; settings must be done in code
 					for (const room of ['GUARD', 'FROZEN', 'INGRESS']) {
 						nIndexTemp = objPortal.arrName.indexOf(room);
 						if (nIndexTemp > -1 && nIndexBuffCurse == 8 && bwRiftConfig.enterMinigameWCurse === false) {
+							if (debug) console.log('[BWRift] Excluding', room, 'portal (cursed, enterMinigameWCurse=false)');
 							for (const index of getAllIndices(objPortal.arrName, room))
 								objPortal.arrIndex[index] = Number.MAX_SAFE_INTEGER - 1;
 						}
@@ -2002,12 +2011,14 @@ function bwRift() { //interface does not work; settings must be done in code
 						var nTotalASC = nASCPot + nASC;
 						if (arrPriorities[nIndexCustom].indexOf('MSC') > -1)
 							nTotalASC += nASCPot;
-						//console.plog('ASC Pot:', nASCPot, 'ASC:', nASC, 'Total ASC:', nTotalASC, 'RSC Pot:', nRSCPot, 'RSC:', nRSC, 'Total RSC:', nTotalRSC);
+						if (debug) console.log('[BWRift] AL/RL combo detected. ASC:', nTotalASC, 'RSC:', nTotalRSC);
 						if (nTotalASC < nTotalRSC) { // ancient first
+							if (debug) console.log('[BWRift] Ancient cheese < Runic cheese, prioritizing Ancient');
 							for (j = 0; j < arrRL.length; j++)
 								objPortal.arrIndex[arrRL[j]] = Number.MAX_SAFE_INTEGER;
 						}
 						else { // runic first
+							if (debug) console.log('[BWRift] Runic cheese <= Ancient cheese, prioritizing Runic');
 							for (j = 0; j < arrAL.length; j++)
 								objPortal.arrIndex[arrAL[j]] = Number.MAX_SAFE_INTEGER;
 						}
@@ -2046,14 +2057,17 @@ function bwRift() { //interface does not work; settings must be done in code
 					} else { //click portal
 						//console.log("choosing portal");
 						if (objPortal.arrName[nMinIndex] == 'ACOLYTE') {
-							//console.plog('Chosen Portal:', objPortal.arrName[nMinIndex], 'Index: Unknown');
+							if (debug) console.log('[BWRift] Acolyte portal chosen, clicking...');
 							fireEvent(classPortalContainer[0].children[nMinIndex], 'click');
-							window.setTimeout(function () {
-								fireEvent(document.getElementsByClassName('mousehuntActionButton small')[1], 'click');
-								window.setTimeout(function () {
-									reloadPage();
-								}, 1000);
-							}, 1000);
+							await bgSleep(1000);
+							var confirmButton = document.getElementsByClassName('mousehuntActionButton small')[1];
+							if (confirmButton) {
+								if (debug) console.log('[BWRift] Confirming acolyte portal entry');
+								fireEvent(confirmButton, 'click');
+							}
+							await bgSleep(1000);
+							if (debug) console.log('[BWRift] Reloading after acolyte entry');
+							reloadPage();
 							return;
 						}
 						if (objPortal.arrName[nMinIndex] == 'ENTER')
@@ -2061,16 +2075,19 @@ function bwRift() { //interface does not work; settings must be done in code
 						else
 							nIndex = bwRiftConfig.order.indexOf(objPortal.arrName[nMinIndex]);
 						if (nIndex > -1) {
-							//console.plog('Chosen Portal:', objPortal.arrName[nMinIndex], 'Index:', nIndex);
+							if (debug) console.log('[BWRift] Chosen portal:', objPortal.arrName[nMinIndex], '-> chamber:', bwRiftConfig.order[nIndex]);
 							strChamberName = bwRiftConfig.order[nIndex];
 							fireEvent(classPortalContainer[0].children[nMinIndex], 'click');
-							window.setTimeout(function () {
-								fireEvent(document.getElementsByClassName('mousehuntActionButton small')[1], 'click');
-								window.setTimeout(function () {
-									reloadPage();
-								}, 1000);
-							}, 1000);
-							nLootRemaining = Number.MAX_SAFE_INTEGER;
+							await bgSleep(1000);
+							var confirmButton = document.getElementsByClassName('mousehuntActionButton small')[1];
+							if (confirmButton) {
+								if (debug) console.log('[BWRift] Confirming portal entry');
+								fireEvent(confirmButton, 'click');
+							}
+							await bgSleep(1000);
+							if (debug) console.log('[BWRift] Reloading after portal entry');
+							reloadPage();
+							return;
 						}
 						else
 							nIndex = nIndexOld;
@@ -2092,6 +2109,7 @@ function bwRift() { //interface does not work; settings must be done in code
 	if (nIndexBuffCurse == 8)
 		nIndex += 16;
 
+	if (debug) console.log('[BWRift] Trap setup for chamber:', strChamberName, 'index:', nIndex);
 	if (strChamberName == 'GEARWORKS' || strChamberName == 'ANCIENT' || strChamberName == 'RUNIC') {
 		var nCleaverAvailable = (objUser.cleaver_status == 'available') ? 1 : 0;
 		//console.plog('Cleaver Available Status:', nCleaverAvailable);
@@ -2110,7 +2128,7 @@ function bwRift() { //interface does not work; settings must be done in code
 		}
 	} else if (strChamberName == 'GUARD') {
 		var nAlertLvl = (isNullOrUndefined(objUser.minigame.guard_chamber)) ? -1 : parseInt(objUser.minigame.guard_chamber.status.split("_")[1]);
-		//console.plog('Guard Barracks Alert Lvl:', nAlertLvl);
+		if (debug) console.log('[BWRift] Guard chamber alert level:', nAlertLvl);
 		if (Number.isNaN(nAlertLvl) || nAlertLvl < 0 || nAlertLvl > 6) {
 			// Not alerted yet
 			for (var prop in objTemp) {
@@ -2142,6 +2160,7 @@ function bwRift() { //interface does not work; settings must be done in code
 	//if (debug) console.log("BW RIFT ARMING:");
 	//if (debug) console.log(objTemp);
 
+	if (debug) console.log('[BWRift] Arming traps:', objTemp);
 	checkThenArm(null, 'weapon', objTemp.weapon);
 	checkThenArm(null, 'base', objTemp.base);
 	checkThenArm(null, 'trinket', objTemp.trinket);
@@ -2166,15 +2185,20 @@ function bwRift() { //interface does not work; settings must be done in code
 			bToggle = true;
 	}
 	//console.plog('QQ Activated:', bPocketwatchActive, 'Activate?:', objTemp.activate, 'Force:', bForce, 'Toggle:', bToggle);
+	if (debug) console.log('[BWRift] Pocketwatch: active=', bPocketwatchActive, 'activate=', objTemp.activate, 'force=', bForce, 'toggle=', bToggle);
 	if (bToggle) {
 		var nRetry = 5;
-		var intervalPocket = setInterval(function () {
-			if (classLootBooster.getAttribute('class').indexOf('chamberEmpty') < 0 || --nRetry <= 0) {
+		if (debug) console.log('[BWRift] Pocketwatch toggle: waiting for chamber to be ready...');
+		while (nRetry > 0) {
+			if (classLootBooster.getAttribute('class').indexOf('chamberEmpty') < 0) {
+				if (debug) console.log('[BWRift] Chamber ready, clicking pocketwatch');
 				fireEvent(classButton, 'click');
-				clearInterval(intervalPocket);
-				intervalPocket = null;
+				break;
 			}
-		}, 1000);
+			await bgSleep(1000);
+			nRetry--;
+		}
+		if (nRetry <= 0 && debug) console.log('[BWRift] Pocketwatch toggle: max retries reached');
 	}
 }
 
