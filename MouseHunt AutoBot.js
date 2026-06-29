@@ -1153,7 +1153,7 @@ function setEasterFondue(shouldActivate) {
 	setTimeout(reloadPage, 2000);
 }
 
-function ddReinforceCavern() {
+async function ddReinforceCavern() {
 	if (getCurrentLocation().indexOf("Draconic Depths") < 0) {
 		return;
 	}
@@ -1166,23 +1166,16 @@ function ddReinforceCavern() {
 		}
 		return;
 	}
-	doAsync([
-		() => { document.querySelector('.draconicDepthsCavernView__reinforceCavernButton.draconicDepthsCavernView__reinforceCavernButton--').click(); },
-		2000,
-		() => {
-			document.querySelector('.draconicDepthsReinforceCavernDialogView__maxButton').click();
-		},
-		1500,
-		() => {
-			document.querySelector('.draconicDepthsView__orangeButton.draconicDepthsView__orangeButton--big.draconicDepthsReinforceCavernDialogView__reinforceButton--.draconicDepthsReinforceCavernDialogView__reinforceButton')
-				.click();
-		},
-		2000,
-		// () => reloadPage(),
-	])
+	document.querySelector('.draconicDepthsCavernView__reinforceCavernButton.draconicDepthsCavernView__reinforceCavernButton--').click();
+	await bgSleep(2000);
+	document.querySelector('.draconicDepthsReinforceCavernDialogView__maxButton').click();
+	await bgSleep(1500);
+	document.querySelector('.draconicDepthsView__orangeButton.draconicDepthsView__orangeButton--big.draconicDepthsReinforceCavernDialogView__reinforceButton--.draconicDepthsReinforceCavernDialogView__reinforceButton')
+		.click();
+	await bgSleep(2000);
 }
 
-function beanstalk() {
+async function beanstalk() {
 	if (getCurrentLocation().indexOf("Bountiful Beanstalk") < 0) {
 		return;
 	}
@@ -1266,88 +1259,72 @@ function beanstalk() {
 	const GREAT_HALL = 2;
 	const useFeatherKeyForGreatHall = true;
 	const MIN_FERT_TO_ENTER_CASTLE = 3024; //prep 30 runs for easter + 2 backup ballroom
-	function enterCastle(room) { //0 = dungeon, 1 = ballroom, 2 = great hall
+
+	async function enterCastle(room) { //0 = dungeon, 1 = ballroom, 2 = great hall
 		if (debug) console.log("Entering castle (planting vine) ");
-		doAsync([
-			() => { document.getElementsByClassName("bountifulBeanstalkClimbView__plantVineDialogButton")[0].click(); },
-			4000,
-			() => {
-				document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].click();
-			},
-			200,
-			() => {
-				if (room === GREAT_HALL && useFeatherKeyForGreatHall) {
-					if (debug) console.log("Using feather and key ");
-					document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_key"]').click();
-				}
-			},
-			200,
-			() => {
-				if (room === GREAT_HALL && useFeatherKeyForGreatHall) {
-					if (debug) console.log("Using feather and key ");
-					document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_feather"]').click();
-				}
-			},
-			200,
-			() => {
-				document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].focus();
-			},
-			200,
-			() => {
-				document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].blur();
-			},
-			1000,
-			() => { document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].click(); },
-			200,
-			() => {
-				document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].focus();
-			},
-			200,
-			() => {
-				document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].blur();
-			},
-			// () => {
-			// 	playAlertSound();
-			// }
-			2000,
-			() => { document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__confirmDialogButton bountifulBeanstalkPlantVineDialogView__confirmDialogPlantButton")[0].click(); },
-			2000,
-			() => { reloadPage(); },
-		]);
+		document.getElementsByClassName("bountifulBeanstalkClimbView__plantVineDialogButton")[0].click();
+		await bgSleep(4000);
+		document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].click();
+		await bgSleep(200);
+		if (room === GREAT_HALL && useFeatherKeyForGreatHall) {
+			if (debug) console.log("Using golden key ");
+			document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_key"]').click();
+		}
+		await bgSleep(200);
+		if (room === GREAT_HALL && useFeatherKeyForGreatHall) {
+			if (debug) console.log("Using golden feather ");
+			document.querySelector('div.headsUpDisplayBountifulBeanstalkView__dialogOption.bountifulBeanstalkPlantVineDialogView__embellishment[data-embellishment-type="golden_feather"]').click();
+		}
+		await bgSleep(200);
+		document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].focus();
+		await bgSleep(200);
+		document.getElementsByClassName("headsUpDisplayBountifulBeanstalkView__dialogOptionTitle")[room].blur();
+		await bgSleep(1000);
+		document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].click();
+		await bgSleep(200);
+		document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].focus();
+		await bgSleep(200);
+		document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__plantVineDialogButton bountifulBeanstalkPlantVineDialogView__plantVineButton active")[0].blur();
+		await bgSleep(2000);
+		document.getElementsByClassName("bountifulBeanstalkPlantVineDialogView__confirmDialogButton bountifulBeanstalkPlantVineDialogView__confirmDialogPlantButton")[0].click();
+		await bgSleep(2000);
+		reloadPage();
 	}
-	function toggleAutoHarp() {
-		doAsync([
-			() => document.querySelector('.headsUpDisplayBountifulBeanstalkView__playHarpDialogButton').click(),
-			3000,
-			() => document.querySelector('.bountifulBeanstalkPlayHarpDialogView__tabButton.bountifulBeanstalkPlayHarpDialogView__autoHarpTabButton').click(),
-			1000,
-			() => document.querySelector('.bountifulBeanstalkPlayHarpDialogView__autoHarpPlayButton').click(),
-			2000,
-			() => reloadPage(),
-		])
+
+	async function toggleAutoHarp() {
+		document.querySelector('.headsUpDisplayBountifulBeanstalkView__playHarpDialogButton').click();
+		await bgSleep(3000);
+		document.querySelector('.bountifulBeanstalkPlayHarpDialogView__tabButton.bountifulBeanstalkPlayHarpDialogView__autoHarpTabButton').click();
+		await bgSleep(1000);
+		document.querySelector('.bountifulBeanstalkPlayHarpDialogView__autoHarpPlayButton').click();
+		await bgSleep(2000);
+		reloadPage();
 	}
-	function disableAutoHarp() {
+
+	async function disableAutoHarp() {
 		if (!locationData.castle.is_auto_harp_enabled) {
 			if (debug) console.log("Auto harp already disabled");
 			return;
 		}
 		if (debug) console.log("Disabling auto harp");
-		toggleAutoHarp();
+		await toggleAutoHarp();
 	}
-	function enableAutoHarp() {
+
+	async function enableAutoHarp() {
 		if (locationData.castle.is_auto_harp_enabled) {
 			if (debug) console.log("Auto harp already enabled");
 			return;
 		}
 		if (debug) console.log("Enabling auto harp");
-		toggleAutoHarp();
+		await toggleAutoHarp();
 	}
-	function wakeGiant() {
+
+	async function wakeGiant() {
 		if (locationData.castle.is_boss_chase) {
 			return;
 		}
 		if (locationData.castle.is_auto_harp_enabled) {
-			disableAutoHarp(); //expect this function to refresh the page
+			await disableAutoHarp(); //expect this function to refresh the page
 			return;
 		}
 
@@ -1357,24 +1334,19 @@ function beanstalk() {
 		if (noiseNeeded <= 0) {
 			return;
 		}
-		makeNoise(noiseNeeded);
+		await makeNoise(noiseNeeded);
 	}
 
-	function makeNoise(noiseNeeded) {
-		doAsync([
-			() => { document.querySelector('.headsUpDisplayBountifulBeanstalkView__playHarpDialogButton').click(); },
-			2000,
-			() => {
-				var inputElement = document.querySelector('.bountifulBeanstalkPlayHarpDialogView__option--plus .bountifulBeanstalkPlayHarpDialogView__input');
-				simulateTyping(inputElement, noiseNeeded.toString());
-			},
-			1500,
-			() => { document.querySelector('.bountifulBeanstalkPlayHarpDialogView__button.bountifulBeanstalkPlayHarpDialogView__playButton').click(); },
-			2000,
-			() => reloadPage(),
-		])
+	async function makeNoise(noiseNeeded) {
+		document.querySelector('.headsUpDisplayBountifulBeanstalkView__playHarpDialogButton').click();
+		await bgSleep(2000);
+		var inputElement = document.querySelector('.bountifulBeanstalkPlayHarpDialogView__option--plus .bountifulBeanstalkPlayHarpDialogView__input');
+		await simulateTyping(inputElement, noiseNeeded.toString());
+		await bgSleep(1500);
+		document.querySelector('.bountifulBeanstalkPlayHarpDialogView__button.bountifulBeanstalkPlayHarpDialogView__playButton').click();
+		await bgSleep(2000);
+		reloadPage();
 	}
-
 	checkThenArm(null, TRAP, TRAPS_BY_TYPE["Physical"]);
 
 	const autoEnterCastle = true;
@@ -1395,9 +1367,9 @@ function beanstalk() {
 			setFuelOff();
 			if (autoEnterCastle) {
 				if (locationData.items.fabled_fertilizer_stat_item.quantity_unformatted >= MIN_FERT_TO_ENTER_CASTLE) { 
-					enterCastle(GREAT_HALL);
+					await enterCastle(GREAT_HALL);
 				} else {
-					enterCastle(BALLROOM);
+					await enterCastle(BALLROOM);
 				}
 			} else {
 				playAlertSound();
@@ -1447,12 +1419,12 @@ function beanstalk() {
 		checkThenArm(null, TRINKET, "Rift Charm");
 		setFuelOff();
 		smartArmLeapingCheese();
-		wakeGiant();
+		await wakeGiant();
 	} else { // great hall
 		if (debug) console.log("in great hall");
 		useAppropriateBase();
 		if (locationData.castle.current_room.loot_multiplier == 8 && isFeatherActivated()) {
-			disableAutoHarp();
+			await disableAutoHarp();
 			if (locationData.castle.is_boss_chase) {
 				armRoyalBeansterCheese();
 				checkThenArm(null, TRINKET, "Rift Ultimate Lucky Power Charm");
@@ -1467,7 +1439,7 @@ function beanstalk() {
 		} else {
 			setEasterFondue(false);
 			if (isFeatherActivated()) { // avoid infinite autoharp if no feather
-				enableAutoHarp();
+				await enableAutoHarp();
 			}
 			checkThenArm(null, TRINKET, "Rift Charm");
 			smartArmLeapingCheese();
