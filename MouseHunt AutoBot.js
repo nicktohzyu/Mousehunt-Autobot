@@ -1723,9 +1723,9 @@ function bwRift() { //interface does not work; settings must be done in code
 		master: {
 			weapon: new Array(32).fill(bestRiftWeapon),
 			base: new Array(32).fill(bestRiftBase),
-			trinket: new Array(32).fill('Rift Vacuum Charm'),
+			trinket: new Array(32).fill(VACUUM_CHARMS),
 			bait: new Array(32).fill('Brie String'),
-			activate: new Array(32).fill(VACUUM_CHARMS),
+			activate: new Array(32).fill(false),
 		},
 		specialActivate: {
 			forceActivate: new Array(32).fill(false),
